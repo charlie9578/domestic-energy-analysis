@@ -1,0 +1,9 @@
+# Public data fixture provenance
+
+Both converted fixture files are historical excerpts, not synthetic readings or complete periods.
+
+- UCI fixture: [UCI source](https://archive.ics.uci.edu/dataset/235/individual+household+electric+power+consumption) (CC BY 4.0); input opening 1,000 rows from [GitHub mirror](https://github.com/Day-yong/Machine_Learning/blob/master/datas/household_power_consumption_1000.txt). December 2006 Europe/Paris UTC+01, 1-minute average kW -> 30-minute kWh; only full 30-minute windows included; submeter Wh/min -> kWh. 33 complete rows. These were not independently compared byte-for-byte to the publisher ZIP.
+- OPSD *provisional counter excerpt*: [OPSD original](https://data.open-power-system-data.org/household_data/2020-04-15/) (CC BY 4.0); [third-party mirror](https://github.com/Chirag-Kathuria-009/Energy_Stimulator/blob/main/data/sample/bronze/opsd/household_data_15min.csv). The mirror's first 5 days appear to contain **cumulative** meter counters and were differenced to form 479 x 15-minute rows; source-to-publisher fidelity was not independently checked. **Original OPSD publisher CSVs instead contain interval kWh; do not difference them**. Labelled heat-pump/EV/PV channels from the mirror are provisional, not verified ground truth. Do not annualize.
+- UKPN LCL fixture elsewhere in examples: [Low Carbon London](https://data.london.gov.uk/dataset/smartmeter-energy-consumption-data-in-london-households-vqm0d), CC BY; an existing extract in [RTDIP](https://github.com/rtdip/core/blob/develop/tests/sdk/python/rtdip_sdk/data_models/meters/utils/test_data/smart_meters_london/CC_LCL-FullData.csv).
+
+These small historical, pseudonymized research excerpts must never be combined with private household usage records and then committed. Data licences are separate from the repository code licence.
