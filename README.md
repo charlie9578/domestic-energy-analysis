@@ -46,7 +46,7 @@ ERA5 represents a grid cell. Compare against on-site or station measurements whe
 
 ## Held-out validation
 
-The measured-data study pairs heating energy with indoor and outdoor temperatures at five HeatpumpMonitor sites, tests heat signatures on a later year, and matches the London smart-meter fixture to Heathrow weather. It also compares tariff and thermostat scenarios and screens retrofit economics under explicit assumptions. See [methods and findings](research/OBSERVED_VALIDATION.md) and [aggregate results](research/OBSERVED_VALIDATION.json).
+The measured-data study pairs heating energy with indoor and outdoor temperatures at five HeatpumpMonitor sites, tests heat signatures on a later year, and matches five Konstanz-area households and the London smart-meter fixture to hourly ERA5. It also compares tariff and thermostat scenarios and screens retrofit economics under explicit assumptions. See [methods and findings](research/OBSERVED_VALIDATION.md) and [aggregate results](research/OBSERVED_VALIDATION.json).
 
 ## Quick start
 

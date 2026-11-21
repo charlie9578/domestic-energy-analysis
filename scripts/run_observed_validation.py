@@ -1,16 +1,17 @@
 """Run measured heat and smart-meter validation with separate counterfactuals."""
 import argparse
-import csv
-import gzip
 import hashlib
 import json
 from collections import Counter
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from statistics import mean
+from zoneinfo import ZoneInfo
+from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 from domestic_energy.core import price_meter_rows, timestamp_utc
-from domestic_energy.data import read_csv, write_json
+from domestic_energy.data import read_csv, write_csv, write_json
+from domestic_energy.household_cohort import opsd_halfhours
 from domestic_energy.economics import investment_appraisal
 from domestic_energy.heating_controls import House, Settings, simulate_heating
 from domestic_energy.pipeline import join_daily_meter_weather
@@ -29,38 +30,59 @@ def sha256(path):
         return hashlib.file_digest(source, "sha256").hexdigest()
 
 
-def london_meter(station_path):
-    meter = read_csv(ROOT / "examples/real_lcl_mac000002_2012_part.csv")
-    with gzip.open(station_path, "rt", newline="") as source:
-        weather = [{"date": row[0], "temperature_c": row[1]} for row in csv.reader(source)
-                   if "2012-10-12" <= row[0] <= "2012-11-24" and row[1]]
-    joined = join_daily_meter_weather(meter, weather, min_coverage=1)
-    # Use the same calendar cutoff as the existing half-hourly experiment.
-    profile = expected_halfhourly_profile(meter)
-    cutoff = profile["holdout_daily"][0]["date"]
+def daily_era5(path, zone):
+    temperatures = {}
+    seen = set()
+    for row in read_csv(path):
+        stamp = timestamp_utc(row["start_utc"])
+        if stamp in seen or any((stamp.minute, stamp.second, stamp.microsecond)):
+            raise ValueError("Expected unique aligned ERA5 hourly timestamps")
+        seen.add(stamp)
+        day = stamp.astimezone(zone).date()
+        temperatures.setdefault(day, []).append(float(row["temperature_c"]))
+    return [{"date": str(day), "temperature_c": mean(values)}
+            for day, values in sorted(temperatures.items())
+            if len(values) == civil_hours(day, zone)]
+
+
+def civil_hours(day, zone):
+    start = datetime.combine(day, time(), zone).astimezone(timezone.utc)
+    end = datetime.combine(day + timedelta(days=1), time(), zone).astimezone(timezone.utc)
+    return (end - start).total_seconds() / 3600
+
+
+def daily_experiment(meter, weather, cutoff, zone):
+    joined = join_daily_meter_weather(meter, weather, min_coverage=1, timezone_name=zone.key)
     train = [row for row in joined["daily_rows"] if row["date"] < cutoff]
     test = [row for row in joined["daily_rows"] if row["date"] >= cutoff]
     if len(train) < 14 or len(test) < 5:
-        raise ValueError("Insufficient weather-matched London days")
-    # DST-normalize daily energy in the fit, then restore the physical holdout length.
+        raise ValueError("Insufficient weather-matched complete meter days")
+
     def hours(day):
-        local_day = date.fromisoformat(day)
-        start = datetime.combine(local_day, time(), UK).astimezone(timezone.utc)
-        end = datetime.combine(local_day + timedelta(days=1), time(), UK).astimezone(timezone.utc)
-        return (end - start).total_seconds() / 3600
+        return civil_hours(date.fromisoformat(day), zone)
 
     points = [(row["temperature_c"], row["consumption_kwh"] / hours(row["date"]))
               for row in train]
     intercept, slope = _fit(points)
     baseline = mean(power for _, power in points)
     mae = {}
-    for name, predict in (("station_weather", lambda t: max(0, intercept + slope * t)),
+    for name, predict in (("era5_temperature", lambda t: max(0, intercept + slope * t)),
                           ("mean_power", lambda t: baseline)):
         mae[name] = round(mean(
             abs(row["consumption_kwh"] - predict(row["temperature_c"]) * hours(row["date"]))
             for row in test), 4)
 
-    heldout_dates = {row["date"] for row in test}
+    return {
+        "split_local_date": cutoff, "train_days": len(train), "test_days": len(test),
+        "exclusion_counts": dict(Counter(row["reason"] for row in joined["excluded_dates"])),
+        "measured_import_holdout_daily_mae_kwh": mae,
+    }, {row["date"] for row in test}
+
+
+def london_meter(weather_path):
+    meter = read_csv(ROOT / "examples/real_lcl_mac000002_2012_part.csv")
+    cutoff = expected_halfhourly_profile(meter)["holdout_daily"][0]["date"]
+    result, heldout_dates = daily_experiment(meter, daily_era5(weather_path, UK), cutoff, UK)
     intervals = [row for row in meter
                  if timestamp_utc(row["start_utc"]).astimezone(UK).date().isoformat()
                  in heldout_dates]
@@ -70,12 +92,38 @@ def london_meter(station_path):
                   night_rate if timestamp_utc(row["start_utc"]).astimezone(UK).hour < 7
                   else day_rate} for row in intervals]
         prices[name] = price_meter_rows(intervals, rates, standing_p_per_day=55)
+    return {**result, "hourly_era5_sha256": sha256(weather_path),
+            "hypothetical_tariff_replay_on_unchanged_import": prices}
+
+
+def konstanz_cohort(raw, derived):
+    zone = ZoneInfo("Europe/Berlin")
+    start = datetime(2016, 1, 1, tzinfo=zone).astimezone(timezone.utc)
+    end = datetime(2017, 1, 1, tzinfo=zone).astimezone(timezone.utc)
+    homes = ("residential1", "residential2", "residential4", "residential5", "residential6")
+    meter_path, weather_path = raw / "opsd_15min.csv", raw / "konstanz_era5.csv"
+    weather = daily_era5(weather_path, zone)
+    with meter_path.open(newline="", encoding="utf-8-sig") as file:
+        cohort = opsd_halfhours(file, homes, start=start, end=end)
+    expected = (end - start) // timedelta(minutes=30)
+    results = {}
+    for home in homes:
+        rows = cohort.get(home, [])
+        if len(rows) != expected:
+            raise ValueError(f"{home}: expected {expected} half-hours, got {len(rows)}")
+        measured = [row for row in rows if not row["publisher_interpolated"]]
+        experiment, _ = daily_experiment(measured, weather, "2016-10-01", zone)
+        write_csv(derived / f"opsd_2016_{home}.csv", rows, list(rows[0]))
+        results[home] = {
+            "half_hours": len(rows), "publisher_interpolated_half_hours": len(rows) - len(measured),
+            "publisher_series_import_kwh": round(sum(row["consumption_kwh"] for row in rows), 3),
+            "weather_validation_unflagged_only": experiment,
+        }
     return {
-        "station_sha256": sha256(station_path),
-        "split_local_date": cutoff, "train_days": len(train), "test_days": len(test),
-        "exclusion_counts": dict(Counter(row["reason"] for row in joined["excluded_dates"])),
-        "measured_import_holdout_daily_mae_kwh": mae,
-        "hypothetical_tariff_replay_on_unchanged_import": prices,
+        "timezone": zone.key,
+        "first_start_utc": start.isoformat(), "end_exclusive_utc": end.isoformat(),
+        "opsd_quarter_hour_csv_sha256": sha256(meter_path),
+        "hourly_era5_sha256": sha256(weather_path), "households": results,
     }
 
 
@@ -151,7 +199,7 @@ def retrofit_screen(signature):
         "positive_npv_cases": sum(c["npv_gbp"] > 0 for c in cases)}
 
 
-def run(raw):
+def run(raw, derived):
     metadata_path = raw / "hpm_systems.json"
     metadata = {row["id"]: row for row in json.loads(metadata_path.read_text())}
     tariffs = json.loads((ROOT / "examples/hypothetical_heating_tariffs.json").read_text())
@@ -160,8 +208,8 @@ def run(raw):
     report = {
         "measured_sources": {"heat_pump": "HeatpumpMonitor public daily CSV",
                              "equipment_labels": "HeatpumpMonitor public system metadata",
-                             "london_weather": "Meteostat daily station 03772 (Heathrow)",
                              "london_meter": "UKPN Low Carbon London MAC000002 fixture"},
+        "reanalysis_source": "Open-Meteo hourly ERA5, city-centre regional proxies",
         "hpm_metadata_sha256": sha256(metadata_path),
         "hpm_window_local": {"start_inclusive": str(START), "end_exclusive": str(END)},
         "uncertainty": {"method": "separate calendar-week percentile bootstraps",
@@ -200,16 +248,32 @@ def run(raw):
             "thermostat": thermostat,
             "retrofit": retrofit_screen(validation["signatures"]["indoor_outdoor"]),
         }
-    report["london"] = london_meter(raw / "heathrow.csv.gz")
+    report["london"] = london_meter(raw / "london_era5.csv")
+    report["konstanz_cohort"] = konstanz_cohort(raw, derived)
     return report
+
+
+def export_cohort_archive(path, raw, derived, households):
+    files = [derived / f"opsd_2016_{home}.csv" for home in households]
+    files += [raw / "konstanz_era5.csv", ROOT / "research/OPSD_2016_ATTRIBUTION.txt"]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with ZipFile(path, "w") as archive:
+        for file in files:
+            archive.writestr(ZipInfo(file.name), file.read_bytes(), compress_type=ZIP_DEFLATED)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--raw", type=Path, default=ROOT / "data/raw")
     parser.add_argument("--out", type=Path, default=ROOT / "reports/observed_validation.json")
+    parser.add_argument("--derived", type=Path, default=ROOT / "data/derived")
+    parser.add_argument("--cohort-zip", type=Path, help="Package meter, ERA5 and attribution files")
     args = parser.parse_args()
-    write_json(args.out, run(args.raw))
+    report = run(args.raw, args.derived)
+    write_json(args.out, report)
+    if args.cohort_zip:
+        export_cohort_archive(args.cohort_zip, args.raw, args.derived,
+                              report["konstanz_cohort"]["households"])
 
 
 if __name__ == "__main__":

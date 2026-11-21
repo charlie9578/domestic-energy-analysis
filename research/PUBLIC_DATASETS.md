@@ -7,7 +7,7 @@ Updated 21 November 2026. These are **historical, real measurements** except whe
 | Data | Location and signals | Access and limitations |
 | --- | --- | --- |
 | [Low Carbon London (UKPN)](https://data.london.gov.uk/dataset/smartmeter-energy-consumption-data-in-london-households-vqm0d) | 5,567 London households, 30-minute electricity imports, 2011–2014 | Large historical multi-household dataset; public blocks, manual download; no direct thermostat or verified EV labels. |
-| [Open Power System Data household_data, 2020-04-15](https://data.open-power-system-data.org/household_data/2020-04-15/) | German households; quarter-hour/hourly grid import plus labelled heat pump, EV and PV channels | 15-minute ~58 MB, hourly ~15 MB. Original published file declares interval energy in **kWh**. Different country and housing stock from GB. |
+| [Open Power System Data household_data, 2020-04-15](https://data.open-power-system-data.org/household_data/2020-04-15/) | German households; quarter-hour/hourly grid import plus labelled heat pump, EV and PV channels | 15-minute ~58 MB, hourly ~15 MB. Original publisher CSV contains cumulative energy in **kWh**. Different country and housing stock from GB. |
 | [UCI Individual Household Electric Power Consumption](https://archive.ics.uci.edu/dataset/235/individual+household+electric+power+consumption) | One French home, 2,075,259 minute-average power measurements 2006–2010, three circuit submeters | Small ZIP (~20 MB), CC BY 4.0. 1-minute kW must be converted to interval kWh. Submeters are Wh/min. |
 | [REFIT cleaned](https://zenodo.org/records/5063428) | UK 8-second measured whole-home and appliance power, 20 homes | Cleaned House 1 ~401 MB; opt into size cap. Power **W** not kWh; sampling gaps must not be filled. |
 | [UK-DALE](https://jack-kelly.com/data/) | UK five-home whole-home and appliance power, sub-10-second streams | Obtain relevant house/channels manually; channel.dat often Unix seconds + Watts. |
@@ -21,7 +21,7 @@ These sources complement one another but **do not provide the same households**.
 
 * **Low Carbon London**: [one household's 2,020 actual half-hour intervals](../examples/real_lcl_mac000002_2012_part.csv), ~546.956 kWh *observed*, with gaps.
 * **UCI**: [33 full 30-minute periods](../examples/real/uci_2006_power_30min.csv) converted from the first 1,000 genuinely measured minutes. Original UCI data were read via a [public third-party excerpt](https://github.com/Day-yong/Machine_Learning/blob/master/datas/household_power_consumption_1000.txt). The excerpt covers only part of two days and is not an annual sample. One-minute kW values were integrated as energy; circuit submeters retained.
-* **OPSD-derived**: [479 quarter-hour intervals](../examples/real/opsd_residential4_counters_15min.csv) using a [third-party reproduction](https://github.com/Chirag-Kathuria-009/Energy_Stimulator/blob/main/data/sample/bronze/opsd/household_data_15min.csv) of residential4 grid, heat-pump, EV and PV counters. This **provisional mirrored excerpt contains cumulative counters**, so adjacent samples were differenced. The reproduction has **not been independently matched byte-for-byte or value-for-value against OPSD's published interval file**. Do not treat it as independently verified publisher ground truth. Re-run the original publisher CSV for validated inference.
+* **OPSD-derived**: [479 quarter-hour intervals](../examples/real/opsd_residential4_counters_15min.csv) using a [third-party reproduction](https://github.com/Chirag-Kathuria-009/Energy_Stimulator/blob/main/data/sample/bronze/opsd/household_data_15min.csv) of residential4 grid, heat-pump, EV and PV counters. This **provisional mirrored excerpt contains cumulative counters**, so adjacent samples were differenced. The reproduction has **not been independently matched byte-for-byte or value-for-value against OPSD's published counter file**. Do not treat it as independently verified publisher ground truth. Re-run the original publisher CSV for validated inference.
 * Each example is a **truncated extract**. Do not extrapolate annual costs or household absence from these short windows.
 
 Use:
@@ -64,14 +64,14 @@ python scripts/run_public_data.py --dataset lcl \
 # Example offline OPSD conversion from publisher file, not mirrored counters.
 python -m domestic_energy.dataset_hub convert opsd-hourly \
   --input /path/to/household_data_60min_singleindex.csv \
-  --household residential4 --value-mode interval \
+  --household residential4 --value-mode counter \
   --out data/public/processed/opsd_residential4.csv
 
 # Analyse a normalized interval file.
 python -m domestic_energy meter --csv data/public/processed/opsd_residential4.csv
 ```
 
-The original OPSD household CSV contains energy **per interval**, not running counters. Never use `--value-mode counter` on that file. Counter mode is for a **separately verified cumulative-counter source**. Grid imports, self-consumed PV, household demand and appliance submeter channels **must not be naively summed**.
+The original OPSD publisher CSV contains cumulative kWh. Use counter mode for that file. Use interval mode for inputs independently verified as interval energy. Grid imports, self-consumed PV, household demand and appliance submeter channels **must not be naively summed**.
 
 `fetch` is restricted to publisher endpoints in the code. `--max-mb` limits compressed/raw download *transfer bytes*, not the expanded ZIP contents or downstream processing disk space. ZIP files are read with a streaming member rather than extracted en masse.
 

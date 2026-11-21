@@ -345,11 +345,111 @@
     "end_exclusive": "2025-01-01",
     "start_inclusive": "2023-01-01"
   },
+  "konstanz_cohort": {
+    "end_exclusive_utc": "2016-12-31T23:00:00+00:00",
+    "first_start_utc": "2015-12-31T23:00:00+00:00",
+    "hourly_era5_sha256": "2ac0e359be920e92c40af4e66d27cf0de3781950e1f1df73b9bd9b15eba4dc72",
+    "households": {
+      "residential1": {
+        "half_hours": 17568,
+        "publisher_interpolated_half_hours": 301,
+        "publisher_series_import_kwh": 5151.69,
+        "weather_validation_unflagged_only": {
+          "exclusion_counts": {
+            "no_meter_intervals": 5,
+            "partial_day": 5
+          },
+          "measured_import_holdout_daily_mae_kwh": {
+            "era5_temperature": 3.02,
+            "mean_power": 2.9359
+          },
+          "split_local_date": "2016-10-01",
+          "test_days": 92,
+          "train_days": 264
+        }
+      },
+      "residential2": {
+        "half_hours": 17568,
+        "publisher_interpolated_half_hours": 2275,
+        "publisher_series_import_kwh": 2719.241,
+        "weather_validation_unflagged_only": {
+          "exclusion_counts": {
+            "no_meter_intervals": 22,
+            "partial_day": 40
+          },
+          "measured_import_holdout_daily_mae_kwh": {
+            "era5_temperature": 2.7493,
+            "mean_power": 3.236
+          },
+          "split_local_date": "2016-10-01",
+          "test_days": 90,
+          "train_days": 214
+        }
+      },
+      "residential4": {
+        "half_hours": 17568,
+        "publisher_interpolated_half_hours": 2846,
+        "publisher_series_import_kwh": 3919.317,
+        "weather_validation_unflagged_only": {
+          "exclusion_counts": {
+            "no_meter_intervals": 1,
+            "partial_day": 261
+          },
+          "measured_import_holdout_daily_mae_kwh": {
+            "era5_temperature": 3.0569,
+            "mean_power": 6.0593
+          },
+          "split_local_date": "2016-10-01",
+          "test_days": 6,
+          "train_days": 98
+        }
+      },
+      "residential5": {
+        "half_hours": 17568,
+        "publisher_interpolated_half_hours": 712,
+        "publisher_series_import_kwh": 2676.766,
+        "weather_validation_unflagged_only": {
+          "exclusion_counts": {
+            "no_meter_intervals": 1,
+            "partial_day": 22
+          },
+          "measured_import_holdout_daily_mae_kwh": {
+            "era5_temperature": 1.3026,
+            "mean_power": 2.1717
+          },
+          "split_local_date": "2016-10-01",
+          "test_days": 92,
+          "train_days": 251
+        }
+      },
+      "residential6": {
+        "half_hours": 17568,
+        "publisher_interpolated_half_hours": 1349,
+        "publisher_series_import_kwh": 3299.022,
+        "weather_validation_unflagged_only": {
+          "exclusion_counts": {
+            "no_meter_intervals": 5,
+            "partial_day": 44
+          },
+          "measured_import_holdout_daily_mae_kwh": {
+            "era5_temperature": 4.7798,
+            "mean_power": 3.7451
+          },
+          "split_local_date": "2016-10-01",
+          "test_days": 92,
+          "train_days": 225
+        }
+      }
+    },
+    "opsd_quarter_hour_csv_sha256": "eca7dee5ac6e53373cd0209bc05ba3383cd860bfa5d5e995f74fa78db8857c58",
+    "timezone": "Europe/Berlin"
+  },
   "london": {
     "exclusion_counts": {
       "no_meter_intervals": 1,
       "partial_day": 3
     },
+    "hourly_era5_sha256": "29ecac11960d8e294ace39346ab6faad41d6aed17cb023eff34b262316e0464d",
     "hypothetical_tariff_replay_on_unchanged_import": {
       "flat": {
         "coverage_fraction": 1.0,
@@ -443,20 +543,19 @@
       }
     },
     "measured_import_holdout_daily_mae_kwh": {
-      "mean_power": 2.9291,
-      "station_weather": 2.9785
+      "era5_temperature": 2.9777,
+      "mean_power": 2.9291
     },
     "split_local_date": "2012-11-14",
-    "station_sha256": "23f4828d688f0ba0595b74d2f4c2937a00dfbea3f834a7bf25d765dbc46fce75",
     "test_days": 10,
     "train_days": 30
   },
   "measured_sources": {
     "equipment_labels": "HeatpumpMonitor public system metadata",
     "heat_pump": "HeatpumpMonitor public daily CSV",
-    "london_meter": "UKPN Low Carbon London MAC000002 fixture",
-    "london_weather": "Meteostat daily station 03772 (Heathrow)"
+    "london_meter": "UKPN Low Carbon London MAC000002 fixture"
   },
+  "reanalysis_source": "Open-Meteo hourly ERA5, city-centre regional proxies",
   "simulations": {
     "agile_unit_rates_sha256": "0ab7ccd77bae8ed4aa49bbfa3449da6ff06be3918017b9ee523a788154ddacba",
     "labels": "Counterfactual scenario costs and comfort",

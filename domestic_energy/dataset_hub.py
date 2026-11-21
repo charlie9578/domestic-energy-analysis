@@ -294,7 +294,8 @@ def main(argv=None):
     c.add_argument("--household", default="residential4")
     c.add_argument("--minutes", type=int)
     c.add_argument("--member")
-    c.add_argument("--value-mode", choices=("interval", "counter"), default="interval")
+    c.add_argument("--value-mode", choices=("interval", "counter"), default="counter",
+                   help="OPSD publisher CSVs use cumulative counters (default)")
     args = p.parse_args(argv)
     try:
         if args.command == "list":

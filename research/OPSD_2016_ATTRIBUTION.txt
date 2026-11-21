@@ -1,0 +1,25 @@
+Konstanz-area public household electricity and weather, 2016
+
+Meter source: Open Power System Data, Household Data, release 2020-04-15.
+Contributors: CoSSMic consortium and Adrian Minde (ISC Konstanz).
+Source and processing: https://data.open-power-system-data.org/household_data/2020-04-15/
+Licence: https://creativecommons.org/licenses/by/4.0/
+Changes: Selected five residential grid-import channels. Converted consecutive
+15-minute cumulative readings to half-hour kWh in the 2016 Europe/Berlin
+calendar year. UTC start labels are used. publisher_interpolated=1 means the
+publisher marked at least one of the three counter boundaries interpolated.
+
+Weather source: Copernicus Climate Change Service (C3S), ERA5 reanalysis,
+retrieved using the Open-Meteo Historical Weather API for the Konstanz area
+(latitude 47.6603, longitude 9.1758). This package contains modified Copernicus
+Climate Change Service information. The European Commission and ECMWF are
+not responsible for any use that may be made of this information.
+Open-Meteo API: https://open-meteo.com/en/docs/historical-weather-api
+ERA5 source: https://doi.org/10.24381/cds.adbb2d47
+Licence: https://creativecommons.org/licenses/by/4.0/
+Changes: Selected temperature, precipitation, wind speed and horizontal
+irradiance. Shifted preceding-hour precipitation and irradiance into UTC
+start-labelled intervals. Weather represents a grid cell shared by all homes.
+
+Methods and results:
+https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md

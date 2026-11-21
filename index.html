@@ -23,8 +23,8 @@
   <main id="main">
     <section class="wrap hero" id="home" aria-labelledby="home-title">
       <div class="intro">
-        <p class="eyebrow">Great Britain · Open research</p>
-        <h1 id="home-title">How Britain’s<br class="desktop-break"> homes use <em>energy.</em></h1>
+        <p class="eyebrow">Great Britain and Europe · Open research</p>
+        <h1 id="home-title">How our<br class="desktop-break"> homes use <em>energy.</em></h1>
         <p class="lead">Explore half-hourly smart-meter readings, see how monitored homes respond to colder weather, and compare what tariffs and upgrades could cost.</p>
         <div class="actions">
           <a class="button primary" href="#datasets">Explore the data <span class="arrow" aria-hidden="true"></span></a>
@@ -38,7 +38,7 @@
     </section>
 
     <div class="wrap evidence" aria-label="Study at a glance">
-      <div><span class="tag measured">Measured</span><strong>2,020</strong><span>Half-hourly London meter readings</span></div>
+      <div><span class="tag measured">Public meter series</span><strong>5 households</strong><span>One year of half-hourly imports per home</span></div>
       <div><span class="tag measured">Measured</span><strong>5 sites</strong><span>Heat, electricity and temperatures monitored</span></div>
       <div><span class="tag simulated">Simulated</span><strong>88 cases</strong><span>Full-year tariff and upgrade scenarios</span></div>
     </div>
@@ -60,10 +60,10 @@
         <div class="dataset-grid">
           <article class="card"><span class="tag measured">Used in validation</span><h3>Low Carbon London</h3><p>Half-hourly electricity readings from a historical London trial. This project uses a short extract for one household.</p><a href="https://data.london.gov.uk/dataset/smartmeter-energy-consumption-data-in-london-households-vqm0d">Publisher dataset</a></article>
           <article class="card"><span class="tag measured">Used in validation</span><h3>HeatpumpMonitor</h3><p>Volunteer systems with metered heat and electricity. Indoor and outdoor temperature are available for selected sites.</p><a href="https://heatpumpmonitor.org/api-helper">Public API</a></article>
-          <article class="card"><span class="tag measured">Used in validation</span><h3>Meteostat · Heathrow</h3><p>Historical daily station temperatures used as a regional weather proxy for the anonymised London meter.</p><a href="https://meteostat.net/en/station/03772">Station record</a></article>
+          <article class="card"><span class="tag measured">Used in validation</span><h3>OPSD · Konstanz area</h3><p>Five German homes with 17,568 half-hourly grid-import values each in 2016. The reproducible export includes interpolation flags and hourly ERA5 weather.</p><a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md#reproduce">Build the meter and weather dataset locally</a><a href="https://data.open-power-system-data.org/household_data/2020-04-15/">OPSD publisher dataset</a></article>
           <article class="card"><span class="tag neutral">Further research</span><h3>IDEAL Household Energy</h3><p>Gas, electricity, indoor sensors and surveys from 255 Scottish-area homes. See the release for access and licensing.</p><a href="https://datashare.ed.ac.uk/items/15e82917-56ed-4282-99ef-7f211bf87f9d">University archive</a></article>
           <article class="card"><span class="tag neutral">Further research</span><h3>Electrification of Heat</h3><p>British heat-pump monitoring with cleaned daily and half-hourly datasets. Download access varies by release.</p><a href="https://es.catapult.org.uk/report/electrification-of-heat-summary-reports-and-datasets/">Reports and datasets</a></article>
-          <article class="card"><span class="tag neutral">Gridded reanalysis</span><h3>ERA5 hourly weather</h3><p>Historical temperature, precipitation, 10 m wind speed and horizontal irradiance. The research pipeline exports aligned UTC hours.</p><a href="https://github.com/charlie9578/domestic-energy-analysis#hourly-historical-weather">Download instructions</a></article>
+          <article class="card"><span class="tag neutral">Gridded reanalysis</span><h3>ERA5 hourly weather</h3><p>Historical temperature, precipitation, 10 m wind speed and horizontal irradiance. The London and Konstanz-area analyses use local-day temperatures derived from aligned UTC hours.</p><a href="https://github.com/charlie9578/domestic-energy-analysis#hourly-historical-weather">Download instructions</a></article>
           <article class="card"><span class="tag neutral">Published prices</span><h3>Octopus Energy</h3><p>Historical regional unit prices with validity timestamps. The thermostat study uses published Agile prices.</p><a href="https://developer.octopus.energy/docs/api/">Tariff API</a></article>
         </div>
         <a class="source" href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/SOURCES.md">View the full source catalogue</a>
@@ -71,10 +71,23 @@
     </section>
 
     <section class="wrap section" id="smart-meters">
-      <div class="section-heading"><span class="tag measured">Measured load</span><h2>Smart-meter analysis</h2><p>One Low Carbon London household from October to November 2012.</p></div>
+      <div class="section-heading"><span class="tag measured">Measured load</span><h2>Smart-meter analysis</h2><p>Five Konstanz-area households across 2016, with the short London trace retained for the British tariff example.</p></div>
+      <article class="card cohort-card">
+        <h3>Did ERA5 improve daily import estimates?</h3>
+        <p>Mean absolute error on held-out days from October to December 2016. Days containing a publisher-interpolated interval were excluded.</p>
+        <table><thead><tr><th scope="col">Household</th><th scope="col">Test days</th><th scope="col">Baseline (kWh/day)</th><th scope="col">ERA5 (kWh/day)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Residential 1</th><td>92</td><td>2.94</td><td>3.02</td></tr>
+          <tr><th scope="row">Residential 2</th><td>90</td><td>3.24</td><td>2.75</td></tr>
+          <tr><th scope="row">Residential 4</th><td>6</td><td>6.06</td><td>3.06</td></tr>
+          <tr><th scope="row">Residential 5</th><td>92</td><td>2.17</td><td>1.30</td></tr>
+          <tr><th scope="row">Residential 6</th><td>92</td><td>3.75</td><td>4.78</td></tr>
+        </tbody></table>
+        <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md#one-year-of-half-hourly-household-import">Cohort methods and exclusions</a>
+      </article>
       <div class="split">
-        <article class="card"><h3>What the meter recorded</h3><dl class="metrics"><div><dt>Observed import</dt><dd>546.956 kWh</dd></div><div><dt>Coverage within the extract</dt><dd>97.585%</dd></div><div><dt>Peak half-hour average</dt><dd>4.32 kW</dd></div></dl><p>The longest gap was 24 hours. Observed totals exclude missing intervals.</p></article>
-        <article class="card"><h3>Did weather improve the forecast?</h3><p>Ten held-out complete local days. Lower mean absolute error is better.</p><dl class="bars"><div><dt>Training mean power</dt><dd><span style="--bar:92%"></span><b>2.93 kWh/day</b></dd></div><div><dt>Heathrow weather model</dt><dd><span style="--bar:94%"></span><b>2.98 kWh/day</b></dd></div></dl><a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md#london-smart-meter-and-station-join">Study and exclusions</a></article>
+        <article class="card"><h3>What the London meter recorded</h3><dl class="metrics"><div><dt>Observed import</dt><dd>546.956 kWh</dd></div><div><dt>Coverage within the extract</dt><dd>97.585%</dd></div><div><dt>Peak half-hour average</dt><dd>4.32 kW</dd></div></dl><p>The longest gap was 24 hours. Observed totals exclude missing intervals.</p></article>
+        <article class="card"><h3>London weather comparison</h3><p>Ten held-out complete local days. Lower mean absolute error is better.</p><dl class="bars"><div><dt>Training mean power</dt><dd><span style="--bar:92%"></span><b>2.93 kWh/day</b></dd></div><div><dt>ERA5 temperature model</dt><dd><span style="--bar:94%"></span><b>2.98 kWh/day</b></dd></div></dl><a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md#london-smart-meter-and-era5-comparison">Study and exclusions</a></article>
       </div>
     </section>
 
