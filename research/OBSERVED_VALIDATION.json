@@ -1,0 +1,1394 @@
+{
+  "heat_pumps": {
+    "3": {
+      "daily_csv_sha256": "f7db1d476d139eed71bc42dcb7aafbd20509fab7ff79c58a9dfb2cc7a28c5b11",
+      "days_excluded": {
+        "coverage_or_quality": 30,
+        "missing_or_nonfinite": 18,
+        "no_source_day": 0
+      },
+      "reported_equipment_type": "Air Source",
+      "reported_hybrid": 0,
+      "reported_space_heat_control_type": "Weather compensation with a little room influence",
+      "validation": {
+        "holdout_mae_delta_indoor_vs_outdoor_week_bootstrap_95": [
+          1.5588,
+          2.9844
+        ],
+        "holdout_observed_space_electricity_kwh": 1864.271,
+        "holdout_observed_space_heat_kwh": 6199.965,
+        "holdout_observed_space_heat_to_electricity_ratio": 3.3257,
+        "signatures": {
+          "indoor_outdoor": {
+            "holdout": {
+              "mae_kwh_day": 6.5298,
+              "mean_bias_kwh_day": 5.997,
+              "wape_fraction": 0.2127
+            },
+            "holdout_days_outside_training_temperature_range": 6,
+            "holdout_mae_delta_vs_mean_week_bootstrap_95": [
+              -2.8149,
+              -0.0823
+            ],
+            "intercept_kw": -0.04726,
+            "slope_w_per_k": 131.8171,
+            "training_slope_week_bootstrap_95": [
+              104.2858,
+              152.7259
+            ]
+          },
+          "outdoor_only": {
+            "holdout": {
+              "mae_kwh_day": 4.237,
+              "mean_bias_kwh_day": 3.2606,
+              "wape_fraction": 0.138
+            },
+            "holdout_days_outside_training_temperature_range": 2,
+            "holdout_mae_delta_vs_mean_week_bootstrap_95": [
+              -4.991,
+              -2.496
+            ],
+            "intercept_kw": 2.39863,
+            "slope_w_per_k": 118.0256,
+            "training_slope_week_bootstrap_95": [
+              92.5846,
+              137.7412
+            ]
+          }
+        },
+        "split_local_date": "2024-01-01",
+        "test_days": 202,
+        "test_weeks": 32,
+        "train_days": 175,
+        "train_weeks": 31,
+        "training_mean_power_baseline_holdout": {
+          "mae_kwh_day": 7.9343,
+          "mean_bias_kwh_day": 3.4316,
+          "wape_fraction": 0.2585
+        }
+      }
+    },
+    "4": {
+      "daily_csv_sha256": "78a868ecf58a9187d485036fa055827c9c0d7cb606e3486473c934f97517ab92",
+      "days_excluded": {
+        "coverage_or_quality": 30,
+        "missing_or_nonfinite": 1,
+        "no_source_day": 0
+      },
+      "reported_equipment_type": "Air Source",
+      "reported_hybrid": 0,
+      "reported_space_heat_control_type": "Weather compensation with simple set point control",
+      "validation": {
+        "holdout_mae_delta_indoor_vs_outdoor_week_bootstrap_95": [
+          -2.8934,
+          -0.9537
+        ],
+        "holdout_observed_space_electricity_kwh": 1607.062,
+        "holdout_observed_space_heat_kwh": 7373.623,
+        "holdout_observed_space_heat_to_electricity_ratio": 4.5883,
+        "signatures": {
+          "indoor_outdoor": {
+            "holdout": {
+              "mae_kwh_day": 6.7519,
+              "mean_bias_kwh_day": -2.5073,
+              "wape_fraction": 0.1895
+            },
+            "holdout_days_outside_training_temperature_range": 0,
+            "holdout_mae_delta_vs_mean_week_bootstrap_95": [
+              -5.5574,
+              -1.9822
+            ],
+            "intercept_kw": -0.34322,
+            "slope_w_per_k": 143.4046,
+            "training_slope_week_bootstrap_95": [
+              121.4634,
+              164.633
+            ]
+          },
+          "outdoor_only": {
+            "holdout": {
+              "mae_kwh_day": 8.6931,
+              "mean_bias_kwh_day": -4.7938,
+              "wape_fraction": 0.244
+            },
+            "holdout_days_outside_training_temperature_range": 0,
+            "holdout_mae_delta_vs_mean_week_bootstrap_95": [
+              -3.6084,
+              -0.0733
+            ],
+            "intercept_kw": 2.31873,
+            "slope_w_per_k": 133.3275,
+            "training_slope_week_bootstrap_95": [
+              102.9606,
+              150.8017
+            ]
+          }
+        },
+        "split_local_date": "2024-01-01",
+        "test_days": 207,
+        "test_weeks": 32,
+        "train_days": 187,
+        "train_weeks": 32,
+        "training_mean_power_baseline_holdout": {
+          "mae_kwh_day": 10.5271,
+          "mean_bias_kwh_day": -4.9015,
+          "wape_fraction": 0.2955
+        }
+      }
+    },
+    "8": {
+      "daily_csv_sha256": "3a11bf5733622644200ed2d8520f645963356346f12b11f6da7716d0c01a0f45",
+      "days_excluded": {
+        "coverage_or_quality": 7,
+        "missing_or_nonfinite": 13,
+        "no_source_day": 0
+      },
+      "reported_equipment_type": "Air Source",
+      "reported_hybrid": 0,
+      "reported_space_heat_control_type": "Pure weather compensation, no room influence",
+      "validation": {
+        "holdout_mae_delta_indoor_vs_outdoor_week_bootstrap_95": [
+          1.0769,
+          3.0782
+        ],
+        "holdout_observed_space_electricity_kwh": 1889.982,
+        "holdout_observed_space_heat_kwh": 8266.654,
+        "holdout_observed_space_heat_to_electricity_ratio": 4.3739,
+        "signatures": {
+          "indoor_outdoor": {
+            "holdout": {
+              "mae_kwh_day": 10.1781,
+              "mean_bias_kwh_day": 7.6472,
+              "wape_fraction": 0.2573
+            },
+            "holdout_days_outside_training_temperature_range": 2,
+            "holdout_mae_delta_vs_mean_week_bootstrap_95": [
+              -12.1031,
+              -4.8519
+            ],
+            "intercept_kw": -0.79805,
+            "slope_w_per_k": 250.8527,
+            "training_slope_week_bootstrap_95": [
+              229.7091,
+              266.1537
+            ]
+          },
+          "outdoor_only": {
+            "holdout": {
+              "mae_kwh_day": 8.1072,
+              "mean_bias_kwh_day": 3.7382,
+              "wape_fraction": 0.205
+            },
+            "holdout_days_outside_training_temperature_range": 2,
+            "holdout_mae_delta_vs_mean_week_bootstrap_95": [
+              -14.3306,
+              -7.075
+            ],
+            "intercept_kw": 3.46956,
+            "slope_w_per_k": 252.626,
+            "training_slope_week_bootstrap_95": [
+              230.4089,
+              271.2929
+            ]
+          }
+        },
+        "split_local_date": "2024-01-01",
+        "test_days": 209,
+        "test_weeks": 32,
+        "train_days": 196,
+        "train_weeks": 32,
+        "training_mean_power_baseline_holdout": {
+          "mae_kwh_day": 18.7136,
+          "mean_bias_kwh_day": 6.3232,
+          "wape_fraction": 0.4731
+        }
+      }
+    },
+    "9": {
+      "daily_csv_sha256": "e10e4bc773ede4ceab37ab43e966a6ec63ce9629f56f1492c3791fb8ea092f77",
+      "days_excluded": {
+        "coverage_or_quality": 10,
+        "no_source_day": 0
+      },
+      "reported_equipment_type": "Air Source",
+      "reported_hybrid": 0,
+      "reported_space_heat_control_type": "Weather compensation with a little room influence",
+      "validation": {
+        "holdout_mae_delta_indoor_vs_outdoor_week_bootstrap_95": [
+          -0.9759,
+          -0.0586
+        ],
+        "holdout_observed_space_electricity_kwh": 1660.329,
+        "holdout_observed_space_heat_kwh": 7452.963,
+        "holdout_observed_space_heat_to_electricity_ratio": 4.4888,
+        "signatures": {
+          "indoor_outdoor": {
+            "holdout": {
+              "mae_kwh_day": 6.7263,
+              "mean_bias_kwh_day": 5.2047,
+              "wape_fraction": 0.1877
+            },
+            "holdout_days_outside_training_temperature_range": 0,
+            "holdout_mae_delta_vs_mean_week_bootstrap_95": [
+              -10.0873,
+              -5.0992
+            ],
+            "intercept_kw": -0.74657,
+            "slope_w_per_k": 196.0112,
+            "training_slope_week_bootstrap_95": [
+              179.1633,
+              208.841
+            ]
+          },
+          "outdoor_only": {
+            "holdout": {
+              "mae_kwh_day": 7.2502,
+              "mean_bias_kwh_day": 6.5214,
+              "wape_fraction": 0.2023
+            },
+            "holdout_days_outside_training_temperature_range": 1,
+            "holdout_mae_delta_vs_mean_week_bootstrap_95": [
+              -9.4931,
+              -4.5686
+            ],
+            "intercept_kw": 3.08802,
+            "slope_w_per_k": 182.037,
+            "training_slope_week_bootstrap_95": [
+              166.0154,
+              195.7871
+            ]
+          }
+        },
+        "split_local_date": "2024-01-01",
+        "test_days": 208,
+        "test_weeks": 32,
+        "train_days": 207,
+        "train_weeks": 32,
+        "training_mean_power_baseline_holdout": {
+          "mae_kwh_day": 14.1925,
+          "mean_bias_kwh_day": 6.8918,
+          "wape_fraction": 0.3961
+        }
+      }
+    },
+    "11": {
+      "daily_csv_sha256": "174bd514564c58d723cee7c72739f14f665ae60fe59e6042732c39386daf4569",
+      "days_excluded": {
+        "coverage_or_quality": 11,
+        "missing_or_nonfinite": 120,
+        "no_source_day": 0
+      },
+      "reported_equipment_type": "Ground Source",
+      "reported_hybrid": 0,
+      "reported_space_heat_control_type": "Weather compensation with simple set point control",
+      "validation": {
+        "holdout_mae_delta_indoor_vs_outdoor_week_bootstrap_95": [
+          0.4528,
+          1.0139
+        ],
+        "holdout_observed_space_electricity_kwh": 833.582,
+        "holdout_observed_space_heat_kwh": 3823.111,
+        "holdout_observed_space_heat_to_electricity_ratio": 4.5864,
+        "signatures": {
+          "indoor_outdoor": {
+            "holdout": {
+              "mae_kwh_day": 9.8332,
+              "mean_bias_kwh_day": 0.31,
+              "wape_fraction": 0.3781
+            },
+            "holdout_days_outside_training_temperature_range": 12,
+            "holdout_mae_delta_vs_mean_week_bootstrap_95": [
+              -3.0912,
+              -0.4307
+            ],
+            "intercept_kw": -0.19785,
+            "slope_w_per_k": 92.6232,
+            "training_slope_week_bootstrap_95": [
+              54.6928,
+              125.1313
+            ]
+          },
+          "outdoor_only": {
+            "holdout": {
+              "mae_kwh_day": 9.1026,
+              "mean_bias_kwh_day": 0.354,
+              "wape_fraction": 0.35
+            },
+            "holdout_days_outside_training_temperature_range": 6,
+            "holdout_mae_delta_vs_mean_week_bootstrap_95": [
+              -3.923,
+              -1.0553
+            ],
+            "intercept_kw": 1.87819,
+            "slope_w_per_k": 106.5901,
+            "training_slope_week_bootstrap_95": [
+              73.495,
+              139.1097
+            ]
+          }
+        },
+        "split_local_date": "2024-01-01",
+        "test_days": 147,
+        "test_weeks": 28,
+        "train_days": 147,
+        "train_weeks": 27,
+        "training_mean_power_baseline_holdout": {
+          "mae_kwh_day": 11.5549,
+          "mean_bias_kwh_day": 2.4372,
+          "wape_fraction": 0.4443
+        }
+      }
+    }
+  },
+  "hpm_metadata_sha256": "402836034a31fdc72258574d53a74ba2b8768469ac4a2ab54c24226622d7e62f",
+  "hpm_window_local": {
+    "end_exclusive": "2025-01-01",
+    "start_inclusive": "2023-01-01"
+  },
+  "london": {
+    "exclusion_counts": {
+      "no_meter_intervals": 1,
+      "partial_day": 3
+    },
+    "hypothetical_tariff_replay_on_unchanged_import": {
+      "flat": {
+        "coverage_fraction": 1.0,
+        "effective_variable_rate_p_per_kwh": 27.0,
+        "first_start_utc": "2012-11-14T00:00:00+00:00",
+        "intervals": 480,
+        "last_end_utc": "2012-11-24T00:00:00+00:00",
+        "local_hour_mean_interval_kwh": {
+          "0": 0.2298,
+          "1": 0.2228,
+          "10": 0.2894,
+          "11": 0.2204,
+          "12": 0.329,
+          "13": 0.2784,
+          "14": 0.2029,
+          "15": 0.1354,
+          "16": 0.1406,
+          "17": 0.3137,
+          "18": 0.2649,
+          "19": 0.5915,
+          "2": 0.1661,
+          "20": 0.3005,
+          "21": 0.2829,
+          "22": 0.2511,
+          "23": 0.2514,
+          "3": 0.111,
+          "4": 0.1143,
+          "5": 0.1113,
+          "6": 0.1047,
+          "7": 0.1035,
+          "8": 0.1294,
+          "9": 0.2988
+        },
+        "matched_intervals": 480,
+        "mean_observed_kw": 0.454,
+        "observed_hours": 240.0,
+        "p95_interval_kw": 1.172,
+        "peak_interval_kw": 2.682,
+        "span_hours": 240.0,
+        "standing_charge_days": 10,
+        "standing_charge_gbp": 5.5,
+        "timezone": "Europe/London",
+        "total_cost_gbp": 34.9,
+        "total_kwh": 108.876,
+        "variable_cost_gbp": 29.4
+      },
+      "night_discount": {
+        "coverage_fraction": 1.0,
+        "effective_variable_rate_p_per_kwh": 29.9374,
+        "first_start_utc": "2012-11-14T00:00:00+00:00",
+        "intervals": 480,
+        "last_end_utc": "2012-11-24T00:00:00+00:00",
+        "local_hour_mean_interval_kwh": {
+          "0": 0.2298,
+          "1": 0.2228,
+          "10": 0.2894,
+          "11": 0.2204,
+          "12": 0.329,
+          "13": 0.2784,
+          "14": 0.2029,
+          "15": 0.1354,
+          "16": 0.1406,
+          "17": 0.3137,
+          "18": 0.2649,
+          "19": 0.5915,
+          "2": 0.1661,
+          "20": 0.3005,
+          "21": 0.2829,
+          "22": 0.2511,
+          "23": 0.2514,
+          "3": 0.111,
+          "4": 0.1143,
+          "5": 0.1113,
+          "6": 0.1047,
+          "7": 0.1035,
+          "8": 0.1294,
+          "9": 0.2988
+        },
+        "matched_intervals": 480,
+        "mean_observed_kw": 0.454,
+        "observed_hours": 240.0,
+        "p95_interval_kw": 1.172,
+        "peak_interval_kw": 2.682,
+        "span_hours": 240.0,
+        "standing_charge_days": 10,
+        "standing_charge_gbp": 5.5,
+        "timezone": "Europe/London",
+        "total_cost_gbp": 38.09,
+        "total_kwh": 108.876,
+        "variable_cost_gbp": 32.59
+      }
+    },
+    "measured_import_holdout_daily_mae_kwh": {
+      "mean_power": 2.9291,
+      "station_weather": 2.9785
+    },
+    "split_local_date": "2012-11-14",
+    "station_sha256": "23f4828d688f0ba0595b74d2f4c2937a00dfbea3f834a7bf25d765dbc46fce75",
+    "test_days": 10,
+    "train_days": 30
+  },
+  "measured_sources": {
+    "equipment_labels": "HeatpumpMonitor public system metadata",
+    "heat_pump": "HeatpumpMonitor public daily CSV",
+    "london_meter": "UKPN Low Carbon London MAC000002 fixture",
+    "london_weather": "Meteostat daily station 03772 (Heathrow)"
+  },
+  "simulations": {
+    "agile_unit_rates_sha256": "0ab7ccd77bae8ed4aa49bbfa3449da6ff06be3918017b9ee523a788154ddacba",
+    "labels": "Counterfactual scenario costs and comfort",
+    "retrofit_assumptions": {
+      "capex_gbp": 4000,
+      "degree_days": [
+        1800,
+        2400,
+        3000
+      ],
+      "electricity_p": 27,
+      "heat_loss_reduction": 0.2,
+      "lifetime_years": 25,
+      "real_discount_rate": 0.035,
+      "spf": [
+        2.5,
+        3.5,
+        4.5
+      ]
+    },
+    "systems": {
+      "3": {
+        "retrofit": {
+          "annual_net_saving_gbp_range": [
+            54.06,
+            237.52
+          ],
+          "cases": 27,
+          "npv_gbp_range": [
+            -3108.98,
+            -85.32
+          ],
+          "positive_npv_cases": 0
+        },
+        "thermostat": {
+          "lowest_worst_case_cost_by_tariff": {
+            "ILLUSTRATIVE Economy-7-like 9p night / 35p day": {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                20.5473,
+                61.2544
+              ],
+              "strategy": "preheat",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            "ILLUSTRATIVE flat 27p electric / 8p gas": {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                40.9917,
+                65.5094
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            "Published Octopus Agile AGILE-23-12-06 region G, energy only": {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                23.99,
+                45.59
+              ],
+              "strategy": "preheat",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            }
+          },
+          "runs": [
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                42.3781,
+                66.8615
+              ],
+              "strategy": "constant",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 7,
+              "setback_c": 17,
+              "simulated_heating_cost_range_gbp": [
+                40.9249,
+                65.5094
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                40.9917,
+                65.5094
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 19,
+              "simulated_heating_cost_range_gbp": [
+                41.3905,
+                65.5956
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                41.7654,
+                65.8991
+              ],
+              "strategy": "preheat",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                43.0321,
+                67.8933
+              ],
+              "strategy": "constant",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 7,
+              "setback_c": 17,
+              "simulated_heating_cost_range_gbp": [
+                42.492,
+                74.2599
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                41.2819,
+                74.2599
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 19,
+              "simulated_heating_cost_range_gbp": [
+                39.3022,
+                72.0357
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                20.5473,
+                61.2544
+              ],
+              "strategy": "preheat",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                30.16,
+                47.58
+              ],
+              "strategy": "constant",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 7,
+              "setback_c": 17,
+              "simulated_heating_cost_range_gbp": [
+                30.6,
+                49.8
+              ],
+              "strategy": "setback",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                30.37,
+                49.8
+              ],
+              "strategy": "setback",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 19,
+              "simulated_heating_cost_range_gbp": [
+                29.9,
+                49.33
+              ],
+              "strategy": "setback",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                23.99,
+                45.59
+              ],
+              "strategy": "preheat",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            }
+          ],
+          "status": "simulated"
+        }
+      },
+      "4": {
+        "retrofit": {
+          "annual_net_saving_gbp_range": [
+            62.97,
+            256.04
+          ],
+          "cases": 27,
+          "npv_gbp_range": [
+            -2962.21,
+            219.88
+          ],
+          "positive_npv_cases": 1
+        },
+        "thermostat": {
+          "lowest_worst_case_cost_by_tariff": {
+            "ILLUSTRATIVE Economy-7-like 9p night / 35p day": {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                29.1976,
+                67.4748
+              ],
+              "strategy": "preheat",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            "ILLUSTRATIVE flat 27p electric / 8p gas": {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                49.2529,
+                71.3333
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            "Published Octopus Agile AGILE-23-12-06 region G, energy only": {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                30.75,
+                50.27
+              ],
+              "strategy": "preheat",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            }
+          },
+          "runs": [
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                51.0861,
+                72.9151
+              ],
+              "strategy": "constant",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 7,
+              "setback_c": 17,
+              "simulated_heating_cost_range_gbp": [
+                49.0488,
+                71.3333
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                49.2529,
+                71.3333
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 19,
+              "simulated_heating_cost_range_gbp": [
+                49.8826,
+                71.4729
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                50.3206,
+                71.7963
+              ],
+              "strategy": "preheat",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                51.8744,
+                74.0403
+              ],
+              "strategy": "constant",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 7,
+              "setback_c": 17,
+              "simulated_heating_cost_range_gbp": [
+                52.9516,
+                81.8083
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                50.061,
+                81.8083
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 19,
+              "simulated_heating_cost_range_gbp": [
+                47.3738,
+                78.3543
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                29.1976,
+                67.4748
+              ],
+              "strategy": "preheat",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                36.67,
+                52.32
+              ],
+              "strategy": "constant",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 7,
+              "setback_c": 17,
+              "simulated_heating_cost_range_gbp": [
+                37.32,
+                54.87
+              ],
+              "strategy": "setback",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                36.71,
+                54.87
+              ],
+              "strategy": "setback",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 19,
+              "simulated_heating_cost_range_gbp": [
+                36.3,
+                54.04
+              ],
+              "strategy": "setback",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                30.75,
+                50.27
+              ],
+              "strategy": "preheat",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            }
+          ],
+          "status": "simulated"
+        }
+      },
+      "8": {
+        "retrofit": {
+          "annual_net_saving_gbp_range": [
+            119.08,
+            413.92
+          ],
+          "cases": 27,
+          "npv_gbp_range": [
+            -2037.36,
+            2822.07
+          ],
+          "positive_npv_cases": 10
+        },
+        "thermostat": {
+          "lowest_worst_case_cost_by_tariff": {
+            "ILLUSTRATIVE Economy-7-like 9p night / 35p day": {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                98.0953,
+                135.9486
+              ],
+              "strategy": "preheat",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            "ILLUSTRATIVE flat 27p electric / 8p gas": {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                114.0368,
+                133.8259
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            "Published Octopus Agile AGILE-23-12-06 region G, energy only": {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                79.25,
+                97.19
+              ],
+              "strategy": "preheat",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            }
+          },
+          "runs": [
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                118.8712,
+                139.4143
+              ],
+              "strategy": "constant",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 1,
+              "setback_c": 17,
+              "simulated_heating_cost_range_gbp": [
+                112.1277,
+                133.1119
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                114.0368,
+                133.8259
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 19,
+              "simulated_heating_cost_range_gbp": [
+                116.1731,
+                136.2974
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                116.8072,
+                137.3253
+              ],
+              "strategy": "preheat",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                120.7057,
+                141.5657
+              ],
+              "strategy": "constant",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 1,
+              "setback_c": 17,
+              "simulated_heating_cost_range_gbp": [
+                119.8266,
+                161.6047
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                115.0078,
+                158.1011
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 19,
+              "simulated_heating_cost_range_gbp": [
+                113.5808,
+                142.8228
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                98.0953,
+                135.9486
+              ],
+              "strategy": "preheat",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                85.06,
+                99.75
+              ],
+              "strategy": "constant",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 1,
+              "setback_c": 17,
+              "simulated_heating_cost_range_gbp": [
+                83.67,
+                102.41
+              ],
+              "strategy": "setback",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                83.71,
+                101.67
+              ],
+              "strategy": "setback",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 19,
+              "simulated_heating_cost_range_gbp": [
+                83.91,
+                100.72
+              ],
+              "strategy": "setback",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                79.25,
+                97.19
+              ],
+              "strategy": "preheat",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            }
+          ],
+          "status": "simulated"
+        }
+      },
+      "9": {
+        "retrofit": {
+          "annual_net_saving_gbp_range": [
+            92.88,
+            324.79
+          ],
+          "cases": 27,
+          "npv_gbp_range": [
+            -2469.23,
+            1353.02
+          ],
+          "positive_npv_cases": 5
+        },
+        "thermostat": {
+          "lowest_worst_case_cost_by_tariff": {
+            "ILLUSTRATIVE Economy-7-like 9p night / 35p day": {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                64.499,
+                97.5112
+              ],
+              "strategy": "preheat",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            "ILLUSTRATIVE flat 27p electric / 8p gas": {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                82.7068,
+                99.0541
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            "Published Octopus Agile AGILE-23-12-06 region G, energy only": {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                56.36,
+                70.52
+              ],
+              "strategy": "preheat",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            }
+          },
+          "runs": [
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                86.1109,
+                102.1131
+              ],
+              "strategy": "constant",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 4,
+              "setback_c": 17,
+              "simulated_heating_cost_range_gbp": [
+                81.6029,
+                99.0541
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                82.7068,
+                99.0541
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 19,
+              "simulated_heating_cost_range_gbp": [
+                84.1192,
+                99.9107
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                84.7491,
+                100.5819
+              ],
+              "strategy": "preheat",
+              "tariff": "ILLUSTRATIVE flat 27p electric / 8p gas"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                87.4398,
+                103.6889
+              ],
+              "strategy": "constant",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 4,
+              "setback_c": 17,
+              "simulated_heating_cost_range_gbp": [
+                88.8429,
+                117.5767
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                83.708,
+                117.5767
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 19,
+              "simulated_heating_cost_range_gbp": [
+                80.6851,
+                106.9228
+              ],
+              "strategy": "setback",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                64.499,
+                97.5112
+              ],
+              "strategy": "preheat",
+              "tariff": "ILLUSTRATIVE Economy-7-like 9p night / 35p day"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                61.37,
+                72.76
+              ],
+              "strategy": "constant",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 4,
+              "setback_c": 17,
+              "simulated_heating_cost_range_gbp": [
+                61.16,
+                75.81
+              ],
+              "strategy": "setback",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 18,
+              "simulated_heating_cost_range_gbp": [
+                60.56,
+                75.81
+              ],
+              "strategy": "setback",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": 19,
+              "simulated_heating_cost_range_gbp": [
+                60.56,
+                74.15
+              ],
+              "strategy": "setback",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            },
+            {
+              "cases": 9,
+              "comfort_feasible_cases": 9,
+              "setback_c": null,
+              "simulated_heating_cost_range_gbp": [
+                56.36,
+                70.52
+              ],
+              "strategy": "preheat",
+              "tariff": "Published Octopus Agile AGILE-23-12-06 region G, energy only"
+            }
+          ],
+          "status": "simulated"
+        }
+      },
+      "11": {
+        "retrofit": {
+          "annual_net_saving_gbp_range": [
+            28.35,
+            194.6
+          ],
+          "cases": 27,
+          "npv_gbp_range": [
+            -3532.7,
+            -792.63
+          ],
+          "positive_npv_cases": 0
+        },
+        "thermostat": {
+          "status": "air-source COP assumptions do not cover this equipment"
+        }
+      }
+    },
+    "thermostat_assumptions": {
+      "cop_at_7c": 3.3,
+      "cop_slope_per_outdoor_c": 0.055,
+      "initial_indoor_c": 20,
+      "internal_gains_kw": 0.35,
+      "max_heat_kw": 9,
+      "thermal_capacity_kwh_per_k": [
+        5,
+        10,
+        16
+      ],
+      "weather": "observed daily means repeated half-hourly, January 8\u201321 2024"
+    }
+  },
+  "uncertainty": {
+    "method": "separate calendar-week percentile bootstraps",
+    "replicates": 1000,
+    "seed": 26
+  }
+}

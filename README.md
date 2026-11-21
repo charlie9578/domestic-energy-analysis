@@ -21,6 +21,10 @@ The initial scope is **Great Britain**, with official statistics for **England a
 
 Read [the research report](research/REPORT.md), [methodology and caveats](research/METHODOLOGY.md), and [the public data catalogue](research/SOURCES.md) before quoting results.
 
+## Held-out validation
+
+The measured-data study pairs heating energy with indoor and outdoor temperatures at five HeatpumpMonitor sites, tests heat signatures on a later year, and matches the London smart-meter fixture to Heathrow weather. It also compares tariff and thermostat scenarios and screens retrofit economics under explicit assumptions. See [methods and findings](research/OBSERVED_VALIDATION.md) and [aggregate results](research/OBSERVED_VALIDATION.json).
+
 ## Quick start
 
 ```bash
