@@ -114,3 +114,27 @@ A **real, historical Low Carbon London single-household half-hourly extract** (2
 Run `PYTHONPATH=. python scripts/run_heating_study.py --out reports/heating_study` to reproduce **120 synthetic winter scenarios** (4 archetypes × 2 tariffs × 15 heat/control configurations). With weather downloaded from Open-Meteo, run `python -m domestic_energy heating-study --weather data/raw/weather.csv --tariffs examples/hypothetical_heating_tariffs.json --house-json examples/example_house.json --out reports/real_weather_study.json`. The weather may be real, but the house thermodynamics remain **assumed** until calibrated.
 
 **Read [`research/REAL_DATA_HEATING.md`](research/REAL_DATA_HEATING.md) for exact data provenance, gaps, interpretation, commands, modelling limitations and what further evidence would be needed to assess an individual building.**
+
+
+## Real-world data hub: public examples + repeatable local downloads
+
+The repository now contains **three small, attributed, real-world electricity extracts from distinct study families**:
+
+* [Low Carbon London](examples/real_lcl_mac000002_2012_part.csv) — historical 30-minute measured electricity, one anonymised household, with missing periods.
+* [UCI household power](examples/real/uci_2006_power_30min.csv) — 33 complete half-hour samples converted from minute-average power readings; one French home, a partial two-day extract.
+* [OPSD residential4 provisional mirror](examples/real/opsd_residential4_counters_15min.csv) — 479 quarter-hour samples with labelled heat-pump/EV/PV channels, derived by differencing an unverified cumulative-counter reproduction. **Recheck against the original publisher for authoritative analysis.**
+
+**Run locally (Python 3.11+, no runtime dependencies):**
+
+```bash
+python -m domestic_energy.dataset_hub list
+python scripts/run_public_data.py --dataset opsd-hourly --fetch --household residential4
+python scripts/run_public_data.py --dataset uci --fetch
+python scripts/run_public_data.py --dataset opsd-quarterhour --fetch --household residential4 --allow-large --max-mb 80
+python scripts/run_public_data.py --dataset refit-house1 --fetch --allow-large --max-mb 650
+python -m domestic_energy meter --csv data/public/processed/opsd-hourly_residential4.csv
+```
+
+These download from allow-listed publisher URLs, leave large raw and converted data in **gitignored `data/public/`**, record checksums, refuse to overwrite outputs and preserve missing-period gaps. REFIT / UK-DALE are power recordings (W), UCI minute-average power is kW, OPSD published channels are interval kWh, and the OPSD **third-party sample mirror** is a counter series — the conversions deliberately differ. ZIPs can be read without extracting the full archive.
+
+**Details and exact source terms:** [Public datasets, example provenance, full local workflow and limitations](research/PUBLIC_DATASETS.md). Historical data priced on today's tariffs must be labelled counterfactual. The dataset downloads have not been live-tested in CI.
