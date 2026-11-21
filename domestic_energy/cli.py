@@ -93,7 +93,7 @@ def parser() -> argparse.ArgumentParser:
     w.add_argument('--lon', type=float, required=True)
     w.add_argument('--start', required=True, help='YYYY-MM-DD')
     w.add_argument('--end', required=True, help='YYYY-MM-DD inclusive')
-    w.add_argument('--hourly', action='store_true', help='UTC-hourly temperature/shortwave instead of local-day data')
+    w.add_argument('--hourly', action='store_true', help='UTC-hourly temperature, precipitation, wind speed and irradiance')
     w.add_argument('--timezone', default='Europe/London')
     w.add_argument('--out', required=True)
     prep = sub.add_parser('prepare-daily', help='Join interval meter, local weather and declared occupancy')
@@ -231,7 +231,7 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == 'fetch-weather':
             if args.hourly:
                 weather = fetch_open_meteo_hourly(args.lat, args.lon, args.start, args.end)
-                columns = ['start_utc','temperature_c','shortwave_w_m2']
+                columns = ['start_utc', 'temperature_c', 'shortwave_w_m2', 'precipitation_mm', 'wind_speed_m_s']
             else:
                 weather = fetch_open_meteo_daily(args.lat, args.lon, args.start, args.end,
                                                   timezone_name=args.timezone)

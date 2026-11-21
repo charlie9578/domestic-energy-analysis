@@ -166,27 +166,52 @@ def fetch_open_meteo_daily(latitude: float, longitude: float, start_date: str, e
 
 def fetch_open_meteo_hourly(latitude: float, longitude: float, start_date: str,
                            end_date: str) -> list[dict]:
-    """Hourly temperature (UTC, avoids DST ambiguity), suitable for HP COP shape.
+    """ERA5 UTC hours with instantaneous temperature/wind and forward interval values."""
+    from datetime import date, datetime, time
+    from math import isfinite
 
-    Not a substitute for actual household weather sensors or forecast data.
-    """
-    from datetime import date
     if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
         raise ValueError('Invalid coordinates')
     start, end = date.fromisoformat(start_date), date.fromisoformat(end_date)
-    if end < start or (end-start).days > 31:
-        raise ValueError('Request <=32 calendar days of hourly data')
+    if end < start or (end - start).days > 31:
+        raise ValueError('Request 1 to 32 calendar days of hourly data')
+
+    # Open-Meteo reports precipitation and shortwave for the preceding hour.
+    # Fetch the following midnight so the last requested hour has its end value.
+    variables = {
+        'temperature_2m': ('temperature_c', '°C', 0),
+        'shortwave_radiation': ('shortwave_w_m2', 'W/m²', 1),
+        'precipitation': ('precipitation_mm', 'mm', 1),
+        'wind_speed_10m': ('wind_speed_m_s', 'm/s', 0),
+    }
     url = 'https://archive-api.open-meteo.com/v1/archive?' + urlencode({
         'latitude': latitude, 'longitude': longitude,
-        'start_date': str(start), 'end_date': str(end),
-        'hourly': 'temperature_2m,shortwave_radiation',
+        'start_date': str(start), 'end_date': str(end + timedelta(days=1)),
+        'hourly': ','.join(variables), 'wind_speed_unit': 'ms',
         'timezone': 'UTC', 'models': 'era5',
     })
-    data = json.loads(get_text(url)).get('hourly') or {}
-    stamps = data.get('time') or []
-    temps = data.get('temperature_2m') or []
-    radiation = data.get('shortwave_radiation') or []
-    if len(stamps) != len(temps) or len(stamps) != len(radiation) or not stamps:
-        raise ValueError('Malformed hourly weather series')
-    return [{'start_utc': stamp + '+00:00', 'temperature_c': float(temp),
-             'shortwave_w_m2': float(sun)} for stamp, temp, sun in zip(stamps, temps, radiation)]
+    payload = json.loads(get_text(url))
+    data = payload.get('hourly') or {}
+    units = payload.get('hourly_units') or {}
+    count = ((end - start).days + 1) * 24
+    midnight = datetime.combine(start, time())
+    expected = [(midnight + timedelta(hours=i)).isoformat(timespec='minutes')
+                for i in range(count + 24)]
+    if data.get('time') != expected:
+        raise ValueError('Hourly weather timestamps are incomplete, duplicated or out of order')
+    for variable, (_, unit, _) in variables.items():
+        series = data.get(variable)
+        if units.get(variable) != unit or not isinstance(series, list) or len(series) != len(expected):
+            raise ValueError(f'Malformed hourly weather variable or units: {variable}')
+
+    rows = []
+    for index, stamp in enumerate(expected[:count]):
+        row = {'start_utc': stamp + '+00:00'}
+        for variable, (column, _, offset) in variables.items():
+            value = data[variable][index + offset]
+            if (type(value) not in (int, float) or not isfinite(value)
+                    or (variable != 'temperature_2m' and value < 0)):
+                raise ValueError(f'Missing or invalid hourly weather value: {variable} for {stamp} UTC')
+            row[column] = float(value)
+        rows.append(row)
+    return rows

@@ -31,6 +31,19 @@ python -m http.server 8000
 
 Visit http://localhost:8000. The frontend uses plain HTML, CSS and JavaScript. Its tariff comparison uses the observed London interval totals and its upgrade selector uses the published synthetic scenario table. Calculations run in the browser.
 
+## Hourly historical weather
+
+Fetch gridded ERA5 reanalysis for an inclusive UTC date range through Open-Meteo.
+
+```bash
+python -m domestic_energy fetch-weather --lat 51.5 --lon -0.12 \
+  --start 2025-01-01 --end 2025-01-07 --hourly --out data/raw/london_era5.csv
+```
+
+Each `start_utc` row contains 2 m air temperature (`temperature_c`) and 10 m wind speed (`wind_speed_m_s`) at the timestamp, plus precipitation accumulated in the hour starting at that timestamp (`precipitation_mm`) and mean global horizontal irradiance over the same hour (`shortwave_w_m2`). The adapter shifts the provider’s preceding-hour precipitation and irradiance forward into start-labelled intervals. This corrects the irradiance alignment in older hourly exports, so regenerate those CSVs before comparing them. Use at most 32 UTC dates per request. The adapter retrieves an extra day to close the last interval, so choose an end date with the following day available. [Open-Meteo historical weather API](https://open-meteo.com/en/docs/historical-weather-api)
+
+ERA5 represents a grid cell. Compare against on-site or station measurements where accuracy near a particular home matters. Horizontal irradiance can drive a solar model after accounting for roof geometry and shading. Existing validation results still use their documented weather sources.
+
 ## Held-out validation
 
 The measured-data study pairs heating energy with indoor and outdoor temperatures at five HeatpumpMonitor sites, tests heat signatures on a later year, and matches the London smart-meter fixture to Heathrow weather. It also compares tariff and thermostat scenarios and screens retrofit economics under explicit assumptions. See [methods and findings](research/OBSERVED_VALIDATION.md) and [aggregate results](research/OBSERVED_VALIDATION.json).

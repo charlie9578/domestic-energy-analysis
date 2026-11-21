@@ -4,6 +4,7 @@ import json
 import tempfile
 import unittest
 from contextlib import redirect_stdout, redirect_stderr
+from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import patch
 
@@ -35,12 +36,51 @@ class WeatherParserTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             fetch_open_meteo_daily(51.5, -0.1, '2025-01-01', '2025-01-01')
 
+    def hourly_payload(self):
+        midnight = datetime(2025, 3, 30)
+        return {'hourly_units': {
+            'temperature_2m': '°C', 'shortwave_radiation': 'W/m²',
+            'precipitation': 'mm', 'wind_speed_10m': 'm/s',
+        }, 'hourly': {
+            'time': [(midnight + timedelta(hours=i)).isoformat(timespec='minutes')
+                     for i in range(48)],
+            'temperature_2m': list(range(48)),
+            'wind_speed_10m': [i / 10 for i in range(48)],
+            'precipitation': [i / 100 for i in range(48)],
+            'shortwave_radiation': [i * 10 for i in range(48)],
+        }}
+
     @patch('domestic_energy.data.get_text')
     def test_hourly_utc_contract(self, fake):
-        fake.return_value = json.dumps({'hourly': {'time':['2025-01-01T00:00'],
-           'temperature_2m':[5], 'shortwave_radiation':[0]}})
-        out = fetch_open_meteo_hourly(51.5, -0.1, '2025-01-01', '2025-01-01')
-        self.assertEqual(out[0]['start_utc'], '2025-01-01T00:00+00:00')
+        fake.return_value = json.dumps(self.hourly_payload())
+        out = fetch_open_meteo_hourly(51.5, -0.1, '2025-03-30', '2025-03-30')
+        self.assertEqual(len(out), 24)
+        self.assertEqual(out[0], {'start_utc': '2025-03-30T00:00+00:00', 'temperature_c': 0,
+                                 'wind_speed_m_s': 0, 'precipitation_mm': .01, 'shortwave_w_m2': 10})
+        self.assertEqual(out[-1]['start_utc'], '2025-03-30T23:00+00:00')
+        self.assertEqual(out[-1]['temperature_c'], 23)
+        self.assertEqual(out[-1]['wind_speed_m_s'], 2.3)
+        self.assertEqual(out[-1]['precipitation_mm'], .24)
+        self.assertEqual(out[-1]['shortwave_w_m2'], 240)
+        url = fake.call_args.args[0]
+        self.assertIn('end_date=2025-03-31', url)
+        self.assertIn('timezone=UTC', url)
+        self.assertIn('models=era5', url)
+        self.assertIn('wind_speed_unit=ms', url)
+
+    @patch('domestic_energy.data.get_text')
+    def test_hourly_rejects_missing_data_wrong_units_and_duplicate_time(self, fake):
+        for section, name, value, message in (
+            ('hourly', 'precipitation', [0] * 24 + [None] + [0] * 23, 'invalid hourly'),
+            ('hourly_units', 'wind_speed_10m', 'km/h', 'variable or units'),
+            ('hourly', 'time', ['2025-03-30T00:00'] * 48, 'timestamps'),
+        ):
+            with self.subTest(name=name):
+                payload = self.hourly_payload()
+                payload[section][name] = value
+                fake.return_value = json.dumps(payload)
+                with self.assertRaisesRegex(ValueError, message):
+                    fetch_open_meteo_hourly(51.5, -0.1, '2025-03-30', '2025-03-30')
 
     def test_reject_unapproved_host(self):
         with self.assertRaises(ValueError):
