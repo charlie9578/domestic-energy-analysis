@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore public smart-meter, heating and weather research, then compare domestic energy tariffs and upgrade scenarios.">
+  <title>Tariff comparison · Domestic Energy Research</title>
+  <link rel="icon" href="docs/assets/house.webp" type="image/webp">
+  <link rel="stylesheet" href="docs/styles.css">
+  <script src="docs/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="header">
+    <div class="wrap header-inner">
+      <a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a>
+      <nav aria-label="Main navigation"><a href="datasets.html">Datasets</a><a href="meter-explorer.html">Meter explorer</a><a href="heating.html">Heating</a><a href="tariffs.html" aria-current="page">Tariffs</a><a href="upgrades.html">Home upgrades</a></nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="wrap section" id="tariffs">
+      <div class="section-heading"><span class="tag simulated">Illustrative pricing</span><h1 class="subpage-title">Compare tariffs on measured load</h1><p>Reprice all recorded London meter intervals, including 100.376 kWh overnight and 446.580 kWh during the day. Compare variable charges on the same consumption. Standing charges are excluded.</p></div>
+      <div class="split">
+        <form class="card" id="tariff-form">
+          <h3>Unit rates</h3>
+          <label>Flat rate (p/kWh)<input name="flat" type="number" min="0" max="500" step="0.01" value="27" required></label>
+          <label>Day rate (p/kWh)<input name="day" type="number" min="0" max="500" step="0.01" value="35" required></label>
+          <label>Night rate (p/kWh), 00:00–07:00 local<input name="night" type="number" min="0" max="500" step="0.01" value="9" required></label>
+          <button class="button primary" type="submit">Compare rates</button>
+        </form>
+        <div class="card result" aria-live="polite" aria-atomic="true">
+          <h3>Cost over observed intervals</h3>
+          <dl class="metrics"><div><dt>Flat</dt><dd id="flat-cost">£147.68</dd></div><div><dt>Day and night</dt><dd id="tou-cost">£165.34</dd></div></dl>
+          <p id="tariff-verdict">Flat is £17.66 cheaper.</p>
+          <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/MEASURED_LCL_RESULTS.md">Meter trace and tariff method</a>
+        </div>
+      </div>
+      <noscript><p>The displayed comparison uses the original example rates. Enable JavaScript to recalculate.</p></noscript>
+    </section>
+  </main>
+  <footer><div class="wrap footer-inner"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a><a href="https://github.com/charlie9578/domestic-energy-analysis">Repository and reproducibility</a></div></footer>
+</body>
+</html>

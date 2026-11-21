@@ -105,3 +105,24 @@ footer .brand-icon { background: #e3f0e5; color: var(--ink); }
   .evidence div > span:last-child { font-size: .72rem; }
   .footer-inner { align-items: start; flex-direction: column; padding-block: 1rem; }
 }
+
+.subpage-title { margin-top: 0; font-size: clamp(2.6rem, 6vw, 4.5rem); }
+nav a[aria-current="page"] { text-decoration: underline; }
+#meter-form h2, #meter-form + aside h2, .reading-card h2 { font-size: 2rem; }
+#meter-form input[type="file"] { max-width: 100%; }
+.meter-actions { margin-top: 0; }
+.meter-status { min-height: 1.65rem; margin-block: .6rem; }
+.reading-card + .reading-card { margin-top: 1rem; }
+.reading-card .section-heading { margin-bottom: 0; }
+.meter-controls { display: flex; gap: .75rem; align-items: end; flex-wrap: wrap; }
+.meter-pagination { display: flex; gap: .5rem; }
+.meter-pagination button:disabled { opacity: .55; cursor: default; }
+#plots figure { margin-top: .65rem; padding-top: .5rem; border-top: 1px solid var(--line); }
+#plots canvas { display: block; width: 100%; }
+.meter-scroll { overflow-x: auto; }
+.meter-scroll table { min-width: 28rem; }
+.meter-filter { width: min(100%, 18rem); }
+summary { cursor: pointer; font-weight: 650; }
+pre { margin: 0; padding: .5rem; overflow: auto; background: var(--band); font-size: .78rem; }
+#meter-form + aside, .reading-card { min-width: 0; grid-template-columns: minmax(0, 1fr); }
+.meter-scroll { min-width: 0; }

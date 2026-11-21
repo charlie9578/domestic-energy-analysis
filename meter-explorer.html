@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart-meter explorer · Domestic Energy Research</title>
+  <link rel="icon" href="docs/assets/house.webp" type="image/webp">
+  <link rel="stylesheet" href="docs/styles.css">
+  <script src="docs/meter-explorer.js" type="module"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="header"><div class="wrap header-inner">
+    <a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a>
+    <nav aria-label="Main navigation"><a href="datasets.html">Datasets</a><a href="meter-explorer.html" aria-current="page">Meter explorer</a><a href="heating.html">Heating</a><a href="tariffs.html">Tariffs</a><a href="upgrades.html">Home upgrades</a></nav>
+  </div></header>
+  <main class="wrap section" id="main">
+    <div class="section-heading">
+      <p class="eyebrow">Smart-meter analysis</p>
+      <h1 class="subpage-title">Explore household energy use</h1>
+      <p>Review gas and electricity at their recorded resolution, compare them with outdoor temperature and scan for unusual patterns. Files stay in this browser tab.</p>
+    </div>
+
+    <div class="split">
+      <form class="card" id="meter-form">
+        <h2>Load your data</h2>
+        <label>Electricity readings (CSV)<input type="file" name="electricity" accept=".csv,text/csv"></label>
+        <label>Gas readings (CSV)<input type="file" name="gas" accept=".csv,text/csv"></label>
+        <label>Hourly outdoor temperature (CSV, optional)<input type="file" name="weather" accept=".csv,text/csv"></label>
+        <label>Default meter interval (minutes)<input type="number" name="minutes" min="1" max="1440" step="1" value="30" required></label>
+        <div class="actions meter-actions"><button class="button primary" type="submit">Analyse files</button><button class="button secondary" type="button" id="demo">Try synthetic demo</button></div>
+      </form>
+      <aside class="card">
+        <h2>CSV format</h2>
+        <p>Use one file per fuel, with interval energy in kWh and an explicit timestamp offset. Use the optional duration column for non-default intervals and <code>publisher_interpolated</code> (0 or 1) to flag filled values.</p>
+        <pre>start_utc,consumption_kwh,duration_minutes
+2025-01-01T00:00Z,0.42,30</pre>
+        <p>The weather file accepts hourly ERA5 exports. Extra fields such as wind speed are ignored by the pattern rules.</p>
+        <pre>start_utc,temperature_c
+2025-01-01T00:00Z,4.5</pre>
+        <a href="datasets.html">Browse public datasets and weather instructions</a>
+      </aside>
+    </div>
+    <p class="meter-status" id="status" role="status"></p>
+    <noscript><p>Enable JavaScript to analyse files locally or try the synthetic demo.</p></noscript>
+
+    <div id="results" hidden>
+      <section class="card reading-card" aria-labelledby="readings-title">
+        <div class="section-heading"><h2 id="readings-title">Readings</h2><p id="series-summary"></p><p>Grey bars mark publisher-interpolated values. Missing readings leave gaps.</p></div>
+        <div class="meter-controls">
+          <label>Start date (UTC)<input type="date" id="view-date" required></label>
+          <label>Range<select id="range"><option value="1">1 day</option><option value="7">7 days</option></select></label>
+          <div class="meter-pagination"><button type="button" class="button secondary" id="previous">Previous</button><button type="button" class="button secondary" id="next">Next</button></div>
+        </div>
+        <div id="plots"></div>
+        <details><summary>Review interval values for the first day of the window</summary>
+          <div class="meter-scroll"><table>
+            <thead><tr><th scope="col">Start (UTC)</th><th scope="col">Channel</th><th scope="col">Duration</th><th scope="col">Value</th><th scope="col">Quality</th></tr></thead>
+            <tbody id="intervals"></tbody>
+          </table></div>
+        </details>
+      </section>
+      <section class="card reading-card" aria-labelledby="patterns-title">
+        <div class="section-heading"><span class="tag inferred">Candidate patterns</span><h2 id="patterns-title">Pattern timeline</h2>
+          <p>Heat, hot water and cooking can overlap in aggregate readings. Low use can have several causes, including a holiday, and does not establish occupancy. The rules have been checked on synthetic examples and have no field accuracy estimate.</p>
+        </div>
+        <label class="meter-filter">Pattern type<select id="pattern"><option value="">All patterns</option></select></label>
+        <p id="pattern-status" role="status"></p>
+        <div class="meter-scroll"><table id="event-table" hidden>
+          <thead><tr><th scope="col">Pattern</th><th scope="col">Start and end (UTC)</th><th scope="col">Why it was flagged</th></tr></thead>
+          <tbody id="events"></tbody>
+        </table></div>
+        <p id="baseline-note"></p>
+      </section>
+    </div>
+  </main>
+  <footer><div class="wrap footer-inner"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a><a href="https://github.com/charlie9578/domestic-energy-analysis">Repository and reproducibility</a></div></footer>
+</body>
+</html>

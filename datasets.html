@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore public smart-meter, heating and weather research, then compare domestic energy tariffs and upgrade scenarios.">
+  <title>Public datasets · Domestic Energy Research</title>
+  <link rel="icon" href="docs/assets/house.webp" type="image/webp">
+  <link rel="stylesheet" href="docs/styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="header">
+    <div class="wrap header-inner">
+      <a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a>
+      <nav aria-label="Main navigation"><a href="datasets.html" aria-current="page">Datasets</a><a href="meter-explorer.html">Meter explorer</a><a href="heating.html">Heating</a><a href="tariffs.html">Tariffs</a><a href="upgrades.html">Home upgrades</a></nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="band" id="datasets">
+      <div class="wrap section">
+        <div class="section-heading"><h1 class="subpage-title">Public datasets</h1><p>Check the coverage, available channels and access terms before combining sources.</p></div>
+        <div class="dataset-grid">
+          <article class="card"><span class="tag measured">Used in validation</span><h3>Low Carbon London</h3><p>Half-hourly electricity readings from a historical London trial. This project uses a short extract for one household.</p><a href="https://data.london.gov.uk/dataset/smartmeter-energy-consumption-data-in-london-households-vqm0d">Publisher dataset</a></article>
+          <article class="card"><span class="tag measured">Used in validation</span><h3>HeatpumpMonitor</h3><p>Volunteer systems with metered heat and electricity. Indoor and outdoor temperature are available for selected sites.</p><a href="https://heatpumpmonitor.org/api-helper">Public API</a></article>
+          <article class="card"><span class="tag measured">Used in validation</span><h3>OPSD · Konstanz area</h3><p>Five German homes with 17,568 half-hourly grid-import values each in 2016. The reproducible export includes interpolation flags and hourly ERA5 weather.</p><a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md#reproduce">Build the meter and weather dataset locally</a><a href="https://data.open-power-system-data.org/household_data/2020-04-15/">OPSD publisher dataset</a></article>
+          <article class="card"><span class="tag neutral">Further research</span><h3>IDEAL Household Energy</h3><p>Gas, electricity, indoor sensors and surveys from 255 Scottish-area homes. See the release for access and licensing.</p><a href="https://datashare.ed.ac.uk/items/15e82917-56ed-4282-99ef-7f211bf87f9d">University archive</a></article>
+          <article class="card"><span class="tag neutral">Further research</span><h3>Electrification of Heat</h3><p>British heat-pump monitoring with cleaned daily and half-hourly datasets. Download access varies by release.</p><a href="https://es.catapult.org.uk/report/electrification-of-heat-summary-reports-and-datasets/">Reports and datasets</a></article>
+          <article class="card"><span class="tag neutral">Gridded reanalysis</span><h3>ERA5 hourly weather</h3><p>Historical temperature, precipitation, 10 m wind speed and horizontal irradiance. The London and Konstanz-area analyses use local-day temperatures derived from aligned UTC hours.</p><a href="https://github.com/charlie9578/domestic-energy-analysis#hourly-historical-weather">Download instructions</a></article>
+          <article class="card"><span class="tag neutral">Published prices</span><h3>Octopus Energy</h3><p>Historical regional unit prices with validity timestamps. The thermostat study uses published Agile prices.</p><a href="https://developer.octopus.energy/docs/api/">Tariff API</a></article>
+        </div>
+        <a class="source" href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/SOURCES.md">View the full source catalogue</a>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-inner"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a><a href="https://github.com/charlie9578/domestic-energy-analysis">Repository and reproducibility</a></div></footer>
+</body>
+</html>

@@ -7,16 +7,13 @@
   <title>Domestic Energy Research</title>
   <link rel="icon" href="docs/assets/house.webp" type="image/webp">
   <link rel="stylesheet" href="docs/styles.css">
-  <script src="docs/app.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="header">
     <div class="wrap header-inner">
       <a class="brand" href="#home"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a>
-      <nav aria-label="Main navigation">
-        <a href="#datasets">Datasets</a><a href="#smart-meters">Smart meters</a><a href="#heating">Heating</a><a href="#tariffs">Tariffs</a><a href="#upgrades">Home upgrades</a>
-      </nav>
+      <nav aria-label="Main navigation"><a href="datasets.html">Datasets</a><a href="meter-explorer.html">Meter explorer</a><a href="heating.html">Heating</a><a href="tariffs.html">Tariffs</a><a href="upgrades.html">Home upgrades</a></nav>
     </div>
   </header>
 
@@ -27,7 +24,7 @@
         <h1 id="home-title">How our<br class="desktop-break"> homes use <em>energy.</em></h1>
         <p class="lead">Explore half-hourly smart-meter readings, see how monitored homes respond to colder weather, and compare what tariffs and upgrades could cost.</p>
         <div class="actions">
-          <a class="button primary" href="#datasets">Explore the data <span class="arrow" aria-hidden="true"></span></a>
+          <a class="button primary" href="datasets.html">Explore the data <span class="arrow" aria-hidden="true"></span></a>
           <a class="button secondary" href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md">Read the methodology <span class="arrow" aria-hidden="true"></span></a>
         </div>
       </div>
@@ -46,32 +43,16 @@
     <section class="wrap section explorer" aria-labelledby="explore-title">
       <div class="section-heading"><h2 id="explore-title">Explore the research</h2><p>Each study links to its source data, assumptions and reproduction steps.</p></div>
       <div class="topic-grid">
-        <a class="topic" href="#datasets"><span class="topic-icon" aria-hidden="true">▤</span><div><h3>Public datasets</h3><p>Meter readings, weather and equipment records</p></div><span class="arrow" aria-hidden="true"></span></a>
-        <a class="topic" href="#smart-meters"><span class="topic-icon" aria-hidden="true">∿</span><div><h3>Smart meters</h3><p>Consumption, coverage and held-out forecasts</p></div><span class="arrow" aria-hidden="true"></span></a>
-        <a class="topic" href="#heating"><span class="topic-icon" aria-hidden="true">☷</span><div><h3>Heating</h3><p>Heat loss, heat pumps and thermostat schedules</p></div><span class="arrow" aria-hidden="true"></span></a>
-        <a class="topic" href="#tariffs"><span class="topic-icon" aria-hidden="true">£</span><div><h3>Tariffs</h3><p>Reprice a measured London load profile</p></div><span class="arrow" aria-hidden="true"></span></a>
-        <a class="topic" href="#upgrades"><span class="topic-icon" aria-hidden="true">⌂</span><div><h3>Home upgrades</h3><p>Solar, insulation, storage and heat pumps</p></div><span class="arrow" aria-hidden="true"></span></a>
-      </div>
-    </section>
-
-    <section class="band" id="datasets">
-      <div class="wrap section">
-        <div class="section-heading"><h2>Public datasets</h2><p>Check the coverage, available channels and access terms before combining sources.</p></div>
-        <div class="dataset-grid">
-          <article class="card"><span class="tag measured">Used in validation</span><h3>Low Carbon London</h3><p>Half-hourly electricity readings from a historical London trial. This project uses a short extract for one household.</p><a href="https://data.london.gov.uk/dataset/smartmeter-energy-consumption-data-in-london-households-vqm0d">Publisher dataset</a></article>
-          <article class="card"><span class="tag measured">Used in validation</span><h3>HeatpumpMonitor</h3><p>Volunteer systems with metered heat and electricity. Indoor and outdoor temperature are available for selected sites.</p><a href="https://heatpumpmonitor.org/api-helper">Public API</a></article>
-          <article class="card"><span class="tag measured">Used in validation</span><h3>OPSD · Konstanz area</h3><p>Five German homes with 17,568 half-hourly grid-import values each in 2016. The reproducible export includes interpolation flags and hourly ERA5 weather.</p><a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md#reproduce">Build the meter and weather dataset locally</a><a href="https://data.open-power-system-data.org/household_data/2020-04-15/">OPSD publisher dataset</a></article>
-          <article class="card"><span class="tag neutral">Further research</span><h3>IDEAL Household Energy</h3><p>Gas, electricity, indoor sensors and surveys from 255 Scottish-area homes. See the release for access and licensing.</p><a href="https://datashare.ed.ac.uk/items/15e82917-56ed-4282-99ef-7f211bf87f9d">University archive</a></article>
-          <article class="card"><span class="tag neutral">Further research</span><h3>Electrification of Heat</h3><p>British heat-pump monitoring with cleaned daily and half-hourly datasets. Download access varies by release.</p><a href="https://es.catapult.org.uk/report/electrification-of-heat-summary-reports-and-datasets/">Reports and datasets</a></article>
-          <article class="card"><span class="tag neutral">Gridded reanalysis</span><h3>ERA5 hourly weather</h3><p>Historical temperature, precipitation, 10 m wind speed and horizontal irradiance. The London and Konstanz-area analyses use local-day temperatures derived from aligned UTC hours.</p><a href="https://github.com/charlie9578/domestic-energy-analysis#hourly-historical-weather">Download instructions</a></article>
-          <article class="card"><span class="tag neutral">Published prices</span><h3>Octopus Energy</h3><p>Historical regional unit prices with validity timestamps. The thermostat study uses published Agile prices.</p><a href="https://developer.octopus.energy/docs/api/">Tariff API</a></article>
-        </div>
-        <a class="source" href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/SOURCES.md">View the full source catalogue</a>
+        <a class="topic" id="datasets" href="datasets.html"><span class="topic-icon" aria-hidden="true">▤</span><div><h3>Public datasets</h3><p>Meter readings, weather and equipment records</p></div><span class="arrow" aria-hidden="true"></span></a>
+        <a class="topic" href="meter-explorer.html"><span class="topic-icon" aria-hidden="true">∿</span><div><h3>Smart meters</h3><p>Review readings and automatically flag patterns</p></div><span class="arrow" aria-hidden="true"></span></a>
+        <a class="topic" id="heating" href="heating.html"><span class="topic-icon" aria-hidden="true">☷</span><div><h3>Heating</h3><p>Heat loss, heat pumps and thermostat schedules</p></div><span class="arrow" aria-hidden="true"></span></a>
+        <a class="topic" id="tariffs" href="tariffs.html"><span class="topic-icon" aria-hidden="true">£</span><div><h3>Tariffs</h3><p>Reprice a measured London load profile</p></div><span class="arrow" aria-hidden="true"></span></a>
+        <a class="topic" id="upgrades" href="upgrades.html"><span class="topic-icon" aria-hidden="true">⌂</span><div><h3>Home upgrades</h3><p>Solar, insulation, storage and heat pumps</p></div><span class="arrow" aria-hidden="true"></span></a>
       </div>
     </section>
 
     <section class="wrap section" id="smart-meters">
-      <div class="section-heading"><span class="tag measured">Measured load</span><h2>Smart-meter analysis</h2><p>Five Konstanz-area households across 2016, with the short London trace retained for the British tariff example.</p></div>
+      <div class="section-heading"><span class="tag measured">Measured load</span><h2>Smart-meter analysis</h2><p>Five Konstanz-area households across 2016, with the short London trace retained for the British tariff example.</p><a class="button primary" href="meter-explorer.html">Open meter explorer</a></div>
       <article class="card cohort-card">
         <h3>Did ERA5 improve daily import estimates?</h3>
         <p>Mean absolute error on held-out days from October to December 2016. Days containing a publisher-interpolated interval were excluded.</p>
@@ -91,72 +72,6 @@
       </div>
     </section>
 
-    <section class="band" id="heating">
-      <div class="wrap section">
-        <div class="section-heading"><span class="tag inferred">Inferred from measurements</span><h2>Heating and heat loss</h2><p>Five monitored heat pumps provided matched space heat, electricity and temperatures. Models fitted on 2023 heating-season days were tested on 2024 observations.</p></div>
-        <div class="split">
-          <article class="card table-card"><h3>Apparent heat-loss coefficients</h3><table><thead><tr><th scope="col">System</th><th scope="col">W/K</th><th scope="col">95% interval</th></tr></thead><tbody>
-            <tr><th scope="row">3 · Air source</th><td>132</td><td>104–153</td></tr>
-            <tr><th scope="row">4 · Air source</th><td>143</td><td>121–165</td></tr>
-            <tr><th scope="row">8 · Air source</th><td>251</td><td>230–266</td></tr>
-            <tr><th scope="row">9 · Air source</th><td>196</td><td>179–209</td></tr>
-            <tr><th scope="row">11 · Ground source</th><td>93</td><td>55–125</td></tr>
-          </tbody></table><p>Equipment types come from registry metadata. The intervals reflect variation across resampled weeks.</p></article>
-          <article class="card"><span class="tag simulated">Simulated schedules</span><h3>Thermostat strategy</h3><p>Adding indoor temperature improved held-out forecasts at two of the five sites compared with an outdoor-only model.</p><p>Among the fixed schedules tested for four air-source systems, an 18°C night setback ranked first under the illustrative flat tariff. Fixed preheat ranked first under the study’s off-peak and Agile prices. The comfort screen uses modelled indoor temperature.</p><a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md#thermostat-and-retrofit-scenarios">Controls and assumptions</a></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="wrap section" id="tariffs">
-      <div class="section-heading"><span class="tag simulated">Illustrative pricing</span><h2>Compare tariffs on measured load</h2><p>Reprice all recorded London meter intervals, including 100.376 kWh overnight and 446.580 kWh during the day. Compare variable charges on the same consumption. Standing charges are excluded.</p></div>
-      <div class="split">
-        <form class="card" id="tariff-form">
-          <h3>Unit rates</h3>
-          <label>Flat rate (p/kWh)<input name="flat" type="number" min="0" max="500" step="0.01" value="27" required></label>
-          <label>Day rate (p/kWh)<input name="day" type="number" min="0" max="500" step="0.01" value="35" required></label>
-          <label>Night rate (p/kWh), 00:00–07:00 local<input name="night" type="number" min="0" max="500" step="0.01" value="9" required></label>
-          <button class="button primary" type="submit">Compare rates</button>
-        </form>
-        <div class="card result" aria-live="polite" aria-atomic="true">
-          <h3>Cost over observed intervals</h3>
-          <dl class="metrics"><div><dt>Flat</dt><dd id="flat-cost">£147.68</dd></div><div><dt>Day and night</dt><dd id="tou-cost">£165.34</dd></div></dl>
-          <p id="tariff-verdict">Flat is £17.66 cheaper.</p>
-          <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/MEASURED_LCL_RESULTS.md">Meter trace and tariff method</a>
-        </div>
-      </div>
-      <noscript><p>The displayed comparison uses the original example rates. Enable JavaScript to recalculate.</p></noscript>
-    </section>
-
-    <section class="band" id="upgrades">
-      <div class="wrap section">
-        <div class="section-heading"><span class="tag simulated">Synthetic full-year study</span><h2>Explore home upgrades</h2><p>Compare modelled annual operating bills for a mid-terrace home. These scenarios exclude installation costs. Solar output, heating demand and both tariffs use the study’s illustrative assumptions.</p></div>
-        <div class="split">
-          <form class="card" id="upgrade-form">
-            <h3>Compare a portfolio</h3>
-            <label>Upgrade
-              <select name="portfolio">
-                <option value="solar">4 kWp solar PV</option>
-                <option value="insulation">Insulation · 20% lower space-heat demand</option>
-                <option value="heatPump">Heat pump · SPF 3.4, gas disconnected</option>
-                <option value="battery">Solar PV + 5 kWh battery</option>
-                <option value="thermal">Direct electric + 12 kWh thermal storage</option>
-                <option value="combined">Solar + insulation + heat pump + battery</option>
-              </select>
-            </label>
-            <label>Tariff
-              <select name="tariff"><option value="flat">Illustrative flat</option><option value="tou">Hypothetical time of use</option></select>
-            </label>
-          </form>
-          <div class="card result" aria-live="polite" aria-atomic="true">
-            <h3>Simulated annual bill</h3>
-            <dl class="metrics"><div><dt>Existing gas boiler</dt><dd id="baseline-bill">£2,329.65</dd></div><div><dt>Selected portfolio</dt><dd id="upgrade-bill">£1,916.88</dd></div></dl>
-            <p id="upgrade-verdict">£412.77 lower per year before installation costs.</p>
-            <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/SCENARIO_STUDY.md">Full scenario table and economics</a>
-          </div>
-        </div>
-        <noscript><p>The displayed comparison uses solar PV on the illustrative flat tariff. Enable JavaScript to compare other portfolios.</p></noscript>
-      </div>
-    </section>
   </main>
   <footer><div class="wrap footer-inner"><a class="brand" href="#home"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a><a href="https://github.com/charlie9578/domestic-energy-analysis">Repository and reproducibility</a></div></footer>
 </body>

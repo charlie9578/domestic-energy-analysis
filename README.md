@@ -29,7 +29,13 @@ Visit the [research explorer on GitHub Pages](https://charlie9578.github.io/dome
 python -m http.server 8000
 ```
 
-Visit http://localhost:8000. The frontend uses plain HTML, CSS and JavaScript. Its tariff comparison uses the observed London interval totals and its upgrade selector uses the published synthetic scenario table. Calculations run in the browser.
+Visit http://localhost:8000. Datasets, the meter explorer, heating, tariffs and upgrades have dedicated pages. The tariff comparison uses observed London interval totals, and the upgrade selector uses the published synthetic scenario table.
+
+In the [meter explorer](https://charlie9578.github.io/domestic-energy-analysis/meter-explorer.html), load a gas or electricity interval CSV, or both, and optionally an hourly ERA5 CSV for the same area and dates. Uploads stay in the tab. Use `start_utc,consumption_kwh,duration_minutes` for meter readings and `start_utc,temperature_c` for weather. Gas values must already be in kWh. The explorer keeps native interval durations and uses UTC for charts and complete-day checks. The details table shows the first day of the selected window.
+
+The pattern rules flag sustained cold-weather gas use, elevated cold-day electricity relative to mild days, short gas/electrical bursts, EV-like plateaus and unusually low or high daily use. Short bursts can be consistent with cooking or hot water, including showers. Several devices can produce similar signatures. The low-use rule compares at least three complete days against a median from at least 14 eligible days. Missing or publisher-interpolated values are excluded from the rules, and the synthetic demo illustrates the checks without supplying field accuracy estimates.
+
+Run the browser-analysis unit tests with `node --test tests/meter_analysis.test.mjs` (Node 24).
 
 ## Hourly historical weather
 

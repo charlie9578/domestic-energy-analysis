@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore public smart-meter, heating and weather research, then compare domestic energy tariffs and upgrade scenarios.">
+  <title>Heating and heat loss · Domestic Energy Research</title>
+  <link rel="icon" href="docs/assets/house.webp" type="image/webp">
+  <link rel="stylesheet" href="docs/styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="header">
+    <div class="wrap header-inner">
+      <a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a>
+      <nav aria-label="Main navigation"><a href="datasets.html">Datasets</a><a href="meter-explorer.html">Meter explorer</a><a href="heating.html" aria-current="page">Heating</a><a href="tariffs.html">Tariffs</a><a href="upgrades.html">Home upgrades</a></nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="band" id="heating">
+      <div class="wrap section">
+        <div class="section-heading"><span class="tag inferred">Inferred from measurements</span><h1 class="subpage-title">Heating and heat loss</h1><p>Five monitored heat pumps provided matched space heat, electricity and temperatures. Models fitted on 2023 heating-season days were tested on 2024 observations.</p></div>
+        <div class="split">
+          <article class="card table-card"><h3>Apparent heat-loss coefficients</h3><table><thead><tr><th scope="col">System</th><th scope="col">W/K</th><th scope="col">95% interval</th></tr></thead><tbody>
+            <tr><th scope="row">3 · Air source</th><td>132</td><td>104–153</td></tr>
+            <tr><th scope="row">4 · Air source</th><td>143</td><td>121–165</td></tr>
+            <tr><th scope="row">8 · Air source</th><td>251</td><td>230–266</td></tr>
+            <tr><th scope="row">9 · Air source</th><td>196</td><td>179–209</td></tr>
+            <tr><th scope="row">11 · Ground source</th><td>93</td><td>55–125</td></tr>
+          </tbody></table><p>Equipment types come from registry metadata. The intervals reflect variation across resampled weeks.</p></article>
+          <article class="card"><span class="tag simulated">Simulated schedules</span><h3>Thermostat strategy</h3><p>Adding indoor temperature improved held-out forecasts at two of the five sites compared with an outdoor-only model.</p><p>Among the fixed schedules tested for four air-source systems, an 18°C night setback ranked first under the illustrative flat tariff. Fixed preheat ranked first under the study’s off-peak and Agile prices. The comfort screen uses modelled indoor temperature.</p><a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md#thermostat-and-retrofit-scenarios">Controls and assumptions</a></article>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-inner"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a><a href="https://github.com/charlie9578/domestic-energy-analysis">Repository and reproducibility</a></div></footer>
+</body>
+</html>

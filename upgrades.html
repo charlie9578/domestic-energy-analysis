@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore public smart-meter, heating and weather research, then compare domestic energy tariffs and upgrade scenarios.">
+  <title>Home upgrades · Domestic Energy Research</title>
+  <link rel="icon" href="docs/assets/house.webp" type="image/webp">
+  <link rel="stylesheet" href="docs/styles.css">
+  <script src="docs/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="header">
+    <div class="wrap header-inner">
+      <a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a>
+      <nav aria-label="Main navigation"><a href="datasets.html">Datasets</a><a href="meter-explorer.html">Meter explorer</a><a href="heating.html">Heating</a><a href="tariffs.html">Tariffs</a><a href="upgrades.html" aria-current="page">Home upgrades</a></nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="band" id="upgrades">
+      <div class="wrap section">
+        <div class="section-heading"><span class="tag simulated">Synthetic full-year study</span><h1 class="subpage-title">Explore home upgrades</h1><p>Compare modelled annual operating bills for a mid-terrace home. These scenarios exclude installation costs. Solar output, heating demand and both tariffs use the study’s illustrative assumptions.</p></div>
+        <div class="split">
+          <form class="card" id="upgrade-form">
+            <h3>Compare a portfolio</h3>
+            <label>Upgrade
+              <select name="portfolio">
+                <option value="solar">4 kWp solar PV</option>
+                <option value="insulation">Insulation · 20% lower space-heat demand</option>
+                <option value="heatPump">Heat pump · SPF 3.4, gas disconnected</option>
+                <option value="battery">Solar PV + 5 kWh battery</option>
+                <option value="thermal">Direct electric + 12 kWh thermal storage</option>
+                <option value="combined">Solar + insulation + heat pump + battery</option>
+              </select>
+            </label>
+            <label>Tariff
+              <select name="tariff"><option value="flat">Illustrative flat</option><option value="tou">Hypothetical time of use</option></select>
+            </label>
+          </form>
+          <div class="card result" aria-live="polite" aria-atomic="true">
+            <h3>Simulated annual bill</h3>
+            <dl class="metrics"><div><dt>Existing gas boiler</dt><dd id="baseline-bill">£2,329.65</dd></div><div><dt>Selected portfolio</dt><dd id="upgrade-bill">£1,916.88</dd></div></dl>
+            <p id="upgrade-verdict">£412.77 lower per year before installation costs.</p>
+            <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/SCENARIO_STUDY.md">Full scenario table and economics</a>
+          </div>
+        </div>
+        <noscript><p>The displayed comparison uses solar PV on the illustrative flat tariff. Enable JavaScript to compare other portfolios.</p></noscript>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-inner"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a><a href="https://github.com/charlie9578/domestic-energy-analysis">Repository and reproducibility</a></div></footer>
+</body>
+</html>

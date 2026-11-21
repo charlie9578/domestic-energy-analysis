@@ -3,7 +3,7 @@
 const gbp = new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" });
 const tariffForm = document.querySelector("#tariff-form");
 
-tariffForm.addEventListener("submit", (event) => {
+tariffForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   const rates = new FormData(tariffForm);
   const flat = Math.round(546.956 * Number(rates.get("flat")));
@@ -39,5 +39,5 @@ function updateUpgrade() {
     : `${gbp.format(Math.abs(difference) / 100)} ${difference > 0 ? "higher" : "lower"} per year before installation costs.`;
 }
 
-upgradeForm.addEventListener("change", updateUpgrade);
-updateUpgrade();
+upgradeForm?.addEventListener("change", updateUpgrade);
+if (upgradeForm) updateUpgrade();
