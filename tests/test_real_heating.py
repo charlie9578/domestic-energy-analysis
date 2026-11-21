@@ -187,7 +187,7 @@ class HeatingControlTests(unittest.TestCase):
     def test_baseload_join_fails_on_partial_and_double_count_gate(self):
         data=weather(2)
         meter=[{'start_utc':r['start_utc'],'consumption_kwh':.1,'duration_minutes':30} for r in data]
-        self.assertEqual(sum(align_meter_baseload(data,meter)),len(data)*.1)
+        self.assertAlmostEqual(sum(align_meter_baseload(data,meter)),len(data)*.1,places=10)
         with self.assertRaises(ValueError):
             align_meter_baseload(data,meter[:-1])
 
