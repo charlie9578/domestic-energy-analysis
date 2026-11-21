@@ -2,9 +2,9 @@
 
 **Public-data-first, reproducible research into domestic heating, gas, electricity, heat pumps, half-hourly smart meters and energy prices.**
 
-The initial scope is **Great Britain**, with official statistics for **England and Wales** clearly distinguished from GB tariffs and other UK datasets. The repository started empty; this is a standalone Python 3.11+ foundation with no runtime dependencies. Data from third parties are **not copied into the repository**.
+The initial scope is **Great Britain**, with official statistics for **England and Wales** clearly distinguished from GB tariffs and other UK datasets. The repository started empty; this is a standalone Python 3.11+ foundation with no runtime dependencies. A small, attributed **real historical Low Carbon London electricity sample** is bundled as a research fixture; the large raw datasets are not copied.
 
-> Research snapshot: **21 November 2026**. Default prices are the **Ofgem 1 October–31 December 2026 GB Direct Debit regional averages**, held constant for illustrative comparisons. They are **not** an annual forecast, a supplier quote or a guarantee for an individual postcode. The example time series are **entirely synthetic**.
+> Research snapshot: **21 November 2026**. Default prices are the **Ofgem 1 October–31 December 2026 GB Direct Debit regional averages**, held constant for illustrative comparisons. They are **not** an annual forecast, a supplier quote or a guarantee for an individual postcode. The modelled scenario/weather/price example time series are **synthetic**, while the separately attributed Low Carbon London electricity extract is **measured**.
 
 ## What works today
 
@@ -97,7 +97,7 @@ tests/               unit/regression tests including DST and data gaps
 .github/workflows/   offline CI tests; no network calls or secrets
 ```
 
-`data/` and `reports/` are ignored by Git; leave raw third-party data in their own location, respect each licence, and avoid exposing smart-meter consumption or identifiers. No credentials are needed for the currently implemented public API adapters.
+`data/` and `reports/` are ignored by Git; leave full raw third-party data in their own location, respect each licence and avoid exposing non-public smart-meter consumption or identifiers. The small public study extract is explicitly attributed and contains only the publisher's existing pseudonymous household identifier. No credentials are needed for the currently implemented public API adapters.
 
 ## Reproducibility and limitations
 

@@ -9,7 +9,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from dataclasses import replace
 
-from domestic_energy.real_meter import import_lcl, measured_profile
+from domestic_energy.real_meter import import_lcl, measured_profile, expected_halfhourly_profile
 from domestic_energy.heating_controls import (House, Settings, align_meter_baseload,
                                               in_window, setpoint, simulate_heating, strategy_grid)
 
@@ -85,6 +85,21 @@ class RealMeterTests(unittest.TestCase):
     def test_measured_profile_conserves_energy(self):
         rows = import_lcl([self.path], 'MAC000002', timestamp_mode='utc_end')['rows']
         self.assertEqual(measured_profile(rows)['total_kwh'], .4)
+
+    def test_expected_meter_holdout_requires_complete_days(self):
+        from datetime import datetime, timezone, timedelta
+        start=datetime(2025, 2, 1, tzinfo=timezone.utc)
+        rows=[]
+        for n in range(30*48):
+            dt=start+timedelta(minutes=30*n)
+            rows.append({'start_utc':dt.isoformat(), 'consumption_kwh':0.1+0.01*(dt.weekday()>=5), 'duration_minutes':30})
+        outcome=expected_halfhourly_profile(rows)
+        self.assertEqual(outcome['n_full_days'],30)
+        self.assertGreaterEqual(outcome['n_test_days'],5)
+        self.assertLess(outcome['holdout_mae_kwh_per_halfhour'],.02)
+        rows.pop(17)
+        outcome=expected_halfhourly_profile(rows)
+        self.assertEqual(outcome['n_partial_days_excluded'],1)
 
     def test_one_household_limit_fail_closed(self):
         with self.assertRaises(ValueError):
