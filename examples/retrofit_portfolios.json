@@ -1,0 +1,19 @@
+[
+  {"name": "gas_baseline"},
+  {"name": "solar", "pv_scale": 1},
+  {"name": "insulate_space_heat_20pct", "insulation_heat_reduction": 0.2},
+  {"name": "heat_pump_spf_2.4", "heat_pump_spf": 2.4,
+   "remaining_gas_to_electric_kwh_per_kwh": 0.85, "disconnect_gas": true},
+  {"name": "heat_pump_spf_3.4", "heat_pump_spf": 3.4,
+   "remaining_gas_to_electric_kwh_per_kwh": 0.85, "disconnect_gas": true},
+  {"name": "solar_and_battery", "pv_scale": 1, "battery_kwh": 5, "battery_power_kw": 3},
+  {"name": "direct_electric", "direct_electric_from_gas": true,
+   "remaining_gas_to_electric_kwh_per_kwh": 0.85, "disconnect_gas": true},
+  {"name": "night_storage", "direct_electric_from_gas": true,
+   "remaining_gas_to_electric_kwh_per_kwh": 0.85, "disconnect_gas": true,
+   "storage_heater_kwh_th": 12, "storage_heater_power_kw": 7},
+  {"name": "solar_insulate_heat_pump_battery", "insulation_heat_reduction": 0.2,
+   "pv_scale": 1, "heat_pump_spf": 3.4, "disconnect_gas": true,
+   "remaining_gas_to_electric_kwh_per_kwh": 0.85,
+   "battery_kwh": 5, "battery_power_kw": 3}
+]

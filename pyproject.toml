@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "domestic-energy-analysis"
+version = "0.1.0"
+description = "Public-data-first research on British heat pumps, smart meters, gas, electricity and pricing"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "Domestic Energy Analysis contributors"}]
+dependencies = []
+
+[project.scripts]
+domestic-energy = "domestic_energy.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["domestic_energy*"]

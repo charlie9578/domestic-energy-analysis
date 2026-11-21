@@ -2,7 +2,10 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .venv/
-dist/
 *.egg-info/
-data/
-reports/
+/dist/
+/build/
+/data/
+/reports/
+.env
+.ipynb_checkpoints/

@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Ofgem_Q4_2026_rates_held_for_illustration_NOT_A_TARIFF",
+    "flat_import_p": 26.32,
+    "electricity_standing_p_per_day": 54.83,
+    "gas_p": 7.97,
+    "gas_standing_p_per_day": 29.68,
+    "export_p": 5
+  },
+  {
+    "name": "HYPOTHETICAL_TOU_NOT_A_SUPPLIER_OFFER",
+    "schedule": [
+      {"start_hour": 0, "end_hour": 6, "import_p": 10},
+      {"start_hour": 6, "end_hour": 16, "import_p": 31},
+      {"start_hour": 16, "end_hour": 19, "import_p": 41},
+      {"start_hour": 19, "end_hour": 24, "import_p": 31}
+    ],
+    "electricity_standing_p_per_day": 54.83,
+    "gas_p": 7.97,
+    "gas_standing_p_per_day": 29.68,
+    "export_p": 5
+  }
+]
