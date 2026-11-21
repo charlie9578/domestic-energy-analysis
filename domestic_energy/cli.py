@@ -14,6 +14,8 @@ from .pipeline import join_daily_meter_weather
 from .signatures import identify_system_clues, interval_profile
 from .economics import compare_tariffs, simulate_portfolio, investment_appraisal
 from .flexibility import schedule_ev_charge
+from .real_meter import import_lcl, measured_profile, expected_halfhourly_profile
+from .heating_controls import House, Settings, simulate_heating, strategy_grid, align_meter_baseload
 from .data import (fetch_open_meteo_daily, fetch_open_meteo_hourly,
                    fetch_heatpump_daily, fetch_octopus_unit_rates, read_csv,
                    write_csv, write_json)
@@ -136,6 +138,40 @@ def parser() -> argparse.ArgumentParser:
     pg.add_argument('--tariffs', required=True)
     pg.add_argument('--scenarios', required=True, help='JSON list of {name, parameters...} scenarios')
     pg.add_argument('--out')
+    lc = sub.add_parser('import-lcl', help='Convert real UKPN Low Carbon London raw CSV/ZIP to UTC intervals')
+    lc.add_argument('--input', required=True, action='append', help='LCL CSV, .csv.gz, or ZIP; repeat for blocks')
+    lc.add_argument('--household', required=True, help='Explicit one household, e.g. MAC000002')
+    lc.add_argument('--timestamp-mode', choices=['utc_end', 'utc_start'], required=True,
+                    help='Source convention: raw UTC/GMT timestamp labels end/start of interval')
+    lc.add_argument('--out', required=True, help='Canonical per-household interval CSV')
+    lc.add_argument('--qa', help='Optional QA JSON with gap and duplicate counts')
+    real = sub.add_parser('measured-profile', help='Report actual electricity profile, no appliance labels')
+    real.add_argument('--csv', required=True)
+    real.add_argument('--expectations', action='store_true', help='Add time-ordered half-hourly heldout forecast')
+    real.add_argument('--out')
+    hc = sub.add_parser('heating-study', help='Compare physical thermostat/heat-source scenarios and tariffs')
+    hc.add_argument('--weather', required=True, help='UTC hourly or half-hourly weather from fetch-weather --hourly')
+    hc.add_argument('--tariffs', required=True, help='Hypothetical tariff JSON list; no claims about current offers')
+    hc.add_argument('--house-json', help='Optional House parameter JSON')
+    hc.add_argument('--settings-json', help='Optional thermostat Settings parameter JSON')
+    hc.add_argument('--away-days', default='', help='Explicit known away dates, comma-separated YYYY-MM-DD')
+    hc.add_argument('--wfh-days', default='', help='Explicit known WFH dates, comma-separated YYYY-MM-DD')
+    hc.add_argument('--storage-backup-kw', type=float, default=0.)
+    hc.add_argument('--baseload-csv', help='Optional verified non-space-heating electricity profile; exact UTC join')
+    hc.add_argument('--confirm-nonheating-baseload', action='store_true',
+                    help='Required to prevent counting heating electricity twice')
+    hc.add_argument('--out')
+    trace = sub.add_parser('heating-trace', help='Inspect every interval of one thermostat strategy')
+    trace.add_argument('--weather', required=True)
+    trace.add_argument('--tariff', required=True, help='Single JSON tariff object')
+    trace.add_argument('--source', choices=['gas','heatpump','resistive','storage'], required=True)
+    trace.add_argument('--strategy', choices=['constant','setback','timed','wfh_aware','preheat',
+                                              'storage_constant','storage_setback','storage_timed'], required=True)
+    trace.add_argument('--house-json')
+    trace.add_argument('--settings-json')
+    trace.add_argument('--away-days', default='')
+    trace.add_argument('--wfh-days', default='')
+    trace.add_argument('--out')
     ev = sub.add_parser('ev-plan', help='Best-rate EV charge plan from provided half-hour rate CSV')
     ev.add_argument('--rates', required=True)
     ev.add_argument('--arrival', required=True)
@@ -259,6 +295,44 @@ def main(argv: list[str] | None = None) -> int:
             output.sort(key=lambda x: (x['cost_gbp'], x['scenario']))
             _print_or_save({'results': output,
                 'warning': 'Scenario costs cannot be compared as annual bills unless coverage is representative and complete. Capex is excluded; run investment appraisal.'}, args.out)
+        elif args.command == 'import-lcl':
+            parsed = import_lcl(args.input, args.household, timestamp_mode=args.timestamp_mode)
+            write_csv(args.out, parsed['rows'], ['start_utc','consumption_kwh','duration_minutes'])
+            if args.qa:
+                write_json(args.qa, parsed['qa'])
+            print(f"Imported {parsed['qa']['selected_intervals']} measured intervals; "
+                  f"coverage={parsed['qa']['coverage_fraction']}, kWh={parsed['qa']['observed_total_kwh']}")
+        elif args.command == 'measured-profile':
+            rows = read_csv(args.csv)
+            result = measured_profile(rows)
+            if args.expectations:
+                result['expected_usage_validation'] = expected_halfhourly_profile(rows)
+            _print_or_save(result, args.out)
+        elif args.command in ('heating-study', 'heating-trace'):
+            from datetime import date
+            def known_dates(value):
+                return {date.fromisoformat(x.strip()) for x in value.split(',') if x.strip()}
+            weather = read_csv(args.weather)
+            house = House(**json.loads(Path(args.house_json).read_text(encoding='utf-8'))) if args.house_json else House()
+            settings = Settings(**json.loads(Path(args.settings_json).read_text(encoding='utf-8'))) if args.settings_json else Settings()
+            away, wfh = known_dates(args.away_days), known_dates(args.wfh_days)
+            if args.command == 'heating-study':
+                baseload = None
+                if args.baseload_csv:
+                    if not args.confirm_nonheating_baseload:
+                        raise ValueError('Confirm meter CSV excludes space heating before using as baseload')
+                    baseload = align_meter_baseload(weather, read_csv(args.baseload_csv))
+                result = strategy_grid(weather,
+                    json.loads(Path(args.tariffs).read_text(encoding='utf-8')),
+                    house=house, settings=settings, away_dates=away, wfh_dates=wfh,
+                    baseload_kwh=baseload, storage_backup_heat_kw=args.storage_backup_kw)
+            else:
+                result = simulate_heating(weather, heat_source=args.source,
+                    strategy=args.strategy,
+                    tariff=json.loads(Path(args.tariff).read_text(encoding='utf-8')),
+                    house=house, settings=settings, away_dates=away, wfh_dates=wfh,
+                    record_intervals=True)
+            _print_or_save(result, args.out)
         elif args.command == 'ev-plan':
             result = schedule_ev_charge(read_csv(args.rates), arrival_utc=args.arrival,
                 departure_utc=args.departure, battery_energy_needed_kwh=args.battery_energy_kwh,

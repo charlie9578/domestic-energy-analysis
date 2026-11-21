@@ -105,101 +105,12 @@ The project separates **(1) official published figures**, **(2) genuine source A
 
 Under MIT licence for the code only; linked external data retain their own licences, attribution requirements and privacy conditions. Research and models are informational, not regulated energy, engineering or financial advice.
 
-## Expanded analysis: weather, occupancy, buildings, tariffs and technologies
+## New: measured electricity + realistic thermostat scenarios (2026-11-21)
 
-> **Version 0.2 / 21 Nov 2026.** All newly introduced study data are **SYNTHETIC** and generate no HTTP requests. The first study evaluates **88 complete illustrative household-years** (four building-heat-loss setups × two tariff structures × eleven portfolios). See [Scenario study](research/SCENARIO_STUDY.md), [Advanced models](research/ADVANCED_MODELS.md), and [Source status](research/SOURCES.md).
+A **real, historical Low Carbon London single-household half-hourly extract** (2020 unique recorded intervals, 546.956 kWh observed, with missing gaps) is under [`examples/real_lcl_mac000002_2012_part.csv`](examples/real_lcl_mac000002_2012_part.csv). This is real aggregate electricity, not a synthetic heat-pump/home-temperature dataset. Import additional archive blocks with `import-lcl` (streaming CSV, gzip or ZIP); validate coverage using `measured-profile` and `measured-profile --expectations` (time-ordered holdout calendar baseline) and generate cautious hypotheses via `detect`. Only genuine observed kWh may be described as observed. For this small sample, annualisation, room temperature and heating appliance labels are **not** identifiable.
 
-New commands build **expected domestic energy consumption by calendar and weather**, identify cautious patterns, and compare complete building/energy-system combinations:
+`domestic_energy/heating_controls.py` adds a single-zone heat-balance model for **constant 20°C, 17°C overnight setback, 06:00–09:00/17:00–22:00 timed heating, declared WFH/away days, illustrative overnight preheat**, and gas boiler / air heat pump / resistive electric / 00:00–07:00 chargeable night-storage heating. It simulates heat leakage, thermal capacity, maximum heat output, store charge/discharge and standing comfort penalties; **cheap but cold** scenarios are excluded from recommended cheapest feasible strategies. Example tariffs are HYPOTHETICAL, and neither properties nor thermostat setpoints are inferred from the real meter extract.
 
-| Feature | Input | Output | What it does NOT assert |
-| --- | --- | --- | --- |
-| Local weather retrieval | Coordinates, dates, [Open-Meteo ERA5](https://open-meteo.com/en/docs/historical-weather-api) | Historical daily or hourly weather CSV | A historical series is not a future forecast; station/microclimate may differ |
-| Local-day join | Half-hourly UTC meter + local-day weather + declared occupancy | Validated daily consumption table | Missing periods are zero demand; a missing activity flag means home |
-| Daily expected energy | 42+ daily paired readings, temperature, optional WFH/away | Time-ordered holdout error, expected kWh and bounds | A guaranteed forecast or verified causal insulation effect |
-| Indicative heat loss | Daily gas/weather, boiler efficiency and optional floor area | W/K, W/(K·m²) proxy | Certified EPC score, thermal-image diagnosis or actual U-values |
-| Household pattern hypotheses | Half-hourly electric, optional gas, weather and export | Candidate EV plateaus, gas heating runs, low activity/away, daytime variation, weather sensitivity | Confirmed EV, resident absence, WFH, solar panel or heat-pump ownership |
-| Portfolio × tariff | **Gross** household demand, submetered/heating allocations, PV generation, actual or hypothetical prices | Full-time-series import, export, standing, gas and £ costs | Forward tariff price forecast, genuine PV generation or warranty |
-| Electrical battery | Above and battery kWh, kW, efficiency | Perfect-foresight state-of-charge charge/discharge optimised bill | Guaranteed achievable battery ROI |
-| Thermal night-storage | Known useful space-heat demand and electrical conversion | Thermal-state heat shifting, heat loss and bill | Validated thermal comfort or emitter feasibility |
-| EV charging | Known parking window, charger kW, tariff 30-minute prices | Cheapest charging slots vs charging on arrival | True EV ownership/availability inferred from meter |
-| Capital economics | Modelled annual savings, assumed capex, upkeep, degradation, discount rate | NPV and simple payback | Real quote, grant eligibility or financing assessment |
+Run `PYTHONPATH=. python scripts/run_heating_study.py --out reports/heating_study` to reproduce **120 synthetic winter scenarios** (4 archetypes × 2 tariffs × 15 heat/control configurations). With weather downloaded from Open-Meteo, run `python -m domestic_energy heating-study --weather data/raw/weather.csv --tariffs examples/hypothetical_heating_tariffs.json --house-json examples/example_house.json --out reports/real_weather_study.json`. The weather may be real, but the house thermodynamics remain **assumed** until calibrated.
 
-### Run the full-year synthetic study
-
-```bash
-python scripts/run_study.py --out reports/synthetic_study
-# 88 full-year cases, 2025 synthetic readings, 2026 price-cap scenario,
-# known EV, declared holiday/WFH calendars and a 4 kWp synthetic PV profile
-```
-
-Its outputs include `SYNTHETIC_scenario_grid.csv`, `SYNTHETIC_truth.json`, `forecast_and_detection.json`, and mock daily/interval readings that can be used by the following commands. Generated files stay under Git-ignored `reports/`.
-
-### Model a weather-corrected home from real/consented meter data
-
-```bash
-# Public historic weather; network required; coordinates are sent to Open-Meteo
-python -m domestic_energy fetch-weather \
-    --lat 51.5 --lon -0.12 --start 2025-01-01 --end 2025-12-31 \
-    --out data/weather_london_2025.csv
-
-# Use local-day date,temperature_c and optionally declared away/WFH flags.
-# All meter timestamps must be offset-aware ISO timestamps, with energy in kWh.
-python -m domestic_energy prepare-daily --meter my_OWN_meter.csv \
-    --weather data/weather_london_2025.csv --occupancy my_OWN_calendar.csv \
-    --out data/daily_for_model.csv --qa reports/quality.json
-
-python -m domestic_energy forecast --csv data/daily_for_model.csv \
-    --fuel gas --boiler-efficiency .85 --floor-area 110 \
-    --out reports/weather_model.json
-
-# To make future expected consumption, create a future weather + known-calendar CSV.
-python -m domestic_energy forecast --csv data/daily_for_model.csv \
-    --future-csv data/future_weather_assumptions.csv --out reports/future.json
-```
-
-Train the gas model **only on gas readings** and the electricity model **only on electricity readings**; do not confuse gas meter volume with gas energy units. For genuine building comparisons, add floor area/building type/EPC statistics from NEED with comparable climate/occupancy, then field-validate the inferred heat-loss coefficient. The fitted model is trained on 80% of days and tested on the later 20%; its error band is only indicative.
-
-### Explore meter signatures and systems (no definitive identification)
-
-```bash
-# Run on synthetic generated example first
-python -m domestic_energy detect \
-    --electricity reports/synthetic_study/SYNTHETIC_mid_terrace_2025_intervals.csv \
-    --out reports/detection.json
-
-# Optional real, locally-held and consented gas/weather/export data
-python -m domestic_energy detect --electricity my_OWN_meter.csv \
-    --gas my_OWN_gas_intervals.csv --weather data/weather_london_2025.csv \
-    --export my_OWN_export_intervals.csv --out reports/my_hypotheses.json
-```
-
-The engine explicitly **does not claim to determine** someone's holiday or WFH status, whether a house owns a car, or which exact electrical appliance is operating from a 30-minute aggregate meter. EV/immersion/storage-heater signatures overlap; solar and batteries can mask import. Use confirmed charger, inverter, thermostat and heating submetering to validate. **Do not commit private meter readings, household identifiers, coordinates, holiday calendars or activity inferences**. If publishing results, use aggregated consented statistics.
-
-### Compare tariffs and energy systems
-
-The advanced simulator requires **gross electricity use before behind-the-meter solar generation** (`consumption_kwh`), optional `pv_generation_kwh`, `gas_kwh`, `gas_heating_kwh`, `electric_heating_kwh`, and optional `temperature_c`, all aligned at `start_utc` as a separate `duration_minutes` interval. `gas_heating_kwh` is **GAS INPUT** attributable to space heating. `electric_heating_kwh` is known *resistive* heating electricity, not automatically estimated by looking at peaks. A smart meter's net **grid import from an existing PV home is NOT gross electrical demand**; reconstruct from properly metered PV/battery data before running PV comparisons or conclusions will be wrong.
-
-```bash
-python -m domestic_energy compare-tariffs \
-    --csv reports/synthetic_study/SYNTHETIC_mid_terrace_2025_intervals.csv \
-    --tariffs examples/hypothetical_tariffs.json \
-    --out reports/tariff_ranking.json
-
-python -m domestic_energy portfolio-grid \
-    --csv reports/synthetic_study/SYNTHETIC_mid_terrace_2025_intervals.csv \
-    --tariffs examples/hypothetical_tariffs.json \
-    --scenarios examples/retrofit_portfolios.json \
-    --out reports/portfolios.json
-
-# For custom scenarios, see python -m domestic_energy compare-tariffs --help.
-# EV off-peak time-shifting:
-python -m domestic_energy ev-plan --rates examples/synthetic_tou_rates.csv \
-    --arrival 2026-11-01T00:00:00Z --departure 2026-11-02T00:00:00Z \
-    --battery-energy-kwh 7 --charger-kw 7
-```
-
-**What is actually the cheapest?** Only a supplied list of tariffs/assumptions can be ranked. Real buying comparisons require verified supplier product codes, regional prices, valid dates and standing charges, contract/exit fees, export eligibility, technology availability, financing and capital costs. Battery/thermal dispatch is computed with unrealistically perfect knowledge of future prices and loads; treat the optimized bill as an **optimistic** bound. Heat-pump conversion must electrify all residual gas loads before dropping the gas standing charge. None of these outputs is a personalized or official insulation/EPC assessment.
-
-### Reproducibility and privacy rules
-
-No model is trained on anyone's private data by default. All public APIs are called only by explicit `fetch-*` commands. Historic weather adapter uses the current Open-Meteo format and rejects missing days. Solar PVGIS version 6 changed field names in July 2026, so public hourly solar series must be separately converted and verified before use; **there is no automatic PVGIS downloader yet**. Core dependency is Python ≥3.11, without machine-learning packages or external keys. Regression checks now include DST local-day preparation, missing data, thermal/electrical storage energy conservation, and deliberately ambiguous appliance detection.
+**Read [`research/REAL_DATA_HEATING.md`](research/REAL_DATA_HEATING.md) for exact data provenance, gaps, interpretation, commands, modelling limitations and what further evidence would be needed to assess an individual building.**

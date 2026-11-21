@@ -234,4 +234,4 @@ def expected_halfhourly_profile(rows: list[dict], *, test_fraction: float = .25,
             'holdout_total_expected_kwh':round(expected_total,3),
             'holdout_daily':by_day,
             'hour_slot_expected_kwh':{f'{slot//2:02d}:{slot%2*30:02d}':round(halfhour.get(slot,all_mean),3) for slot in range(48)},
-            'note':'Measured electricity, time-ordered heldout; no weather or occupancy inference, no guaranteed future accuracy. Sparse weekday cells fall back to time-of-day median.
+            'note':'Measured electricity, time-ordered heldout; no weather or occupancy inference, no guaranteed future accuracy. Sparse weekday cells fall back to time-of-day median.'}

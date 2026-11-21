@@ -1,0 +1,15 @@
+[
+  {
+    "name": "ILLUSTRATIVE flat 27p electric / 8p gas",
+    "flat_p_per_kwh": 27,
+    "gas_p_per_kwh": 8
+  },
+  {
+    "name": "ILLUSTRATIVE Economy-7-like 9p night / 35p day",
+    "day_p_per_kwh": 35,
+    "night_p_per_kwh": 9,
+    "night_start_hour": 0,
+    "night_end_hour": 7,
+    "gas_p_per_kwh": 8
+  }
+]

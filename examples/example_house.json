@@ -1,0 +1,17 @@
+{
+  "heat_loss_w_per_k": 200,
+  "thermal_capacity_kwh_per_k": 10,
+  "max_heat_kw": 9,
+  "internal_gains_kw": 0.35,
+  "initial_indoor_c": 19,
+  "boiler_efficiency": 0.87,
+  "cop_at_7c": 3.3,
+  "cop_slope_per_outdoor_c": 0.055,
+  "store_capacity_kwh_th": 20,
+  "store_charge_kw": 5,
+  "store_discharge_kw": 5,
+  "store_efficiency": 0.95,
+  "store_loss_fraction_per_hour": 0.008,
+  "store_loss_to_room_fraction": 1,
+  "backup_heat_kw": 0
+}
