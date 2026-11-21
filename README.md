@@ -23,10 +23,10 @@ Read [the research report](research/REPORT.md), [methodology and caveats](resear
 
 ## HTML research explorer
 
-Visit the [research explorer on GitHub Pages](https://charlie9578.github.io/domestic-energy-analysis/). To preview changes locally, open [docs/index.html](docs/index.html) or serve the frontend from the repository root.
+Visit the [research explorer on GitHub Pages](https://charlie9578.github.io/domestic-energy-analysis/). To preview changes locally, open [index.html](index.html) or serve the frontend from the repository root.
 
 ```bash
-python -m http.server 8000 --directory docs
+python -m http.server 8000
 ```
 
 Visit http://localhost:8000. The frontend uses plain HTML, CSS and JavaScript. Its tariff comparison uses the observed London interval totals and its upgrade selector uses the published synthetic scenario table. Calculations run in the browser.
