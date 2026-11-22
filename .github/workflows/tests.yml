@@ -21,6 +21,6 @@ jobs:
         with:
           node-version: "24"
       - name: Run browser scenario tests
-        run: node --test tests/behaviour.test.mjs tests/meter_analysis.test.mjs tests/day_ahead.test.mjs
+        run: node --test tests/behaviour.test.mjs tests/meter_analysis.test.mjs tests/day_ahead.test.mjs tests/day_ahead_published.test.mjs
       - name: Generate synthetic intervention examples
         run: python -m scripts.run_behaviour_study --out reports/behaviour_changes
