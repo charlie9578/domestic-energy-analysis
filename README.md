@@ -37,6 +37,22 @@ The pattern rules flag sustained cold-weather gas use, elevated cold-day electri
 
 Run the browser-analysis unit tests with `node --test tests/meter_analysis.test.mjs` (Node 24).
 
+## Monitored indoor temperature example
+
+Open the [meter explorer](https://charlie9578.github.io/domestic-energy-analysis/meter-explorer.html) and choose **Load real monitored profile**. Edit the day and night target temperatures and the hours when they start to compare targets against the measured indoor means by clock hour.
+
+Fetch the original hourly inputs and prepare CSVs for the explorer:
+
+```bash
+python -m scripts.fetch_monitored_home
+```
+
+This downloads public HeatpumpMonitor system 3 data for 8–21 January 2024 and a matching Manchester-area hourly ERA5 series. It writes `indoor.csv`, `heating.csv`, `heatpump-electricity.csv` and `weather-era5.csv` under `data/derived/monitored-home`. Use the corresponding upload fields in the explorer. Select **Electricity file is a heat-pump submeter** when loading its electrical channel. This keeps the readings visible and excludes them from whole-home and appliance heuristics. `site-hourly.csv` also includes the site's outdoor sensor and domestic hot-water signal. [HeatpumpMonitor public time-series API](https://heatpumpmonitor.org/api-helper)
+
+The site publishes 24 clock-hour averages, each based on 14 observations. Mean indoor temperature ranged from **18.62°C at 06:00** to **19.04°C at 21:00**. Outdoor temperature uses hourly ERA5 at Manchester city centre as a regional proxy. Activation comes from the monitored central-heating mode signal. Its hourly mean estimates the fraction of the hour in that mode. Values just above one in the source are capped at one, and null readings are left blank. An hourly fraction cannot identify exact switching times or compressor state.
+
+When users provide an activation log, the explorer displays it alongside indoor temperature and defers to it for fully covered heating intervals. User-supplied clock-hour profiles use duration-weighted averages grouped by the local hour at interval start. They show indoor sampling hours and omit flagged values and intervals longer than one hour. The proposed schedule is a reference for comparing observed temperatures. It does not estimate future temperature, bills or energy savings under a changed setpoint.
+
 ## Hourly historical weather
 
 Fetch gridded ERA5 reanalysis for an inclusive UTC date range through Open-Meteo.

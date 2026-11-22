@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DAY, HOUR, demoSeries, detectPatterns, parseSeries } from "../docs/meter-analysis.js";
+import { DAY, HOUR, clockProfile, demoSeries, detectPatterns, parseSeries, scheduledTarget } from "../docs/meter-analysis.js";
 
 test("CSV preserves intervals, gaps, zeros and flagged values", () => {
   const rows = parseSeries([
@@ -61,4 +61,37 @@ test("electric heating hint needs complete mild and cold weather days", () => {
   }));
   assert.equal(detectPatterns({ electricity, weather }).events.at(-1).type, "Cold-weather electrical demand");
   assert.equal(detectPatterns({ electricity, weather: weather.slice(1) }).events.length, 0);
+});
+
+test("activation log takes precedence and annotates exact indoor boundary readings", () => {
+  const start = Date.UTC(2025, 0, 1);
+  const gas = [0, 1, 2].map((slot) => ({
+    start: start + slot * HOUR / 2, end: start + (slot + 1) * HOUR / 2, kw: 3,
+  }));
+  const weather = [{ start, amount: 4 }, { start: start + HOUR, amount: 4 }];
+  const heating = parseSeries(
+    "start_utc,heating_fraction,duration_minutes\n2025-01-01T00:00Z,0.5,60\n2025-01-01T01:00Z,0,60",
+    "heating", 30);
+  const indoor = parseSeries(
+    "start_utc,indoor_temperature_c,duration_minutes\n2025-01-01T00:00Z,19.0,60\n2025-01-01T01:00Z,19.1,60",
+    "indoor", 30);
+  const { events } = detectPatterns({ gas, weather, heating, indoor });
+  assert.deepEqual(events.map((event) => event.type), ["Recorded heating activation"]);
+  assert.match(events[0].evidence, /30 active minutes.*19.0°C and 19.1°C/);
+  assert.throws(() => parseSeries("start_utc,heating_fraction\n2025-01-01T00:00Z,1.1", "heating", 30));
+});
+
+test("clock-hour profiles retain local summer time and weight native durations", () => {
+  const start = Date.UTC(2025, 6, 1, 5);
+  const indoor = [
+    { start, end: start + HOUR / 4, amount: 17 },
+    { start: start + HOUR / 4, end: start + HOUR, amount: 21 },
+  ];
+  const profile = clockProfile({ indoor }, "Europe/London");
+  assert.deepEqual(profile[6], { hour: 6, indoor_c: 20, indoor_hours: 1 });
+  const targets = { dayStart: 7, nightStart: 22, dayTarget: 20, nightTarget: 17 };
+  assert.equal(scheduledTarget(6, targets), 17);
+  assert.equal(scheduledTarget(7, targets), 20);
+  assert.equal(scheduledTarget(22, targets), 17);
+  assert.equal(scheduledTarget(0, { ...targets, dayStart: 22, nightStart: 7 }), 20);
 });

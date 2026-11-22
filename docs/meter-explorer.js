@@ -1,4 +1,4 @@
-import { DAY, HOUR, dateLabel, dayStart, demoSeries, detectPatterns, parseSeries } from "./meter-analysis.js";
+import { DAY, HOUR, clockProfile, dateLabel, dayStart, demoSeries, detectPatterns, parseSeries, scheduledTarget } from "./meter-analysis.js";
 
 const get = (id) => document.getElementById(id);
 const form = get("meter-form");
@@ -6,10 +6,14 @@ const channels = {
   electricity: { name: "Electricity", unit: "kWh", colour: "#12604c" },
   gas: { name: "Gas", unit: "kWh", colour: "#9a4b23" },
   weather: { name: "Outdoor temperature", unit: "°C", colour: "#286497" },
+  indoor: { name: "Indoor temperature", unit: "°C", colour: "#6e4183" },
+  heating: { name: "Space-heating activation", unit: "%", colour: "#957420" },
 };
 const timestamp = (stamp) => new Date(stamp).toISOString().slice(0, 19).replace("T", " ");
 const hourLabel = (stamp) => timestamp(stamp).slice(11, 16);
-const format = (amount) => new Intl.NumberFormat("en-GB", { maximumFractionDigits: 3 }).format(amount);
+const decimals = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 3 });
+const format = (amount) => decimals.format(amount);
+const plotValue = (key, row) => key === "heating" ? row.amount * 100 : row.kw ?? row.amount;
 let state = null;
 
 function elements(tag, text, parent) {
@@ -24,9 +28,9 @@ function drawPlots(series, start, end) {
   target.replaceChildren();
   for (const [key, rows] of Object.entries(series)) {
     const channel = channels[key];
-    const weather = key === "weather";
+    const temperature = channel.unit === "°C";
     const figure = elements("figure", "", target);
-    const units = weather ? "°C" : "kW interval average";
+    const units = temperature || key === "heating" ? channel.unit : "kW interval average";
     elements("h3", `${channel.name} · ${units}`, figure);
     if (!rows.length) {
       elements("p", "No data in this window.", figure);
@@ -42,9 +46,9 @@ function drawPlots(series, start, end) {
     canvas.style.height = `${height}px`;
     const ctx = canvas.getContext("2d");
     ctx.scale(scale, scale);
-    const values = rows.map((row) => weather ? row.amount : row.kw);
-    const lo = weather ? Math.floor(Math.min(...values)) : 0;
-    const hi = Math.max(lo + 1, Math.ceil(Math.max(...values)));
+    const values = rows.map((row) => plotValue(key, row));
+    const lo = temperature ? Math.floor(Math.min(...values)) : 0;
+    const hi = key === "heating" ? 100 : Math.max(lo + 1, Math.ceil(Math.max(...values)));
     const x = (stamp) => 32 + (stamp - start) * (width - 42) / (end - start);
     const y = (value) => 84 - (value - lo) * 70 / (hi - lo);
     ctx.font = "11px system-ui";
@@ -58,7 +62,7 @@ function drawPlots(series, start, end) {
     ctx.fillText(end - start === DAY ? "24:00" : dateLabel(end - DAY), width - 10, 105);
     rows.forEach((row, i) => {
       const position = x(Math.max(start, row.start));
-      if (weather) {
+      if (temperature) {
         if (row.flagged) return;
         ctx.fillStyle = channel.colour;
         ctx.fillRect(position - 1, y(row.amount) - 1, 3, 3);
@@ -72,8 +76,9 @@ function drawPlots(series, start, end) {
         }
       } else {
         ctx.fillStyle = row.flagged ? "#8f9a96" : channel.colour;
-        ctx.fillRect(position, y(row.kw), Math.max(1, x(Math.min(end, row.end)) - position - 0.5),
-          row.kw === 0 ? 1 : y(0) - y(row.kw));
+        const value = plotValue(key, row);
+        ctx.fillRect(position, y(value), Math.max(1, x(Math.min(end, row.end)) - position - 0.5),
+          value === 0 ? 1 : y(0) - y(value));
       }
     });
   }
@@ -100,7 +105,7 @@ function render() {
   for (const [key, row] of dayRows) {
     const tr = elements("tr", "", details);
     for (const cell of [timestamp(row.start), channels[key].name,
-      `${(row.end - row.start) / (HOUR / 60)} min`, `${format(row.amount)} ${channels[key].unit}`,
+      `${(row.end - row.start) / (HOUR / 60)} min`, `${format(key === "heating" ? row.amount * 100 : row.amount)} ${channels[key].unit}`,
       row.flagged ? "Publisher interpolated" : "Unflagged"]) elements("td", cell, tr);
   }
   if (!dayRows.length) {
@@ -121,15 +126,18 @@ function render() {
   }
   get("event-table").hidden = !events.length;
   get("pattern-status").textContent = events.length > 100 ? `Showing 100 of ${events.length} candidates. Narrow the window or filter by pattern.`
-    : events.length ? `${events.length} candidate pattern${events.length === 1 ? "" : "s"} in this window.`
-      : "No candidates matched in this window.";
+    : events.length ? `${events.length} pattern${events.length === 1 ? "" : "s"} in this window.`
+      : "No recorded or inferred patterns in this window.";
 }
 
-function show(data, label, demo = false) {
-  const meter = [...(data.gas ?? []), ...(data.electricity ?? [])];
+function show(data, label, demo = false, submeter = false) {
+  const meter = [...(data.gas ?? []), ...(data.electricity ?? []),
+    ...(data.indoor ?? []), ...(data.heating ?? [])];
   const min = dayStart(meter.reduce((value, row) => Math.min(value, row.start), Infinity));
   const max = dayStart(meter.reduce((value, row) => Math.max(value, row.end), -Infinity) - 1);
-  state = { data, min, max, ...detectPatterns(data) };
+  // Keep the submeter in the readings but avoid household-level inference from it.
+  const patternData = submeter ? { ...data, electricity: [] } : data;
+  state = { data, min, max, ...detectPatterns(patternData) };
   const date = get("view-date");
   date.min = dateLabel(min);
   date.max = dateLabel(max);
@@ -146,8 +154,12 @@ function show(data, label, demo = false) {
   get("baseline-note").textContent = state.baselineDays < 14
     ? `Daily anomaly rules need at least 14 complete, unflagged UTC days. Found ${state.baselineDays}.`
     : `${state.baselineDays} complete, unflagged UTC days available for the daily baseline.`;
-  get("status").textContent = label;
+  get("status").textContent = label + (submeter
+    ? " Heat-pump electricity is shown in the readings and excluded from household pattern rules." : "");
   get("results").hidden = false;
+  if (data.indoor?.length || data.heating?.length) setProfile({ data }, demo
+    ? "Synthetic inputs · unflagged values grouped by the local hour at interval start."
+    : "Local files · unflagged values grouped by the local hour at interval start. Each channel uses its available readings.");
   render();
 }
 
@@ -170,8 +182,11 @@ form.addEventListener("submit", async (event) => {
         throw new Error(`${channel.name}: ${error.message}`);
       }
     }
-    if (!data.electricity && !data.gas) throw new Error("Choose at least one gas or electricity CSV.");
-    if (request === current) show(data, "Loaded your files. All analysis is local to this tab.");
+    if (!data.electricity && !data.gas && !data.indoor && !data.heating) {
+      throw new Error("Choose a meter, indoor-temperature or activation CSV.");
+    }
+    if (request === current) show(data, "Loaded your files. All analysis is local to this tab.", false,
+      Boolean(data.electricity && inputs.has("submeter")));
   } catch (error) {
     if (request === current) {
       state = null;
@@ -195,3 +210,64 @@ for (const [id, direction] of [["previous", -1], ["next", 1]]) {
   });
 }
 window.addEventListener("resize", render);
+
+const schedule = get("schedule");
+let profileSource = null;
+let profileRequest = 0;
+
+function renderSchedule() {
+  if (!profileSource) return;
+  const inputs = new FormData(schedule);
+  const options = Object.fromEntries(["dayStart", "nightStart", "dayTarget", "nightTarget"]
+    .map((key) => [key, Number(inputs.get(key))]));
+  schedule.elements.nightStart.setCustomValidity(options.dayStart === options.nightStart
+    ? "Choose different hours for day and night." : "");
+  const valid = schedule.checkValidity();
+  const zone = inputs.get("zone");
+  if (profileSource.data && profileSource.zone !== zone) {
+    profileSource.hours = clockProfile(profileSource.data, zone);
+    profileSource.zone = zone;
+  }
+  const profile = profileSource.hours;
+  const fixed = (value, digits = 1) => Number.isFinite(value) ? value.toFixed(digits) : "—";
+  const body = get("clock-rows");
+  body.replaceChildren();
+  for (const row of profile) {
+    const target = valid ? scheduledTarget(row.hour, options) : NaN;
+    const tr = elements("tr", "", body);
+    elements("th", `${String(row.hour).padStart(2, "0")}:00`, tr).scope = "row";
+    for (const cell of [fixed(row.indoor_c), fixed(row.outdoor_c),
+      Number.isFinite(row.heating_percent) ? `${fixed(row.heating_percent)}%` : "—",
+      fixed(target), fixed(row.indoor_c - target), fixed(row.indoor_hours ?? row.samples)]) {
+      elements("td", cell, tr);
+    }
+  }
+}
+
+function setProfile(source, message) {
+  profileRequest++;
+  profileSource = source;
+  schedule.elements.zone.disabled = Boolean(source.hours);
+  if (source.hours) schedule.elements.zone.value = "Europe/London";
+  schedule.hidden = false;
+  get("clock-table").hidden = false;
+  get("profile-status").textContent = message;
+  renderSchedule();
+}
+
+schedule.addEventListener("submit", (event) => event.preventDefault());
+schedule.addEventListener("input", renderSchedule);
+get("monitored-profile").addEventListener("click", async () => {
+  const current = ++profileRequest;
+  get("profile-status").textContent = "Loading the monitored clock-hour profile…";
+  try {
+    const response = await fetch("docs/assets/monitored-heating-profile.json");
+    if (!response.ok) throw new Error("Profile unavailable");
+    const profile = await response.json();
+    if (current === profileRequest) setProfile(profile,
+      "HeatpumpMonitor system 3 · 8–21 January 2024 · 336 matched hourly observations. Outdoor temperatures are Manchester-area ERA5. Clock hours are UK local.");
+  } catch {
+    if (current === profileRequest) get("profile-status").textContent =
+      "The monitored profile could not be loaded. Try again or use the hourly CSV instructions.";
+  }
+});

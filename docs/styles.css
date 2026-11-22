@@ -126,3 +126,6 @@ summary { cursor: pointer; font-weight: 650; }
 pre { margin: 0; padding: .5rem; overflow: auto; background: var(--band); font-size: .78rem; }
 #meter-form + aside, .reading-card { min-width: 0; grid-template-columns: minmax(0, 1fr); }
 .meter-scroll { min-width: 0; }
+
+.meter-checkbox { display: flex; align-items: center; gap: .55rem; }
+.meter-checkbox input { width: auto; }

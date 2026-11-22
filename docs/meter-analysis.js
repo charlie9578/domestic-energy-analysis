@@ -23,7 +23,10 @@ export function parseSeries(text, kind, defaultMinutes) {
   const lines = text.replace(/^\uFEFF/, "").trim().split(/\r?\n/);
   const header = fields(lines.shift());
   const weather = kind === "weather";
-  const valueColumn = weather ? "temperature_c" : "consumption_kwh";
+  const temperature = weather || kind === "indoor";
+  const heating = kind === "heating";
+  const valueColumn = { weather: "temperature_c", indoor: "indoor_temperature_c",
+    heating: "heating_fraction" }[kind] ?? "consumption_kwh";
   const keys = ["start_utc", valueColumn];
   if (new Set(header).size !== header.length || keys.some((key) => !header.includes(key))) {
     throw new Error(`Expected unique columns including ${keys.join(", ")}.`);
@@ -50,14 +53,15 @@ export function parseSeries(text, kind, defaultMinutes) {
     seen.add(stamp);
     if (value === "") continue;
     const amount = Number(value);
-    if (!Number.isFinite(amount) || (weather ? amount < -90 || amount > 65 : amount < 0)) {
+    const [low, high] = temperature ? [-90, 65] : [0, heating ? 1 : Infinity];
+    if (!Number.isFinite(amount) || amount < low || amount > high) {
       throw new Error(`Row ${offset + 2}: invalid ${valueColumn}.`);
     }
     const flag = columns[index.publisher_interpolated] ?? "";
     if (!["", "0", "1"].includes(flag)) throw new Error(`Row ${offset + 2}: interpolation flag must be 0 or 1.`);
     const end = stamp + minutes * MINUTE;
-    const kw = weather ? null : amount / (minutes / 60);
-    if (!weather && !Number.isFinite(kw)) throw new Error(`Row ${offset + 2}: invalid power.`);
+    const kw = temperature || heating ? null : amount / (minutes / 60);
+    if (kw !== null && !Number.isFinite(kw)) throw new Error(`Row ${offset + 2}: invalid power.`);
     records.push({ start: stamp, end, amount, kw, flagged: flag === "1" });
   }
   records.sort((a, b) => a.start - b.start);
@@ -96,7 +100,7 @@ function completeDays(rows) {
     .map(([day, totals]) => [day, totals.energy]));
 }
 
-export function detectPatterns({ gas = [], electricity = [], weather = [] }) {
+export function detectPatterns({ gas = [], electricity = [], weather = [], indoor = [], heating = [] }) {
   const temperatures = new Map(weather.filter((row) => !row.flagged)
     .map((row) => [row.start, row.amount]));
   const cold = (row) => {
@@ -112,12 +116,40 @@ export function detectPatterns({ gas = [], electricity = [], weather = [] }) {
   });
   const span = (rows) => rows.at(-1).end - rows[0].start;
 
-  runs(gas, (row) => !row.flagged && row.kw >= 2 && cold(row), (block) => {
+  // A supplied activation log takes precedence wherever it covers the full interval.
+  const heatingCoverage = heating.filter((row) => !row.flagged);
+  function logged(row) {
+    let low = 0;
+    let high = heatingCoverage.length;
+    while (low < high) {
+      const middle = (low + high) >> 1;
+      if (heatingCoverage[middle].end <= row.start) low = middle + 1;
+      else high = middle;
+    }
+    let covered = row.start;
+    for (let i = low; i < heatingCoverage.length && covered < row.end; i++) {
+      if (heatingCoverage[i].start > covered) return false;
+      covered = heatingCoverage[i].end;
+    }
+    return covered >= row.end;
+  }
+  const roomByTime = new Map(indoor.filter((row) => !row.flagged).map((row) => [row.start, row.amount]));
+  runs(heating, (row) => !row.flagged && row.amount > 0, (block) => {
+    const start = block[0].start, end = block.at(-1).end;
+    const duty = block.reduce((sum, row) => sum + row.amount * (row.end - row.start), 0);
+    const before = roomByTime.get(start);
+    const after = roomByTime.get(end);
+    const room = before !== undefined && after !== undefined
+      ? ` Indoor readings at the window boundaries were ${before.toFixed(1)}°C and ${after.toFixed(1)}°C.` : "";
+    add("Recorded heating activation", block,
+      `Positive heating signal in each interval, equivalent to ${Math.round(duty / MINUTE)} active minutes in total. Exact switch times may be unavailable.${room}`);
+  });
+  runs(gas, (row) => !row.flagged && row.kw >= 2 && !logged(row) && cold(row), (block) => {
     if (block.length >= 2 && span(block) >= 90 * MINUTE) {
       add("Space-heating candidate", block, "Gas averaged at least 2 kW for 90+ minutes with matching outdoor temperatures at or below 15°C.");
     }
   });
-  runs(gas, (row) => !row.flagged && row.kw >= 2, (block) => {
+  runs(gas, (row) => !row.flagged && row.kw >= 2 && !logged(row), (block) => {
     if (!temperatures.size && block.length >= 2 && span(block) >= 90 * MINUTE) {
       add("Sustained gas use", block, "Gas averaged at least 2 kW for 90+ minutes. Add matched outdoor temperature to check for a space-heating pattern.");
     } else if (span(block) <= 45 * MINUTE) {
@@ -166,7 +198,7 @@ export function detectPatterns({ gas = [], electricity = [], weather = [] }) {
     const reference = median(mild);
     for (const [day, temperature] of weatherDays) {
       const energy = electricDays.get(day);
-      if (temperature <= 10 && energy > reference * 1.5 && energy - reference >= 2) {
+      if (!logged({ start: day, end: day + DAY }) && temperature <= 10 && energy > reference * 1.5 && energy - reference >= 2) {
         add("Cold-weather electrical demand", [{ start: day, end: day + DAY }],
           "On a day averaging 10°C or colder, electricity exceeded the median of at least seven 15°C+ days by 50% and at least 2 kWh. Electric heating is one possible cause.");
       }
@@ -177,7 +209,7 @@ export function detectPatterns({ gas = [], electricity = [], weather = [] }) {
 
 export function demoSeries() {
   const start = Date.UTC(2025, 0, 1);
-  const data = { gas: [], electricity: [], weather: [] };
+  const data = { gas: [], electricity: [], weather: [], indoor: [] };
   for (let day = 0; day < 28; day++) {
     for (let slot = 0; slot < 48; slot++) {
       const stamp = start + day * DAY + slot * HOUR / 2;
@@ -188,9 +220,39 @@ export function demoSeries() {
       for (const [fuel, amount] of Object.entries({ gas, electricity })) {
         data[fuel].push({ start: stamp, end: stamp + HOUR / 2, amount, kw: amount * 2, flagged: false });
       }
-      if (slot % 2 === 0) data.weather.push({ start: stamp, end: stamp + HOUR,
-        amount: 5 + 3 * Math.sin(slot / 48 * Math.PI * 2 - 2), flagged: false });
+      if (slot % 2 === 0) {
+        data.weather.push({ start: stamp, end: stamp + HOUR,
+          amount: 5 + 3 * Math.sin(slot / 48 * Math.PI * 2 - 2), flagged: false });
+        data.indoor.push({ start: stamp, end: stamp + HOUR,
+          amount: (away ? 16.5 : 19) + Math.sin(slot / 48 * Math.PI * 2 - 2), flagged: false });
+      }
     }
   }
   return data;
+}
+
+export function clockProfile(data, zone) {
+  const clock = new Intl.DateTimeFormat("en-GB", { timeZone: zone, hour: "2-digit", hourCycle: "h23" });
+  const bins = Array.from({ length: 24 }, (_, hour) => ({ hour, amounts: {}, counts: {} }));
+  for (const [channel, key, scale] of [
+    ["indoor", "indoor_c", 1], ["weather", "outdoor_c", 1], ["heating", "heating_percent", 100],
+  ]) {
+    for (const row of data[channel] ?? []) {
+      if (row.flagged || row.end - row.start > HOUR) continue;
+      const bin = bins[Number(clock.format(row.start))];
+      const minutes = (row.end - row.start) / MINUTE;
+      bin.amounts[key] = (bin.amounts[key] ?? 0) + row.amount * minutes * scale;
+      bin.counts[key] = (bin.counts[key] ?? 0) + minutes;
+    }
+  }
+  return bins.map(({ hour, amounts, counts }) => ({
+    hour, indoor_hours: (counts.indoor_c ?? 0) / 60,
+    ...Object.fromEntries(Object.entries(amounts).map(([key, value]) => [key, value / counts[key]])),
+  }));
+}
+
+export function scheduledTarget(hour, { dayStart, nightStart, dayTarget, nightTarget }) {
+  const daytime = dayStart < nightStart ? hour >= dayStart && hour < nightStart
+    : hour >= dayStart || hour < nightStart;
+  return daytime ? dayTarget : nightTarget;
 }

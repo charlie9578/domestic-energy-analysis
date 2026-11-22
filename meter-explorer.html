@@ -18,16 +18,19 @@
     <div class="section-heading">
       <p class="eyebrow">Smart-meter analysis</p>
       <h1 class="subpage-title">Explore household energy use</h1>
-      <p>Review gas and electricity at their recorded resolution, compare them with outdoor temperature and scan for unusual patterns. Files stay in this browser tab.</p>
+      <p>Review gas and electricity at their recorded resolution, compare them with hourly weather, and use indoor temperature and heating activation when available. Files stay in this browser tab.</p>
     </div>
 
     <div class="split">
       <form class="card" id="meter-form">
         <h2>Load your data</h2>
         <label>Electricity readings (CSV)<input type="file" name="electricity" accept=".csv,text/csv"></label>
+        <label class="meter-checkbox"><input type="checkbox" name="submeter">Electricity file is a heat-pump submeter</label>
         <label>Gas readings (CSV)<input type="file" name="gas" accept=".csv,text/csv"></label>
         <label>Hourly outdoor temperature (CSV, optional)<input type="file" name="weather" accept=".csv,text/csv"></label>
-        <label>Default meter interval (minutes)<input type="number" name="minutes" min="1" max="1440" step="1" value="30" required></label>
+        <label>Indoor temperature (CSV, optional)<input type="file" name="indoor" accept=".csv,text/csv"></label>
+        <label>Space-heating activation (CSV, optional)<input type="file" name="heating" accept=".csv,text/csv"></label>
+        <label>Default interval (minutes) (minutes)<input type="number" name="minutes" min="1" max="1440" step="1" value="30" required></label>
         <div class="actions meter-actions"><button class="button primary" type="submit">Analyse files</button><button class="button secondary" type="button" id="demo">Try synthetic demo</button></div>
       </form>
       <aside class="card">
@@ -38,11 +41,34 @@
         <p>The weather file accepts hourly ERA5 exports. Extra fields such as wind speed are ignored by the pattern rules.</p>
         <pre>start_utc,temperature_c
 2025-01-01T00:00Z,4.5</pre>
+        <p>For indoor temperature use <code>indoor_temperature_c</code>. For activation use <code>heating_fraction</code> (0 for off, 1 for on, or the share of the interval running). Match the same timestamps and include <code>duration_minutes</code> if needed.</p>
         <a href="datasets.html">Browse public datasets and weather instructions</a>
       </aside>
     </div>
     <p class="meter-status" id="status" role="status"></p>
     <noscript><p>Enable JavaScript to analyse files locally or try the synthetic demo.</p></noscript>
+
+    <section class="card reading-card" aria-labelledby="schedule-title">
+      <div class="section-heading"><h2 id="schedule-title">Indoor temperature by hour</h2>
+        <p>Compare recorded temperatures with a proposed day and night schedule. The comparison shows how observations line up with the target. It does not predict what would happen after a thermostat change.</p>
+      </div>
+      <div class="actions meter-actions"><button type="button" id="monitored-profile" class="button secondary">Load real monitored profile</button>
+        <a href="https://github.com/charlie9578/domestic-energy-analysis#monitored-indoor-temperature-example">Get the hourly CSVs</a></div>
+      <p id="profile-status" role="status">Load indoor readings or the real monitored profile to compare a schedule.</p>
+      <form id="schedule" hidden>
+        <div class="meter-controls">
+          <label>Clock time<select name="zone"><option value="Europe/London">UK local</option><option value="Europe/Berlin">Central Europe</option><option value="UTC">UTC</option></select></label>
+          <label>Day starts<input name="dayStart" type="number" min="0" max="23" value="7" required></label>
+          <label>Night starts<input name="nightStart" type="number" min="0" max="23" value="22" required></label>
+          <label>Day target (°C)<input name="dayTarget" type="number" min="5" max="30" step="0.5" value="20" required></label>
+          <label>Night target (°C)<input name="nightTarget" type="number" min="5" max="30" step="0.5" value="17" required></label>
+        </div>
+      </form>
+      <div class="meter-scroll"><table id="clock-table" hidden>
+        <thead><tr><th scope="col">Hour</th><th scope="col">Indoor °C</th><th scope="col">Outdoor °C</th><th scope="col">Heating active</th><th scope="col">Target °C</th><th scope="col">Indoor − target</th><th scope="col">Indoor coverage (h)</th></tr></thead>
+        <tbody id="clock-rows"></tbody>
+      </table></div>
+    </section>
 
     <div id="results" hidden>
       <section class="card reading-card" aria-labelledby="readings-title">
@@ -61,7 +87,7 @@
         </details>
       </section>
       <section class="card reading-card" aria-labelledby="patterns-title">
-        <div class="section-heading"><span class="tag inferred">Candidate patterns</span><h2 id="patterns-title">Pattern timeline</h2>
+        <div class="section-heading"><span class="tag inferred">Recorded and inferred</span><h2 id="patterns-title">Pattern timeline</h2>
           <p>Heat, hot water and cooking can overlap in aggregate readings. Low use can have several causes, including a holiday, and does not establish occupancy. The rules have been checked on synthetic examples and have no field accuracy estimate.</p>
         </div>
         <label class="meter-filter">Pattern type<select id="pattern"><option value="">All patterns</option></select></label>

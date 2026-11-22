@@ -1,0 +1,175 @@
+{
+  "end_exclusive_utc": "2024-01-22T00:00:00+00:00",
+  "hours": [
+    {
+      "heating_percent": 66.0,
+      "hour": 0,
+      "indoor_c": 18.86,
+      "outdoor_c": 1.52,
+      "samples": 14
+    },
+    {
+      "heating_percent": 88.3,
+      "hour": 1,
+      "indoor_c": 18.77,
+      "outdoor_c": 1.56,
+      "samples": 14
+    },
+    {
+      "heating_percent": 87.5,
+      "hour": 2,
+      "indoor_c": 18.72,
+      "outdoor_c": 1.4,
+      "samples": 14
+    },
+    {
+      "heating_percent": 75.5,
+      "hour": 3,
+      "indoor_c": 18.68,
+      "outdoor_c": 1.39,
+      "samples": 14
+    },
+    {
+      "heating_percent": 79.3,
+      "hour": 4,
+      "indoor_c": 18.64,
+      "outdoor_c": 1.44,
+      "samples": 14
+    },
+    {
+      "heating_percent": 89.7,
+      "hour": 5,
+      "indoor_c": 18.63,
+      "outdoor_c": 1.34,
+      "samples": 14
+    },
+    {
+      "heating_percent": 99.6,
+      "hour": 6,
+      "indoor_c": 18.62,
+      "outdoor_c": 1.19,
+      "samples": 14
+    },
+    {
+      "heating_percent": 95.1,
+      "hour": 7,
+      "indoor_c": 18.67,
+      "outdoor_c": 1.16,
+      "samples": 14
+    },
+    {
+      "heating_percent": 76.2,
+      "hour": 8,
+      "indoor_c": 18.75,
+      "outdoor_c": 1.21,
+      "samples": 14
+    },
+    {
+      "heating_percent": 83.7,
+      "hour": 9,
+      "indoor_c": 18.75,
+      "outdoor_c": 1.46,
+      "samples": 14
+    },
+    {
+      "heating_percent": 79.1,
+      "hour": 10,
+      "indoor_c": 18.7,
+      "outdoor_c": 2.57,
+      "samples": 14
+    },
+    {
+      "heating_percent": 70.4,
+      "hour": 11,
+      "indoor_c": 18.72,
+      "outdoor_c": 3.42,
+      "samples": 14
+    },
+    {
+      "heating_percent": 88.3,
+      "hour": 12,
+      "indoor_c": 18.8,
+      "outdoor_c": 4.06,
+      "samples": 14
+    },
+    {
+      "heating_percent": 87.9,
+      "hour": 13,
+      "indoor_c": 18.85,
+      "outdoor_c": 4.44,
+      "samples": 14
+    },
+    {
+      "heating_percent": 76.2,
+      "hour": 14,
+      "indoor_c": 18.86,
+      "outdoor_c": 4.6,
+      "samples": 14
+    },
+    {
+      "heating_percent": 72.4,
+      "hour": 15,
+      "indoor_c": 18.86,
+      "outdoor_c": 4.5,
+      "samples": 14
+    },
+    {
+      "heating_percent": 77.5,
+      "hour": 16,
+      "indoor_c": 18.87,
+      "outdoor_c": 3.94,
+      "samples": 14
+    },
+    {
+      "heating_percent": 84.7,
+      "hour": 17,
+      "indoor_c": 18.88,
+      "outdoor_c": 3.34,
+      "samples": 14
+    },
+    {
+      "heating_percent": 85.8,
+      "hour": 18,
+      "indoor_c": 18.86,
+      "outdoor_c": 3.06,
+      "samples": 14
+    },
+    {
+      "heating_percent": 90.5,
+      "hour": 19,
+      "indoor_c": 18.88,
+      "outdoor_c": 2.91,
+      "samples": 14
+    },
+    {
+      "heating_percent": 78.8,
+      "hour": 20,
+      "indoor_c": 19.0,
+      "outdoor_c": 2.76,
+      "samples": 14
+    },
+    {
+      "heating_percent": 82.3,
+      "hour": 21,
+      "indoor_c": 19.04,
+      "outdoor_c": 2.73,
+      "samples": 14
+    },
+    {
+      "heating_percent": 90.0,
+      "hour": 22,
+      "indoor_c": 19.01,
+      "outdoor_c": 2.6,
+      "samples": 14
+    },
+    {
+      "heating_percent": 55.0,
+      "hour": 23,
+      "indoor_c": 18.97,
+      "outdoor_c": 2.41,
+      "samples": 14
+    }
+  ],
+  "start_utc": "2024-01-08T00:00:00+00:00",
+  "system": 3
+}
