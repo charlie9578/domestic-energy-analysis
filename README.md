@@ -209,3 +209,7 @@ These are **research plans**, not claims that all external benchmarks have been 
 ### Studies using downloadable public household energy data
 
 The [public-data study replication shortlist](research/REPRODUCIBLE_PUBLIC_DATA_STUDIES.md) identifies published work using Low Carbon London, SMETER, REFIT, UK-DALE and a new Irish EV/PV/battery/heat-pump dataset. It distinguishes open articles from open underlying measurements, identifies directly reproducible parts, and proposes concrete held-out evaluation experiments. See also the broader [related-work survey](research/RELATED_WORK.md).
+
+## Existing dashboards, competitor products and open-source controllers
+
+Browse the [searchable dashboard/product landscape](landscape.html) on the website or read the [qualitative market review](research/DASHBOARDS_AND_COMPETITORS.md). The [57-entry CSV inventory](research/EXISTING_PRODUCTS_CATALOG.csv) covers public heat-pump and grid monitors, smart-meter consumer apps, tariff comparison, building/retrofit services, thermal MPC controllers and EV/PV/battery optimizers. Each entry distinguishes public versus account-only access, what signals are available, APIs, stated capabilities and limitations. The market inventory is a research **snapshot**, not a vendor endorsement or independently verified product comparison. Cross-check live pricing, eligibility, licences and plan terms directly with suppliers.
