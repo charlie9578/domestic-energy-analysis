@@ -22,6 +22,24 @@
     <h1 class="subpage-title">Tomorrow's consumption profile: expected vs observed</h1>
     <p>Compare a 48-point day-ahead electricity profile with the next day's real meter readings, on exactly the same held-out intervals. ERA5 is historical reanalysis, so this is a <strong>perfect-weather hindcast</strong>, not an operational forecast. Electricity import is not necessarily total household demand when solar is present.</p>
   </div>
+  <section class="card reading-card" aria-labelledby="public-study-heading">
+    <div class="section-heading">
+      <span class="tag measured">Public measured data</span>
+      <h2 id="public-study-heading">2016 household import — published ERA5 backtest</h2>
+      <p>Five CoSSMic/OPSD residential grid-import channels near Konstanz, Germany, paired with a Konstanz-area ERA5 reanalysis cell. Compare the weather regression with yesterday persistence and clock/calendar-only on the same held-out complete days. The weather is hindsight ERA5, not a forecast issued beforehand.</p>
+    </div>
+    <p id="published-status" role="status">Loading the reproducible results from the published study…</p>
+    <div class="meter-scroll"><table id="published-table" hidden>
+      <thead><tr><th>Household</th><th>Comparable days</th><th>ERA5 MAE (kWh/30 min)</th><th>Yesterday MAE</th><th>Calendar MAE</th><th>ERA5 vs yesterday</th></tr></thead>
+      <tbody id="published-rows"></tbody>
+    </table></div>
+    <div class="meter-controls">
+      <label>Published household<select id="published-home" disabled><option value="">No study data loaded</option></select></label>
+      <button class="button secondary" type="button" id="published-open" disabled>Explore its measured profile</button>
+    </div>
+    <p id="published-provenance"></p>
+    <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/DAY_AHEAD_FORECASTS.md">Reproduce the study and review exclusions</a>
+  </section>
   <div class="split">
     <form id="forecast-form" class="card">
       <h2>Backtest your data</h2>
