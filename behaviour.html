@@ -82,5 +82,21 @@
 <article class="card"><span class="tag inferred">Unverified candidate</span><h3>Unexplained shift</h3><p>A statistical scan can flag unexpected meter use changes, but an EV, immersion heater, storage heating and household routine can have overlapping signatures.</p></article>
 <article class="card"><span class="tag simulated">Hypothetical intervention</span><h3>Alternative controls and upgrades</h3><p>Thermostat and battery schedules can be simulated using heat-loss, thermal mass, COP, solar yield and prices. Comfort failure is reported separately from monetary cost.</p></article></div>
 <p style="margin-top:1.5rem"><a href="research/BEHAVIOUR_CHANGE.md">Read reproducible CLI and methods</a> · <a href="research/BEHAVIOUR_DEMO_SUMMARY.json">See labelled synthetic before/after experiment</a> · <a href="heating.html">See monitored heating and comfort research</a></p></section>
+<section class="band" id="local-report"><div class="wrap section">
+  <div class="section-heading">
+    <span class="tag measured">Local-only results reader</span>
+    <h2>Inspect your own before/after analysis</h2>
+    <p>Run the Python analysis on actual smart-meter and weather CSV files, save the resulting JSON, then open that JSON here. All file parsing and visualisation run inside your browser. No meter data are transmitted by this viewer.</p>
+  </div>
+  <article class="card">
+    <label for="report-file">Open a local analysis report (JSON, up to 10 MB)
+      <input id="report-file" type="file" accept=".json,application/json">
+    </label>
+    <p class="change-note">Supports the output of <code>python -m domestic_energy.behaviour_change evaluate</code>, <code>timeline</code>, or the labelled synthetic demonstration. This reads analysis results, not raw CSV. It must not be interpreted as verified causation.</p>
+    <p id="report-status" role="status" aria-live="polite">Choose a JSON report to view results.</p>
+  </article>
+  <div id="uploaded-results" class="change-grid" aria-label="Intervention report results" style="margin-top:1rem"></div>
+  <p style="margin-top:1rem"><a href="research/BEHAVIOUR_CHANGE.md">Command-line guide and privacy caveats</a></p>
+</div></section>
 </main><footer><div class="wrap footer-inner"><a class="brand" href="./">⌂ Domestic Energy Research</a><a href="https://github.com/charlie9578/domestic-energy-analysis">Repository and reproducibility</a></div></footer>
 </body></html>
