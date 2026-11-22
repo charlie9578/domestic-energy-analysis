@@ -7,7 +7,7 @@
   <title>Home upgrades · Domestic Energy Research</title>
   <link rel="icon" href="docs/assets/house.webp" type="image/webp">
   <link rel="stylesheet" href="docs/styles.css">
-  <script src="docs/app.js" defer></script>
+  <script src="docs/app.js" type="module"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -42,6 +42,7 @@
           <div class="card result" aria-live="polite" aria-atomic="true">
             <h3>Simulated annual bill</h3>
             <dl class="metrics"><div><dt>Existing gas boiler</dt><dd id="baseline-bill">£2,329.65</dd></div><div><dt>Selected portfolio</dt><dd id="upgrade-bill">£1,916.88</dd></div></dl>
+            <div class="research-chart bill-chart" id="upgrade-bill-chart" aria-hidden="true"></div>
             <p id="upgrade-verdict">£412.77 lower per year before installation costs.</p>
             <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/SCENARIO_STUDY.md">Full scenario table and economics</a>
           </div>

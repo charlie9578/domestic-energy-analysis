@@ -218,6 +218,67 @@ const schedule = get("schedule");
 let profileSource = null;
 let profileRequest = 0;
 
+function drawClock(canvas, lines, lower, upper, unit) {
+  const width = canvas.clientWidth;
+  if (!width) return;
+  const height = 135;
+  const density = window.devicePixelRatio || 1;
+  canvas.width = Math.round(width * density);
+  canvas.height = Math.round(height * density);
+  const ctx = canvas.getContext("2d");
+  ctx.scale(density, density);
+  const x = (hour) => 43 + hour / 24 * (width - 55);
+  const y = (value) => 105 - (value - lower) / (upper - lower) * 87;
+  ctx.font = "11px system-ui";
+  for (let tick = 0; tick <= 3; tick++) {
+    const value = lower + tick * (upper - lower) / 3;
+    ctx.fillStyle = "#d5dfd9";
+    ctx.fillRect(x(0), y(value), x(24) - x(0), 1);
+    ctx.fillStyle = "#43585a";
+    ctx.fillText(`${Number(value.toFixed(1))}${unit}`, 0, y(value) + 4);
+  }
+  for (let hour = 0; hour <= 24; hour += 6) {
+    ctx.textAlign = hour === 24 ? "right" : "center";
+    ctx.fillText(`${String(hour).padStart(2, "0")}:00`, x(hour), 126);
+  }
+  for (const { key, rows, colour, step } of lines) {
+    ctx.strokeStyle = colour;
+    ctx.fillStyle = colour;
+    ctx.lineWidth = 2;
+    const positions = new Map(rows.map((row) => [row.hour, row[key]]));
+    for (const [hour, value] of positions) {
+      if (!Number.isFinite(value)) continue;
+      ctx.fillRect(x(hour) - 1.5, y(value) - 1.5, 3, 3);
+      const next = positions.get(hour + 1);
+      ctx.beginPath();
+      ctx.moveTo(x(hour), y(value));
+      if (step) ctx.lineTo(x(hour + 1), y(value));
+      if (Number.isFinite(next)) ctx.lineTo(x(hour + 1), y(next));
+      ctx.stroke();
+    }
+  }
+}
+
+function renderClockChart(profile) {
+  const chart = get("clock-chart");
+  chart.hidden = false;
+  const values = profile.flatMap((row) => [row.indoor_c, row.target]).filter(Number.isFinite);
+  const plot = get("clock-temperature");
+  plot.hidden = !values.length;
+  if (values.length) {
+    const min = Math.floor(Math.min(...values));
+    const high = Math.max(min + 3, Math.ceil(Math.max(...values)));
+    drawClock(plot, [
+      { key: "indoor_c", rows: profile, colour: "#6e4183" },
+      { key: "target", rows: profile, colour: "#12604c", step: true },
+    ], min, high, "°C");
+  }
+  const heating = profile.some((row) => Number.isFinite(row.heating_percent));
+  get("clock-heating").hidden = !heating;
+  if (heating) drawClock(get("clock-duty"),
+    [{ key: "heating_percent", rows: profile, colour: "#957420" }], 0, 100, "%");
+}
+
 function renderSchedule() {
   if (!profileSource) return;
   const inputs = new FormData(schedule);
@@ -231,12 +292,15 @@ function renderSchedule() {
     profileSource.hours = clockProfile(profileSource.data, zone);
     profileSource.zone = zone;
   }
-  const profile = profileSource.hours;
+  const profile = profileSource.hours.map((row) => ({
+    ...row, target: valid ? scheduledTarget(row.hour, options) : NaN,
+  }));
+  renderClockChart(profile);
   const fixed = (value, digits = 1) => Number.isFinite(value) ? value.toFixed(digits) : "—";
   const body = get("clock-rows");
   body.replaceChildren();
   for (const row of profile) {
-    const target = valid ? scheduledTarget(row.hour, options) : NaN;
+    const target = row.target;
     const tr = elements("tr", "", body);
     elements("th", `${String(row.hour).padStart(2, "0")}:00`, tr).scope = "row";
     for (const cell of [fixed(row.indoor_c), fixed(row.outdoor_c),
@@ -253,11 +317,12 @@ function setProfile(source, message) {
   schedule.elements.zone.disabled = Boolean(source.hours);
   if (source.hours) schedule.elements.zone.value = "Europe/London";
   schedule.hidden = false;
-  get("clock-table").hidden = false;
+  get("clock-details").hidden = false;
   get("profile-status").textContent = message;
   renderSchedule();
 }
 
+window.addEventListener("resize", renderSchedule);
 schedule.addEventListener("submit", (event) => event.preventDefault());
 schedule.addEventListener("input", renderSchedule);
 get("monitored-profile").addEventListener("click", async () => {

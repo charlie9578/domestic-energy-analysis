@@ -129,3 +129,33 @@ pre { margin: 0; padding: .5rem; overflow: auto; background: var(--band); font-s
 
 .meter-checkbox { display: flex; align-items: center; gap: .55rem; }
 .meter-checkbox input { width: auto; }
+
+.research-chart { --chart-label: 8.5rem; display: grid; gap: .58rem; min-width: 0; margin-block: .25rem .5rem; }
+.chart-legend { display: flex; gap: .45rem 1.1rem; flex-wrap: wrap; font-size: .79rem; }
+.chart-key { display: inline-flex; align-items: center; gap: .38rem; }
+.chart-key::before { content: ""; width: .7rem; height: .58rem; border-radius: .12rem; background: var(--series); }
+.chart-group { display: grid; grid-template-columns: var(--chart-label) minmax(0, 1fr); align-items: center; gap: .6rem; }
+.chart-label { font-size: .82rem; font-weight: 650; }
+.chart-axis { display: flex; justify-content: space-between; gap: .1rem; margin-left: calc(var(--chart-label) + .6rem); font-size: .72rem; color: var(--muted); }
+.chart-stack { display: grid; gap: 3px; }
+.chart-lane { position: relative; height: .73rem; background: repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px 25%); border-right: 1px solid var(--line); }
+.chart-bar { display: block; height: 100%; border-radius: 0 .18rem .18rem 0; }
+.chart-range-lane { height: 1.45rem; }
+.chart-whisker { position: absolute; top: 50%; border-top: 2px solid #526776; }
+.chart-whisker::before, .chart-whisker::after { content: ""; position: absolute; top: -5px; height: 8px; border-left: 2px solid #526776; }
+.chart-whisker::before { left: 0; }
+.chart-whisker::after { right: 0; }
+.chart-dot { position: absolute; top: 50%; width: .56rem; height: .56rem; transform: translate(-50%, -50%); border-radius: 50%; background: #132b2e; }
+.chart-details table { margin-top: .6rem; }
+.bill-chart { --chart-label: 7rem; }
+@media (max-width: 620px) {
+  .research-chart { --chart-label: 5.1rem; }
+  .chart-label, .chart-key { font-size: .72rem; }
+  .chart-axis { font-size: .66rem; }
+}
+
+#clock-chart canvas { width: 100%; height: 135px; display: block; }
+#clock-chart canvas[hidden] { display: none; }
+.clock-indoor { --series: #6e4183; }
+.clock-target { --series: #12604c; }
+.clock-duty { --series: #957420; }

@@ -7,6 +7,7 @@
   <title>Domestic Energy Research</title>
   <link rel="icon" href="docs/assets/house.webp" type="image/webp">
   <link rel="stylesheet" href="docs/styles.css">
+  <script src="docs/charts.js" type="module"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -46,15 +47,15 @@
       <div class="section-heading"><span class="tag measured">Measured load</span><h2>Smart-meter analysis</h2><p>Five Konstanz-area households across 2016, with the short London trace retained for the British tariff example.</p><a class="button primary" href="meter-explorer.html">Open meter explorer</a></div>
       <article class="card cohort-card">
         <h3>Did ERA5 improve daily import estimates?</h3>
-        <p>Mean absolute error on held-out days from October to December 2016. Days containing a publisher-interpolated interval were excluded.</p>
-        <table><thead><tr><th scope="col">Household</th><th scope="col">Test days</th><th scope="col">Baseline (kWh/day)</th><th scope="col">ERA5 (kWh/day)</th></tr></thead>
+        <p>Mean absolute error in kWh per day on held-out days from October to December 2016. Days containing a publisher-interpolated interval were excluded.</p>
+        <details class="chart-details meter-scroll"><summary>Show exact values</summary><table data-chart="bars" data-columns="2,3" data-max="8" data-unit="kWh/day"><thead><tr><th scope="col">Household</th><th scope="col">Test days</th><th scope="col">Baseline</th><th scope="col">ERA5</th></tr></thead>
         <tbody>
           <tr><th scope="row">Residential 1</th><td>92</td><td>2.94</td><td>3.02</td></tr>
           <tr><th scope="row">Residential 2</th><td>90</td><td>3.24</td><td>2.75</td></tr>
           <tr><th scope="row">Residential 4</th><td>6</td><td>6.06</td><td>3.06</td></tr>
           <tr><th scope="row">Residential 5</th><td>92</td><td>2.17</td><td>1.30</td></tr>
           <tr><th scope="row">Residential 6</th><td>92</td><td>3.75</td><td>4.78</td></tr>
-        </tbody></table>
+        </tbody></table></details>
         <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md#one-year-of-half-hourly-household-import">Cohort methods and exclusions</a>
       </article>
       <div class="split">

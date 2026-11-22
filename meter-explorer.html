@@ -65,10 +65,18 @@
           <label>Night target (°C)<input name="nightTarget" type="number" min="5" max="30" step="0.5" value="17" required></label>
         </div>
       </form>
-      <div class="meter-scroll"><table id="clock-table" hidden>
+      <div id="clock-chart" hidden aria-hidden="true">
+        <div class="chart-legend"><span class="chart-key clock-indoor">Indoor mean</span><span class="chart-key clock-target">Proposed target</span></div>
+        <canvas id="clock-temperature"></canvas>
+        <div id="clock-heating" hidden>
+          <div class="chart-legend"><span class="chart-key clock-duty">Heating active</span></div>
+          <canvas id="clock-duty"></canvas>
+        </div>
+      </div>
+      <details class="meter-scroll chart-details" id="clock-details" hidden><summary>Show hourly values</summary><table id="clock-table">
         <thead><tr><th scope="col">Hour</th><th scope="col">Indoor °C</th><th scope="col">Outdoor °C</th><th scope="col">Heating active</th><th scope="col">Target °C</th><th scope="col">Indoor − target</th><th scope="col">Indoor coverage (h)</th></tr></thead>
         <tbody id="clock-rows"></tbody>
-      </table></div>
+      </table></details>
     </section>
 
     <div id="results" hidden>
