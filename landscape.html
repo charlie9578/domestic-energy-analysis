@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Research catalogue of public energy dashboards, tariff comparison tools, smart-meter applications, heating controllers, solar and battery products.">
+<title>Energy dashboard & product landscape · Domestic Energy Research</title>
+<link rel="icon" href="docs/assets/house.webp" type="image/webp">
+<link rel="stylesheet" href="docs/styles.css">
+<style>
+.catalog-tools{display:flex;gap:1rem;flex-wrap:wrap;align-items:end;margin:1.2rem 0}
+.catalog-tools label{display:grid;gap:.4rem;flex:1 1 16rem;font-weight:600}
+.catalog-tools input,.catalog-tools select{width:100%;padding:.7rem;border:1px solid #8b9baa;border-radius:.5rem;background:var(--surface,#fff);color:var(--text,#17212b);font:inherit}
+.landscape-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,19rem),1fr));gap:1rem}
+.landscape-card{min-width:0;border:1px solid #bbc7d1;border-radius:1rem;padding:1.2rem;background:var(--surface,#fff);overflow-wrap:anywhere}
+.landscape-card h2{font-size:1.1rem;margin:.6rem 0}
+.landscape-card p{margin:.35rem 0 .65rem}
+.landscape-card .meta{font-size:.84rem;color:var(--muted,#526070)}
+.landscape-card a{font-weight:600}
+.flag{display:inline-block;border-radius:1rem;padding:.22rem .55rem;background:#e7edf1;color:#233849;font-size:.75rem;font-weight:600}
+#count{font-weight:700}
+.catalog-tools input:focus,.catalog-tools select:focus{outline:3px solid #4d9db8;outline-offset:2px}
+@media(prefers-color-scheme:dark){.landscape-card{background:#202b35;color:#f5f7f9;border-color:#667684}.flag{background:#374958;color:#fff}.landscape-card .meta{color:#e1e5ea}.catalog-tools input,.catalog-tools select{background:#202b35;color:#f5f7f9}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="header"><div class="wrap header-inner"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a><nav aria-label="Main navigation"><a href="datasets.html">Datasets</a><a href="meter-explorer.html">Meter explorer</a><a href="heating.html">Heating</a><a href="tariffs.html">Tariffs</a><a href="upgrades.html">Upgrades</a><a href="landscape.html" aria-current="page">Landscape</a></nav></div></header>
+<main id="main" class="wrap section">
+<div class="section-heading"><h1 class="subpage-title">Energy dashboards and product landscape</h1>
+<p>Public monitoring portals, UK smart-meter apps, tariff comparison tools, heating controllers, EV charging, solar and batteries, retrofit services and open-source energy managers.</p></div>
+<article class="card">
+<h2>What this catalogue is—and is not</h2><p>These are published <strong>product claims and documented data-access routes</strong>, not independent product rankings or endorsements. A public dashboard is not automatically a public household-level dataset. Hardware, account access, licensing and prices change. No household account data is shared here.</p>
+<p><a href="research/DASHBOARDS_AND_COMPETITORS.md">Read the competitor and methodology review</a> · <a href="research/EXISTING_PRODUCTS_CATALOG.csv">Download the source-linked CSV (57 entries)</a> · <a href="research/RELATED_WORK.md">Academic studies</a></p>
+</article>
+<div class="catalog-tools">
+<label>Search names and capabilities<input id="search" type="search" autocomplete="off" placeholder="e.g. thermostat, EV, heat loss, COP, tariff"></label>
+<label>Category<select id="segment"><option value="">All categories</option><option value="public_dashboard">Public dashboards</option><option value="monitoring_app">Personal smart-meter apps</option><option value="tariff_comparison">Tariff comparison tools</option><option value="heating_control">Heat-pump and heating control</option><option value="storage_ev_control">EV / solar / battery control</option><option value="retrofit_assessment">Retrofit services</option><option value="open_source">Open-source software</option><option value="data_access">Data access / APIs</option></select></label>
+<label>Access keyword<input id="access" type="search" placeholder="e.g. public, self-hosted, hardware"></label>
+</div>
+<p id="count" role="status" aria-live="polite">Loading source catalogue…</p>
+<section id="list" class="landscape-cards" aria-label="Matching services"></section>
+<noscript><p>JavaScript is needed for search and filters. <a href="research/EXISTING_PRODUCTS_CATALOG.csv">View the full catalogue as CSV</a>.</p></noscript>
+<section class="section"><h2>Suggested independent evaluation</h2><p>Start with HeatpumpMonitor, EoH, energy-stat tariff portals, Octopus Compare, Glow/Bright, Home Assistant/EMHASS/Predbat, and independently monitored heat-pump controls. Compare identical usage, weather, DST and pricing fixtures. Demand error bars, measured outcomes and realistic comfort constraints before claiming a technology wins.</p>
+<a href="research/PRIOR_ART_REPLICATION_PLAN.md">Read the reproducibility and acceptance criteria</a></section>
+</main>
+<footer><div class="wrap footer-inner"><a class="brand" href="./">⌂ Domestic Energy Research</a><a href="https://github.com/charlie9578/domestic-energy-analysis">GitHub repository</a></div></footer>
+<script type="module">
+function csvParse(input){
+const lines=[];let row=[],cell='',quoted=false;
+for(let i=0;i<input.length;i++){const c=input[i];
+if(quoted){if(c==='"'&&input[i+1]==='"'){cell+='"';i++}else if(c==='"'){quoted=false}else cell+=c}
+else if(c==='"'){quoted=true}
+else if(c===','){row.push(cell);cell=''}
+else if(c==='\n'||c==='\r'){if(c==='\r'&&input[i+1]==='\n')i++;row.push(cell);cell='';if(row.some(x=>x.length))lines.push(row);row=[]}
+else cell+=c
+}
+if(quoted)throw Error('Malformed CSV: unmatched quote');
+if(row.length||cell){row.push(cell);if(row.some(x=>x.length))lines.push(row)}
+const [keys,...records]=lines;return records.map(cells=>Object.fromEntries(keys.map((key,i)=>[key,cells[i]??''])));
+}
+const el=id=>document.getElementById(id), container=el('list');let products=[];
+const names={public_dashboard:'Public dashboard',monitoring_app:'Personal meter app',tariff_comparison:'Tariff comparison',heating_control:'Heating control',storage_ev_control:'EV / storage control',retrofit_assessment:'Retrofit assessment',open_source:'Open-source',data_access:'Data access'};
+function render(){
+const query=el('search').value.toLowerCase().trim(),segment=el('segment').value,access=el('access').value.toLowerCase().trim();
+const filtered=products.filter(r=>(!segment||r.segment===segment)&&(!access||r.access.toLowerCase().includes(access))&&(!query||[r.name,r.data_signals,r.stated_capabilities,r.research_value,r.limitations].some(x=>x.toLowerCase().includes(query))));
+el('count').textContent=`${filtered.length} of ${products.length} services`;
+container.replaceChildren();
+for(const r of filtered){
+const card=document.createElement('article');card.className='landscape-card';
+const tag=document.createElement('span');tag.className='flag';tag.textContent=names[r.segment]||r.segment;card.append(tag);
+const title=document.createElement('h2');title.textContent=r.name;card.append(title);
+for(const [label,key] of [['What it offers','stated_capabilities'],['Access','access'],['Data','data_signals'],['Limitations','limitations']]){
+const p=document.createElement('p');const strong=document.createElement('strong');strong.textContent=label+': ';p.append(strong,document.createTextNode(r[key]||'Not independently confirmed'));card.append(p)}
+const link=document.createElement('a');link.href=r.public_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Visit provider';card.append(link);container.append(card)
+}
+}
+try{const res=await fetch('research/EXISTING_PRODUCTS_CATALOG.csv');if(!res.ok)throw Error('HTTP '+res.status);products=csvParse(await res.text());for(const id of ['search','segment','access'])el(id).addEventListener(id==='segment'?'change':'input',render);render()}catch(err){el('count').textContent='Catalogue could not be loaded in this browser ('+err.message+'). Open the CSV link above to view all entries.'}
+</script>
+</body></html>
