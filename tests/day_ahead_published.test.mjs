@@ -13,7 +13,7 @@ test("public ERA5 hindcast is source-attributed and evaluated on paired interval
   for (const entry of Object.values(summary.homes)) {
     if (!entry.methods) continue;
     assert.equal(entry.test_halfhours, entry.test_days * 48);
-    for (const method of ["era5", "calendar", "yesterday"]) {
+    for (const method of ["era5", "calendar", "yesterday", ...(entry.methods.auto_ml ? ["auto_ml"] : [])]) {
       assert.equal(entry.methods[method].interval.count, entry.test_halfhours);
       assert.equal(entry.methods[method].daily.count, entry.test_days);
     }
@@ -28,7 +28,7 @@ test("public per-home day profiles reproduce published MAE within rounding", asy
     assert.equal(detail.days.length, entry.test_days);
     const flattened = detail.days.flatMap((day) => day.points);
     assert.equal(flattened.length, entry.test_halfhours);
-    for (const method of ["era5", "calendar", "yesterday"]) {
+    for (const method of ["era5", "calendar", "yesterday", ...(entry.methods.auto_ml ? ["auto_ml"] : [])]) {
       const mae = flattened.reduce((s, row) => s + Math.abs(row[method] - row.actual), 0) / flattened.length;
       assert.ok(Math.abs(mae - entry.methods[method].interval.mae_kwh) < 0.00002,
         home + " " + method + " summary MAE inconsistent with published trace");
@@ -37,5 +37,16 @@ test("public per-home day profiles reproduce published MAE within rounding", asy
     const dates = detail.days.map((day) => day.date);
     assert.equal(dates.length, new Set(dates).size);
     assert.ok(dates.every((day) => day >= detail.test_start && day <= detail.test_end));
+  }
+});
+
+test("AutoML was selected using historical folds and saved per household", () => {
+  for (const entry of Object.values(summary.homes)) {
+    if (!entry.methods?.auto_ml) continue;
+    assert.ok(entry.auto_ml_selection);
+    assert.ok(entry.auto_ml_selection.candidate_count === 11);
+    assert.ok(entry.auto_ml_selection.fold_details.every((fold) =>
+      fold.validation_end <= entry.train_end));
+    assert.ok(entry.auto_ml_selection.chosen_id);
   }
 });
