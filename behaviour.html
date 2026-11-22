@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Explore how changes in thermostat setting, EV ownership and solar panels affect expected household energy and bills; see weather-normalised research methods.">
+<title>Changes over time · Domestic Energy Research</title>
+<link rel="icon" href="docs/assets/house.webp" type="image/webp">
+<link rel="stylesheet" href="docs/styles.css">
+<script src="docs/behaviour.js" type="module"></script>
+<style>
+.change-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));gap:1rem}
+.change-card{min-width:0}.change-card h2{font-size:1.9rem}.change-card [hidden]{display:none!important}.change-card label{margin-bottom:.55rem}
+.change-card output{font-weight:700;margin-inline-start:.5rem}
+.change-card input[type=range]{accent-color:#12604c;padding:0;width:100%}
+.change-output{margin-top:.4rem;font-weight:750;color:var(--green);font-size:1.17rem}
+.change-note{font-size:.84rem;line-height:1.5}
+.compare-row{display:grid;grid-template-columns:7rem 1fr 6rem;align-items:center;gap:.4rem}
+.compare-row>span:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.track{background:#dfe9e1;border-radius:3rem;height:.72rem;overflow:hidden}
+.track div{height:100%;background:#21745c;border-radius:3rem;transition:width .15s}
+.field-inline{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.field-inline input{width:5.5rem}
+#change-error{color:#a32121;font-weight:700}
+@media(max-width:700px){.compare-row{grid-template-columns:5rem 1fr 5.4rem}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="header"><div class="wrap header-inner"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a><nav aria-label="Main navigation"><a href="datasets.html">Datasets</a><a href="meter-explorer.html">Meter explorer</a><a href="heating.html">Heating</a><a href="tariffs.html">Tariffs</a><a href="upgrades.html">Upgrades</a><a href="behaviour.html" aria-current="page">Changes over time</a><a href="landscape.html">Landscape</a></nav></div></header>
+<main id="main">
+<section class="wrap section">
+<div class="section-heading"><span class="tag simulated">Interactive assumptions, not measured savings</span>
+<h1 class="subpage-title">How households change over time</h1>
+<p>Turning down the thermostat, buying an EV and installing solar PV can change the amount, timing and source of energy shown on a smart meter. Explore their differences. These sliders are simplified <strong>what-if scenarios</strong> and are not calibrated forecasts for any real home.</p></div>
+<article class="card"><h2>Observed versus expected</h2>
+<p>To measure an actual change, we need an intervention date, half-hour meter records, historical local weather, enough complete pre/post days, the correct meter boundary and—ideally—verified thermostat, charger or PV instrumentation. The research backend trains on <em>pre-event</em> data and compares a weather-adjusted expectation with <em>post-event</em> measurements, while showing model validation and competing causes.</p>
+<p><strong>Important:</strong> a lower electricity <em>import</em> after solar installation is not evidence that household appliance demand fell. Extra import after EV adoption does not prove EV charging without a charger meter. A meter trace cannot reveal a precise thermostat setpoint or holiday.</p>
+<a href="research/BEHAVIOUR_CHANGE.md">Research method, code, data schema and caveats</a></article>
+</section>
+<section class="band"><div class="wrap section">
+<div class="section-heading"><h2>Test a change</h2><p>Illustrative physical arithmetic at your chosen prices—not tariff quotes, field measurements or a full thermal simulation. Edit any input to update results.</p></div>
+<form id="change-controls" class="change-grid">
+<article class="card change-card"><h2>1. Thermostat change</h2>
+<p>Ideal steady-state heat loss at one constant outdoor temperature. Real homes have solar/internal gains, thermal inertia, heating schedules and boiler/heat-pump cycling.</p>
+<label>Before <output id="thermostat-from-value" for="thermostat-from">25°C</output><input id="thermostat-from" type="range" min="14" max="28" step="1" value="25"></label>
+<label>After <output id="thermostat-to-value" for="thermostat-to">22°C</output><input id="thermostat-to" type="range" min="14" max="28" step="1" value="22"></label>
+<label>Outdoor temperature <output id="outdoor-value" for="outdoor">5°C</output><input id="outdoor" type="range" min="-10" max="23" value="5"></label>
+<label>Heat loss <output id="heat-loss-value" for="heat-loss">200 W/K</output><input id="heat-loss" type="range" min="80" max="450" step="10" value="200"></label>
+<label>Heating hours <output id="heated-hours-value" for="heated-hours">14 h</output><input id="heated-hours" type="range" min="0" max="24" value="14"></label>
+<label>Heat source<select id="fuel"><option value="gas">Gas boiler</option><option value="heatpump">Heat pump</option><option value="resistive">Direct electric resistance</option></select></label>
+<label id="boiler-eff-label">Gas boiler efficiency <output id="boiler-eff-value" for="boiler-eff">85%</output><input id="boiler-eff" type="range" min="65" max="98" value="85"></label>
+<label id="heatpump-cop-label" hidden>Heat-pump illustrative COP <output id="heatpump-cop-value" for="heatpump-cop">3.2</output><input id="heatpump-cop" type="range" min="1.5" max="5" step="0.1" value="3.2"></label>
+<div class="field-inline"><label>Gas price (p/kWh)<input id="gas-price" type="number" min="0" max="200" step=".1" value="8"></label><label>Electricity (p/kWh)<input id="elec-price" type="number" min="0" max="200" step=".1" value="26"></label></div>
+<p>Approximate <span id="heat-fuel-label">gas input</span>:</p>
+<div class="compare-row"><span>Before</span><div class="track"><div id="heating-bar-before"></div></div><span id="heating-before">—</span></div>
+<div class="compare-row"><span>After</span><div class="track"><div id="heating-bar-after"></div></div><span id="heating-after">—</span></div>
+<p class="change-output" id="heating-difference">—</p><p id="heating-money">—</p>
+<p class="change-note">Fixed outdoor temperature for each assumed heating hour. 30-day value is not a heating-season or annual estimate. No standing-charge change.</p>
+</article>
+<article class="card change-card"><h2>2. Buying an EV</h2><p>An EV adds electrical demand, but timing, PV self-consumption, charging away from home and tariff scheduling determine the bill.</p>
+<label>Weekly mileage <output id="ev-miles-value" for="ev-miles">150 miles</output><input id="ev-miles" type="range" min="0" max="500" step="10" value="150"></label>
+<label>Charged at home <output id="ev-at-home-value" for="ev-at-home">100%</output><input id="ev-at-home" type="range" min="0" max="100" step="5" value="100"></label>
+<label>Off-peak charging <output id="ev-offpeak-value" for="ev-offpeak-share">80%</output><input id="ev-offpeak-share" type="range" min="0" max="100" step="5" value="80"></label>
+<div class="field-inline"><label>kWh/mile<input id="ev-kwh-mile" type="number" min=".1" max="1" step=".01" value=".28"></label><label>Charge efficiency (%)<input id="ev-eff" type="number" min="50" max="100" step="1" value="90"></label><label>Night p/kWh<input id="night-price" type="number" min="-10" max="200" step=".1" value="10"></label></div>
+<p class="change-output" id="ev-annual-energy">—</p><p id="ev-annual-cost">—</p><p id="ev-cheap">—</p>
+<p class="change-note">52 equal-mileage weeks, 90% charger efficiency initially, no vehicle purchase cost or public charging cost. Uses the daytime electricity price set in the thermostat card. EV charging may be partly covered by PV or onsite battery, not modelled here.</p></article>
+<article class="card change-card"><h2>3. Installing solar panels</h2>
+<p>Solar generation reduces measured grid import when self-consumed, while exported electricity may earn separate revenue. Actual household demand need not change.</p>
+<label>PV size <output id="pv-size-value" for="pv-kwp">4 kWp</output><input id="pv-kwp" type="range" min="0" max="15" step=".5" value="4"></label>
+<label>PV directly used <output id="pv-self-value" for="pv-self">45%</output><input id="pv-self" type="range" min="0" max="100" step="5" value="45"></label>
+<div class="field-inline"><label>Annual kWh per kWp<input id="pv-yield" type="number" min="100" max="1500" step="25" value="900"></label><label>Annual home use (kWh)<input id="annual-baseline" type="number" min="0" max="250000" step="100" value="3500"></label><label>Export p/kWh<input id="export-price" type="number" min="-10" max="200" step=".1" value="12"></label></div>
+<p class="change-output" id="pv-generation">—</p>
+<div class="compare-row"><span>Grid before</span><div class="track"><div id="pv-bar-before"></div></div><span id="pv-baseline-label">100%</span></div>
+<div class="compare-row"><span>Grid after</span><div class="track"><div id="pv-bar-after"></div></div><span id="pv-reduced-label">varies</span></div>
+<p id="pv-grid-import">—</p><p class="change-output" id="pv-benefit">—</p><p id="pv-breakdown">—</p>
+<p class="change-note">Annual solar yield and self-use are user assumptions. Excludes installation, degradation, financing, inverter, battery, PV seasonality and export eligibility. Import reduction is capped by assumed home electricity demand.</p></article>
+</form><p id="change-error" role="alert" aria-live="polite"></p>
+</div></section>
+<section class="wrap section"><div class="section-heading"><h2>What can we discover from a real household?</h2>
+<p>With enough data, we can estimate whether consumption changed, how the change evolves over several months, and how much of the difference is explained by weather. Pinning down <em>why</em> it changed requires verified intervention records or additional sensors.</p></div>
+<div class="change-grid"><article class="card"><span class="tag measured">Measured-data analysis</span><h3>Weather-normalised before and after</h3><p>A pre-change model predicts the later period without training on the change. We report held-out pre-change error, temperature extrapolation, missing days and 30-day persistence.</p></article>
+<article class="card"><span class="tag inferred">Unverified candidate</span><h3>Unexplained shift</h3><p>A statistical scan can flag unexpected meter use changes, but an EV, immersion heater, storage heating and household routine can have overlapping signatures.</p></article>
+<article class="card"><span class="tag simulated">Hypothetical intervention</span><h3>Alternative controls and upgrades</h3><p>Thermostat and battery schedules can be simulated using heat-loss, thermal mass, COP, solar yield and prices. Comfort failure is reported separately from monetary cost.</p></article></div>
+<p style="margin-top:1.5rem"><a href="research/BEHAVIOUR_CHANGE.md">Read reproducible CLI and methods</a> · <a href="research/BEHAVIOUR_DEMO_SUMMARY.json">See labelled synthetic before/after experiment</a> · <a href="heating.html">See monitored heating and comfort research</a></p></section>
+</main><footer><div class="wrap footer-inner"><a class="brand" href="./">⌂ Domestic Energy Research</a><a href="https://github.com/charlie9578/domestic-energy-analysis">Repository and reproducibility</a></div></footer>
+</body></html>
