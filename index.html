@@ -14,7 +14,7 @@
   <header class="header">
     <div class="wrap header-inner">
       <a class="brand" href="#home"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a>
-      <nav aria-label="Main navigation"><a href="datasets.html">Datasets</a><a href="meter-explorer.html">Meter explorer</a><a href="heating.html">Heating</a><a href="tariffs.html">Tariffs</a><a href="upgrades.html">Home upgrades</a><a href="behaviour.html">Changes over time</a><a href="landscape.html">Landscape</a></nav>
+      <nav aria-label="Main navigation"><a href="datasets.html">Datasets</a><a href="meter-explorer.html">Meter explorer</a><a href="day-ahead.html">Day-ahead forecast</a><a href="heating.html">Heating</a><a href="tariffs.html">Tariffs</a><a href="upgrades.html">Home upgrades</a><a href="behaviour.html">Changes over time</a><a href="landscape.html">Landscape</a></nav>
     </div>
   </header>
 
@@ -37,6 +37,7 @@
       <div class="topic-grid">
         <a class="topic" id="datasets" href="datasets.html"><span class="topic-icon" aria-hidden="true">▤</span><div><h3>Public datasets</h3><p>Meter readings, weather and equipment records</p></div><span class="arrow" aria-hidden="true"></span></a>
         <a class="topic" href="meter-explorer.html"><span class="topic-icon" aria-hidden="true">∿</span><div><h3>Smart meters</h3><p>Inspect gas, electricity, temperature and recorded heating</p></div><span class="arrow" aria-hidden="true"></span></a>
+        <a class="topic" href="day-ahead.html"><span class="topic-icon" aria-hidden="true">◷</span><div><h3>Day-ahead forecasts</h3><p>ERA5 temperature regression vs yesterday persistence; compare expected and actual 30-minute profiles</p></div><span class="arrow" aria-hidden="true"></span></a>
         <a class="topic" id="heating" href="heating.html"><span class="topic-icon" aria-hidden="true">☷</span><div><h3>Heating</h3><p>Heat loss, heat pumps and thermostat schedules</p></div><span class="arrow" aria-hidden="true"></span></a>
         <a class="topic" id="tariffs" href="tariffs.html"><span class="topic-icon" aria-hidden="true">£</span><div><h3>Tariffs</h3><p>Forecast demand and test tariff or load changes</p></div><span class="arrow" aria-hidden="true"></span></a>
         <a class="topic" id="upgrades" href="upgrades.html"><span class="topic-icon" aria-hidden="true">⌂</span><div><h3>Home upgrades</h3><p>Solar, insulation, storage and heat pumps</p></div><span class="arrow" aria-hidden="true"></span></a>
@@ -46,7 +47,7 @@
     </section>
 
     <section class="wrap section" id="smart-meters">
-      <div class="section-heading"><span class="tag measured">Measured load</span><h2>Smart-meter analysis</h2><p>Five Konstanz-area households across 2016, with the short London trace retained for the British tariff example.</p><a class="button primary" href="meter-explorer.html">Open meter explorer</a></div>
+      <div class="section-heading"><span class="tag measured">Measured load</span><h2>Smart-meter analysis</h2><p>Five Konstanz-area households across 2016, with the short London trace retained for the British tariff example.</p><a class="button primary" href="meter-explorer.html">Open meter explorer</a><a class="button secondary" href="day-ahead.html">Test day-ahead forecasts</a></div>
       <article class="card cohort-card">
         <h3>Did ERA5 improve daily import estimates?</h3>
         <p>Mean absolute error in kWh per day on held-out days from October to December 2016. Days containing a publisher-interpolated interval were excluded.</p>
