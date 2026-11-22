@@ -67,3 +67,108 @@ if(typeof document!=='undefined'){
  const form=el('change-controls');
  if(form){form.addEventListener('submit',event=>event.preventDefault());form.addEventListener('input',render);form.addEventListener('change',render);render()}
 }
+
+
+/** Turn a local Python report into safe display records. Never treats the
+ * estimated association as causal and never sends local files to a server. */
+export function summariseInterventionReport(input){
+ if(!input || typeof input !== 'object' || Array.isArray(input))throw Error('Expected a JSON results object');
+ let records=[];
+ if(typeof input.event_date==='string')records=[input];
+ else if(Array.isArray(input.results))records=input.results;
+ else if(input.sequential && Array.isArray(input.sequential.results))records=input.sequential.results;
+ else if(input.sequential_interventions && Array.isArray(input.sequential_interventions.results))records=input.sequential_interventions.results;
+ else if(input.examples && typeof input.examples==='object')records=Object.values(input.examples);
+ else if(input.single_event_scenarios && typeof input.single_event_scenarios==='object')records=Object.values(input.single_event_scenarios);
+ else throw Error('No intervention results found. Export from behaviour_change evaluate/timeline or run_behaviour_study.');
+ if(!records.length)throw Error('This file has no intervention records.');
+ return records.map((r,i)=>{
+  if(!r || typeof r!=='object')throw Error('Malformed result '+i);
+  const hasEstimate=Number.isFinite(r.deviation_observed_minus_expected_kwh) &&
+                    Number.isFinite(r.deviation_kwh_per_observed_day);
+  const warnings=Array.isArray(r.warnings)?r.warnings.filter(w=>typeof w==='string'):[];
+  const bins=Array.isArray(r.change_over_time_30_day_bins)?
+   r.change_over_time_30_day_bins.filter(b=>Number.isFinite(b.deviation_kwh_per_observed_day)&&
+       Number.isFinite(b.days_since_event_start)):[];
+  return {
+    eventDate:typeof r.event_date==='string'?r.event_date:'Unknown',
+    eventType:typeof r.event_type==='string'?r.event_type:Array.isArray(r.event_types)?r.event_types.join(' + '):'Unknown',
+    status:hasEstimate?'Descriptive association only':String(r.status||'Not assessable'),
+    meterBoundary:String(r.meter_boundary||input.meter_boundary||'Not specified'),
+    beforeDays:Number.isInteger(r.n_pre_days)?r.n_pre_days:null,
+    afterDays:Number.isInteger(r.n_post_days)?r.n_post_days:null,
+    baseline:hasEstimate&&Number.isFinite(r.weather_adjusted_expected_post_kwh)?r.weather_adjusted_expected_post_kwh:null,
+    observed:hasEstimate&&Number.isFinite(r.observed_post_kwh)?r.observed_post_kwh:null,
+    delta:hasEstimate?r.deviation_observed_minus_expected_kwh:null,
+    deltaPerDay:hasEstimate?r.deviation_kwh_per_observed_day:null,
+    validationMae:r.validation&&Number.isFinite(r.validation.validation_mae_kwh_day)?r.validation.validation_mae_kwh_day:null,
+    reliability:String(r.reliability_flag||'Check underlying model and input metadata'),
+    warnings,bins,
+    explanation:String(r.explanation||'The baseline is modelled from pre-event data; this is not a causal savings estimate.')
+  };
+ });
+}
+function showLocalReport(raw){
+ const root=el('uploaded-results');if(!root)return;
+ root.replaceChildren();
+ const records=summariseInterventionReport(raw);
+ const title=document.createElement('p');
+ title.textContent=raw.provenance||raw.dataset_classification||'Source label not supplied. Confirm whether data are measured or synthetic.';
+ root.append(title);
+ for(const record of records){
+  const card=document.createElement('article');card.className='card';
+  const heading=document.createElement('h3');
+  heading.textContent=record.eventDate+' · '+record.eventType+' · '+record.status;card.append(heading);
+  const detail=document.createElement('p');
+  detail.textContent='Meter: '+record.meterBoundary+' · Days before/after: '+
+    (record.beforeDays??'—')+'/'+(record.afterDays??'—')+' · Reliability: '+record.reliability;
+  card.append(detail);
+  if(record.delta!==null){
+   const line=document.createElement('p');
+   line.textContent='Measured minus weather-expected: '+fmt(record.delta)+' kWh across recorded post days ('+
+     fmt(record.deltaPerDay,2)+' kWh per observed day). Pre-event validation MAE: '+
+     (record.validationMae!==null?fmt(record.validationMae,2)+' kWh/day':'not available')+'.';
+   card.append(line);
+   const summary=document.createElement('p');
+   summary.textContent='Expected post: '+fmt(record.baseline)+' kWh; observed post: '+fmt(record.observed)+' kWh.';
+   card.append(summary);
+  }else{
+   const reason=document.createElement('p');reason.textContent=record.explanation;card.append(reason);
+  }
+  if(record.bins.length){
+   const table=document.createElement('table'),head=document.createElement('thead'),row=document.createElement('tr');
+   for(const h of ['Days since change','Difference (kWh/day)']){
+    const th=document.createElement('th');th.textContent=h;row.append(th)
+   }
+   head.append(row);table.append(head);
+   const body=document.createElement('tbody');
+   for(const bin of record.bins){
+    const tr=document.createElement('tr');
+    for(const value of [bin.days_since_event_start+'–'+(bin.days_since_event_start+29),
+                         fmt(bin.deviation_kwh_per_observed_day,2)]){
+      const td=document.createElement('td');td.textContent=value;tr.append(td)
+    }
+    body.append(tr);
+   }
+   table.append(body);card.append(table);
+  }
+  if(record.warnings.length){
+   const h=document.createElement('p');h.textContent='Warnings: '+record.warnings.join(' · ');card.append(h)
+  }
+  root.append(card);
+ }
+}
+if(typeof document!=='undefined'){
+ const upload=el('report-file');
+ if(upload)upload.addEventListener('change',async()=>{
+   const status=el('report-status');
+   const file=upload.files?.[0];
+   if(!file){status.textContent='No file selected.';el('uploaded-results').replaceChildren();return}
+   if(file.size>10*1024*1024){status.textContent='File too large (10 MB local viewer limit).';return}
+   try{
+    const report=JSON.parse(await file.text());
+    showLocalReport(report);
+    status.textContent='Loaded locally from '+file.name+'. No data transmitted by this viewer.';
+   }catch(err){el('uploaded-results').replaceChildren();status.textContent='Cannot read report: '+err.message}
+ });
+}
