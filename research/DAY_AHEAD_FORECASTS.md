@@ -6,7 +6,7 @@ This study tests next-day grid-import profiles on **measured** CoSSMic / OPSD ho
 
 [Open Power System Data Household Data (2020-04-15)](https://data.open-power-system-data.org/household_data/2020-04-15/) provides cumulative quarter-hourly residential grid-import counters (CC BY 4.0). Counter differences form 30-minute energy intervals. Five Konstanz households (residential1, 2, 4, 5 and 6) cover 2016. Publisher interpolation flags carry into derived readings. [Open-Meteo historical ERA5](https://open-meteo.com/en/docs/historical-weather-api) supplies gridded 2m outdoor temperature for 47.6603 N, 9.1758 E, one regional proxy for all five homes. Grid import is not gross household demand where solar self-consumption is present.
 
-Days use the Europe/Berlin civil clock. Only complete **48 × 30-minute** days with unflagged meter readings and hourly weather qualify. Partial days, publisher-interpolated intervals, weather gaps and the 23/25-hour daylight-saving days are excluded, never treated as zero. This excludes many days for residential4, leaving a small, potentially highly selected test sample.
+Days use the Europe/Berlin civil clock. Only complete **48 × 30-minute** days with unflagged meter readings and hourly weather qualify. Partial days, publisher-interpolated intervals, weather gaps and the 23/25-hour daylight-saving days are excluded, never treated as zero. This excludes many days for residential4, leaving a small, potentially highly selected test sample; the guarded selector therefore uses persistence if the earlier training-validation period contains fewer than 40 paired days.
 
 ## Models and backtest
 
@@ -15,12 +15,13 @@ Per home, sort complete eligible days chronologically. Fit on the earlier 80%, t
 1. **ERA5 regression:** learn average energy for each of 48 local half-hours and weekday/weekend, plus a pooled regularised temperature slope fitted on within-slot residuals. Predicted negative energy is clipped to zero.
 2. **Calendar-only:** the same trained time-of-day/weekday model, no weather effect.
 3. **Yesterday persistence:** copy all 48 readings from the preceding complete local day (the zero-order hold).
+4. **Guarded AutoML selection:** choose from eleven predeclared low-complexity candidates: the three models above, fixed blends of their predictions, and yesterday's profile with a conservative temperature adjustment. This is an AutoML-style selection search, not an unconstrained black-box fit. Each model is assessed using three expanding-window validation blocks inside the training partition. More complex candidates qualify only with at least 40 paired training-validation days across all three folds, lower mean MAE by at least **3% and one paired-fold standard error** relative to the best simple model, and improvement in at least two folds. Otherwise retain the best simple model, or use yesterday persistence when validation is sparse. Freeze this choice before final evaluation.
 
-This is a frozen chronological split (not walk-forward re-fitting). No held-out target enters model fitting. Score MAE, RMSE, signed bias and predictive R² on kWh/half-hour, plus daily-total MAE and bias (kWh/day). Regress held-out **observed on predicted** for calibration slope, intercept and correlation R²; distinguish this from predictive R². All scores use the same test days. No statistical confidence intervals are claimed, and the results may not transfer to other buildings, years or future issued forecasts.
+This is a frozen chronological split (not walk-forward re-fitting). No held-out target enters model fitting. Score MAE, RMSE, signed bias and predictive R² on kWh/half-hour, plus daily-total MAE and bias (kWh/day). Regress held-out **observed on predicted** for calibration slope, intercept and correlation R²; distinguish this from predictive R². All scores use the same test days. The paired-fold standard-error guard is a conservative selection heuristic, **not a confidence interval or proof of generalisation**. Even passing it does not guarantee a better independent test result. No statistical confidence intervals are claimed, and the results may not transfer to other buildings, years or future issued forecasts.
 
 ## Measured results
 
-The following published numbers derive from the source-hashed 2016 dataset, as calculated by `scripts/run_day_ahead.mjs`. All three MAEs are **kWh per half-hour**; smaller is better.
+The original baseline numbers below derive from the source-hashed 2016 dataset. The current, additional AutoML test MAE and selected model per home are reported by the [live machine-readable results](../docs/assets/day-ahead/summary.json) and the interactive page. The AutoML result is genuinely out-of-sample: it is **not** chosen using its own test error. All MAEs are **kWh per half-hour**; smaller is better.
 
 | Household | Paired test days | ERA5-regression MAE | Calendar-only MAE | Yesterday MAE |
 | --- | ---: | ---: | ---: | ---: |
@@ -41,9 +42,13 @@ From repository root (Python 3.11+, Node 24, internet access to the public data 
 ```bash
 python -m scripts.prepare_day_ahead
 node scripts/run_day_ahead.mjs
-node --test tests/day_ahead.test.mjs
+node --test tests/day_ahead.test.mjs tests/day_ahead_published.test.mjs
 ```
 
 The Python script downloads the source OPSD quarter-hour file and ERA5 observations (2015-12-31 to 2017-01-01 UTC), converts to local-day-aligned half-hour channels under `data/derived/`, and writes a hash manifest. The Node script produces `docs/assets/day-ahead/summary.json` and one `residential*.json` full held-out trace per household. Raw data live under the ignored `data/` directory; no private meter data should be committed. The [automated workflow](../.github/workflows/day-ahead-data.yml) runs on relevant changes to `main` and commits these outputs directly; it fails on unavailable sources instead of inventing data.
 
 Future validation should substitute **archived forecast weather with a known day-ahead issue time** and test rolling re-fits, a seven-day persistence benchmark, and error uncertainty by consecutive week.
+
+## Overfitting controls and remaining limits
+
+The final 20% holdout is never used for feature, model or hyperparameter selection. The candidate list and blend weights are fixed in source code; we do not search hundreds of parameter values on one small home. The three validation windows are ordered in time and use only earlier observations. A simple baseline is preferred unless a more complex candidate clears a minimum evidence threshold. The model label, validation fold dates, selection rule, candidate validation MAEs and held-out MAE are published separately in each home result. These are **retrospective** tests with hindsight ERA5 weather, not real forecasts. A full operational test additionally needs weather forecasts archived by issuance time and another independent period or new homes.
