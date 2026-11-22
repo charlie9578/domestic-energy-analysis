@@ -30,7 +30,7 @@
     </div>
     <p id="published-status" role="status">Loading the reproducible results from the published study…</p>
     <div class="meter-scroll"><table id="published-table" hidden>
-      <thead><tr><th>Household</th><th>Comparable days</th><th>ERA5 MAE (kWh/30 min)</th><th>Yesterday MAE</th><th>Calendar MAE</th><th>ERA5 vs yesterday</th></tr></thead>
+      <thead><tr><th>Household</th><th>Comparable days</th><th>ERA5 MAE (kWh/30 min)</th><th>Yesterday MAE</th><th>Calendar MAE</th><th>Guarded AutoML MAE</th><th>AutoML choice</th><th>ERA5 vs yesterday</th></tr></thead>
       <tbody id="published-rows"></tbody>
     </table></div>
     <div class="meter-controls">
@@ -38,6 +38,7 @@
       <button class="button secondary" type="button" id="published-open" disabled>Explore its measured profile</button>
     </div>
     <p id="published-provenance"></p>
+    <p>AutoML compares 11 fixed transparent candidates using earlier expanding-window validation only. A more complex blend must clear the 3% and one-standard-error guard over the best simple baseline.</p>
     <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/DAY_AHEAD_FORECASTS.md">Reproduce the study and review exclusions</a>
   </section>
   <div class="split">
@@ -52,7 +53,7 @@
     <aside class="card">
       <h2>Inputs and fair comparison</h2>
       <p>Meter: <code>start_utc,consumption_kwh,duration_minutes,publisher_interpolated</code> (the last column is optional). Weather: <code>start_utc,temperature_c</code>. UTC timestamps must carry <code>Z</code> or an offset.</p>
-      <p>The temperature regression learns 48 half-hour × weekday/weekend average profiles and a pooled within-slot temperature slope. The calendar-only control uses the same profile with slope zero. Yesterday's zero-order hold copies each of the previous local day's 48 values.</p>
+      <p>The guarded AutoML chooses among 11 low-complexity calendar, weather, yesterday and fixed-blend models using expanding-window validation only within earlier training days. Its choice is frozen for the final test. The temperature regression learns 48 half-hour × weekday/weekend average profiles and a pooled within-slot temperature slope. The calendar-only control uses the same profile with slope zero. Yesterday's zero-order hold copies each of the previous local day's 48 values.</p>
       <p>Missing/flagged readings, weather gaps and 23/25-hour local days are excluded: no interpolation or hidden zero-filling. Only the next-day target uses held-out readings. Download ERA5 with <a href="https://github.com/charlie9578/domestic-energy-analysis#hourly-historical-weather">the repository weather command</a>.</p>
     </aside>
   </div>
@@ -64,7 +65,7 @@
         <thead><tr><th>Model</th><th>Half-hour MAE (kWh)</th><th>Half-hour RMSE</th><th>Half-hour R²</th><th>Daily total MAE (kWh)</th><th>Daily total bias (kWh)</th></tr></thead>
         <tbody id="forecast-scores"></tbody>
       </table></div>
-      <p id="forecast-exclusions"></p>
+      <p id="forecast-selection"></p><p id="forecast-exclusions"></p>
     </section>
     <section class="card reading-card">
       <div class="section-heading"><h2>One day: prediction vs reality</h2><p>Select a held-out day to see the profile made without using that day's readings.</p></div>
@@ -72,10 +73,10 @@
         <label>Held-out local date<select id="forecast-day"></select></label>
         <button class="button secondary" type="button" id="forecast-export">Download backtest CSV</button>
       </div>
-      <div class="forecast-legend"><span class="forecast-actual">Observed</span><span class="forecast-era5">ERA5 regression</span><span class="forecast-calendar">Clock/calendar only</span><span class="forecast-yesterday">Yesterday hold</span></div>
+      <div class="forecast-legend"><span class="forecast-actual">Observed</span><span class="forecast-era5">ERA5 regression</span><span class="forecast-calendar">Clock/calendar only</span><span class="forecast-yesterday">Yesterday hold</span><span class="forecast-automl">AutoML selected</span></div>
       <figure><canvas id="forecast-curve" width="900" height="320" role="img" aria-label="Half-hourly demand line plot"></canvas><figcaption class="forecast-caption" id="forecast-caption"></figcaption></figure>
       <p id="forecast-day-summary"></p>
-      <details class="meter-scroll"><summary>Show half-hour values</summary><table><thead><tr><th>Local time</th><th>Actual</th><th>ERA5 regression</th><th>Calendar</th><th>Yesterday</th><th>ERA5 °C</th></tr></thead><tbody id="forecast-values"></tbody></table></details>
+      <details class="meter-scroll"><summary>Show half-hour values</summary><table><thead><tr><th>Local time</th><th>Actual</th><th>ERA5 regression</th><th>Calendar</th><th>Yesterday</th><th>AutoML</th><th>ERA5 °C</th></tr></thead><tbody id="forecast-values"></tbody></table></details>
     </section>
     <section class="card reading-card">
       <div class="section-heading"><h2>Calibration regressions: actual vs predicted</h2><p>OLS slopes and intercepts use held-out data only for diagnostics, not model fitting. Ideal slope = 1 and intercept = 0; R² here measures calibration correlation, not predictive R².</p></div>
@@ -89,7 +90,7 @@
   </div>
   <section class="card reading-card">
     <h2>Interpretation and next steps</h2>
-    <p>This is a frozen chronological train/test split, not a rolling re-fit. The weather model is only as good as the weather supplied; hindsight ERA5 may overstate day-ahead skill. Its performance should be compared with yesterday persistence and calendar-only expectations on paired complete days, and later with archived forecast weather at known issue times. Separate gas, whole-home electricity and heat-pump electricity require separate fits and score tables.</p>
+    <p>This is a frozen chronological train/test split, not a rolling re-fit. Model search uses three expanding-window training-only validation blocks, compares candidates on identical slots and requires material, consistent improvement for more complex blends. The weather model is only as good as the weather supplied; hindsight ERA5 may overstate day-ahead skill. Its performance should be compared with yesterday persistence and calendar-only expectations on paired complete days, and later with archived forecast weather at known issue times. Separate gas, whole-home electricity and heat-pump electricity require separate fits and score tables.</p>
     <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/DEMAND_DECISIONS.md">Earlier half-hourly persistence study</a>
   </section>
 </main>
