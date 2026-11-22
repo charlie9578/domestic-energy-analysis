@@ -1,0 +1,54 @@
+{
+  "status": "HYPOTHETICAL/SYNTHETIC ONLY — NOT observed household results",
+  "generated_as_of": "2026-11-22",
+  "purpose": "Show transparent arithmetic and how to reproduce weather-adjusted, sequenced synthetic interventions.",
+  "setpoint_sensitivity": {
+    "parameter_assumptions": {
+      "thermostat_old_c": 25,
+      "thermostat_new_c": 22,
+      "outside_c": 5,
+      "heating_hours": 14,
+      "heat_loss_w_per_k": 200,
+      "boiler_efficiency": 0.85,
+      "gas_unit_price_p_per_kwh": 8
+    },
+    "useful_heat_reduction_kwh_per_identical_day": 8.4,
+    "gas_input_reduction_kwh_per_identical_day": 9.8824,
+    "variable_cost_reduction_gbp_per_identical_day": 0.7906,
+    "interpretation": "Steady-state illustrative savings per one assumed day, not an observed change, a 30-day winter simulation or an annual price quote."
+  },
+  "electric_car_sensitivity": {
+    "parameter_assumptions": {
+      "weekly_miles": 150,
+      "vehicle_kwh_per_mile": 0.28,
+      "charger_efficiency": 0.9,
+      "home_charging_share": 1,
+      "offpeak_energy_fraction": 0.8,
+      "offpeak_price_p_per_kwh": 10,
+      "daytime_price_p_per_kwh": 26
+    },
+    "estimated_additional_annual_grid_import_kwh": 2426.667,
+    "estimated_additional_annual_variable_cost_gbp": 320.32,
+    "interpretation": "52 repeated weekly mileage assumptions, no public charging bill, capital/maintenance, PV or battery allocation."
+  },
+  "solar_sensitivity": {
+    "parameter_assumptions": {
+      "system_kwp": 4,
+      "annual_kwh_per_kwp": 900,
+      "share_of_generation_self_consumed": 0.45,
+      "pre_pv_gross_house_kwh": 3500,
+      "import_price_p_per_kwh": 26,
+      "export_price_p_per_kwh": 12
+    },
+    "annual_generation_kwh": 3600,
+    "self_consumed_kwh": 1620,
+    "exported_kwh": 1980,
+    "grid_import_before_kwh": 3500,
+    "grid_import_after_kwh": 1880,
+    "illustrative_annual_variable_bill_benefit_gbp": 658.8,
+    "interpretation": "Assumed self-consumption fraction and generation, not derived from a measured roof or interval-level solar and battery power balance."
+  },
+  "longitudinal_reproduction": "python -m scripts.run_behaviour_study --out reports/behaviour_changes",
+  "longitudinal_outputs": "results.json, three labelled synthetic daily CSV samples, and an EV-then-solar timeline; code regenerates them locally and accounts for weather in a pre-only regression.",
+  "scientific_limit": "Synthetic recoverability tests cannot establish real causal effects, detector accuracy, setpoint identification, insulation quality or tariff suitability."
+}
