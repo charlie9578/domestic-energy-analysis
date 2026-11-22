@@ -21,6 +21,28 @@ The initial scope is **Great Britain**, with official statistics for **England a
 
 Read [the research report](research/REPORT.md), [methodology and caveats](research/METHODOLOGY.md), and [the public data catalogue](research/SOURCES.md) before quoting results.
 
+## Day-ahead ERA5-proxy profile forecasts
+
+Open the [day-ahead forecaster](https://charlie9578.github.io/domestic-energy-analysis/day-ahead.html) and upload a half-hourly meter CSV plus matching hourly ERA5 CSV. The browser fits a calendar/half-hour profile and an additive temperature regression on the **earlier 80% of complete weather-matched local days**, and compares the frozen model against a calendar-only forecast and yesterday's 48-slot profile. All three are scored on the same complete held-out days. The page shows the next-day predicted-versus-observed half-hour profile, interval MAE/RMSE/R², daily-total MAE/bias and calibration regressions (actual on predicted). Backtest rows are downloadable as CSV; uploaded data stay in the browser.
+
+**ERA5 is reanalysis, not a day-ahead weather forecast**: this is a perfect-weather hindcast or potential-skill estimate. Forecast skill in deployment must be re-evaluated using archived numerical forecast issue times, not hindsight temperatures. Daylight saving 23/25-hour dates, missing/flagged intervals and missing weather are excluded; comparisons use 48-slot complete local days. A next-day preview is generated only if the uploaded weather file includes every hour of the next unmeasured local date. For real future use, provide an issued weather forecast in the same CSV schema rather than pretending tomorrow's ERA5 is already available. The model predicts grid import, not gross household electricity use under solar self-consumption.
+
+Input file schemas:
+
+```csv
+start_utc,consumption_kwh,duration_minutes,publisher_interpolated
+2025-01-01T00:00:00Z,0.42,30,0
+```
+
+```csv
+start_utc,temperature_c
+2025-01-01T00:00:00Z,4.5
+```
+
+Generate matching ERA5 hourly data with the existing `python -m domestic_energy fetch-weather` command (see below). Select the relevant local clock to pair with the meter. At least 33 complete, matched days are needed. The demo button uses entirely synthetic data. The earlier [OPSD study](research/DEMAND_DECISIONS.md) supplies a different, measured five-home half-hourly baseline comparison; it should not be misrepresented as validation of this new temperature-profile estimator.
+
+Run its offline tests with `node --test tests/day_ahead.test.mjs`.
+
 ## Demand forecasting and bill decisions
 
 The [demand and tariff analysis](https://charlie9578.github.io/domestic-energy-analysis/tariffs.html#demand-decisions) compares chronological half-hourly demand forecasts on five public homes. It then reprices the same observed load and separately tests shifting an observed EV charging circuit subject to energy, timing and peak constraints. [Methods and reproduction](research/DEMAND_DECISIONS.md)
