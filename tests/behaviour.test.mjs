@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { thermostatScenario, evScenario, solarScenario } from '../docs/behaviour.js';
+import { thermostatScenario, evScenario, solarScenario, summariseInterventionReport } from '../docs/behaviour.js';
 
 test('setpoint 25 to 22 conserves temperature difference arithmetic', () => {
   const v=thermostatScenario({beforeC:25,afterC:22,outsideC:5,
@@ -52,4 +52,40 @@ test('bad inputs are rejected',()=>{
    selfUseShare:.5,annualHomeKwh:1000,importPriceP:26,exportPriceP:12}));
  assert.throws(()=>evScenario({milesPerWeek:100,kwhPerMile:.25,chargingEfficiency:0,
   homeFraction:1,offpeakFraction:.5,offpeakPriceP:10,daytimePriceP:26}));
+});
+
+test('local viewer recognises real intervention shape without inventing causal certainty',()=>{
+ const report=summariseInterventionReport({
+   event_date:'2025-01-01',event_type:'thermostat',meter_boundary:'gas_input',
+   n_pre_days:150,n_post_days:60,
+   deviation_observed_minus_expected_kwh:-240,
+   deviation_kwh_per_observed_day:-4,
+   weather_adjusted_expected_post_kwh:900,observed_post_kwh:660,
+   validation:{validation_mae_kwh_day:1.5},
+   change_over_time_30_day_bins:[{days_since_event_start:0,deviation_kwh_per_observed_day:-4}],
+   warnings:['Other changes possible']
+ });
+ assert.equal(report.length,1);
+ assert.equal(report[0].status,'Descriptive association only');
+ assert.equal(report[0].deltaPerDay,-4);
+ assert.equal(report[0].validationMae,1.5);
+ assert.equal(report[0].bins.length,1);
+ assert.equal(report[0].warnings.length,1);
+});
+test('local viewer does not invent an effect for simultaneous events',()=>{
+ const report=summariseInterventionReport({meter_boundary:'electricity_import',
+ results:[{event_date:'2025-01-01',event_types:['solar','ev'],
+ status:'not_attributable',explanation:'Two changes together'}]});
+ assert.equal(report[0].status,'not_attributable');
+ assert.equal(report[0].delta,null);
+ assert.match(report[0].explanation,/together/);
+});
+test('local viewer supports synthetic study formats and rejects malformed content',()=>{
+ assert.equal(summariseInterventionReport({
+   dataset_classification:'SYNTHETIC',
+   examples:{ev:{event_date:'2025-01-01',event_type:'ev',
+    deviation_observed_minus_expected_kwh:50,deviation_kwh_per_observed_day:1}}
+ }).length,1);
+ assert.throws(()=>summariseInterventionReport([]));
+ assert.throws(()=>summariseInterventionReport({foo:'bar'}));
 });
