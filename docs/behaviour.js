@@ -130,7 +130,7 @@ function showLocalReport(raw){
      (record.validationMae!==null?fmt(record.validationMae,2)+' kWh/day':'not available')+'.';
    card.append(line);
    const summary=document.createElement('p');
-   summary.textContent='Expected post: '+fmt(record.baseline)+' kWh; observed post: '+fmt(record.observed)+' kWh.';
+   summary.textContent='Expected post: '+(record.baseline===null?'unavailable':fmt(record.baseline)+' kWh')+'; observed post: '+(record.observed===null?'unavailable':fmt(record.observed)+' kWh')+'.';
    card.append(summary);
   }else{
    const reason=document.createElement('p');reason.textContent=record.explanation;card.append(reason);
