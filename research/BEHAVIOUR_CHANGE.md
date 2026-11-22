@@ -129,3 +129,7 @@ The raw interval CSV uses `start_utc,consumption_kwh,duration_minutes` with expl
 - [NILMTK labelled appliance monitoring and evaluation](https://github.com/nilmtk/nilmtk)
 
 Keep sensitive homeowner event logs, holidays, device IDs and private meter usage **locally**, never in public Git.
+
+### Inspect saved JSON in the website (no server upload)
+
+Run `python -m domestic_energy.behaviour_change evaluate ... > reports/home_intervention.json` or the `timeline` command with output redirected to a local JSON file. Open [the changes-over-time local results viewer](../behaviour.html#local-report), and select that JSON. It will present the pre-only weather baseline, observed post kWh, validation MAE, 30-day evolution and any model warnings, without making a network request to submit the JSON. This does not turn a descriptive estimate into a causal claim. Never publish private homeowner traces, holiday dates or system identifiers.
