@@ -21,6 +21,14 @@ The initial scope is **Great Britain**, with official statistics for **England a
 
 Read [the research report](research/REPORT.md), [methodology and caveats](research/METHODOLOGY.md), and [the public data catalogue](research/SOURCES.md) before quoting results.
 
+## Published measured day-ahead forecast validation
+
+The [day-ahead forecasting page](https://charlie9578.github.io/domestic-energy-analysis/day-ahead.html) now includes a **published historical backtest on five measured Konstanz-area OPSD household import channels**, with each household's half-hour predicted-versus-observed curve, regression calibration diagnostics and downloadable held-out predictions. Earlier 80% of eligible days are training; the final 20% are held out and compared on identical complete-day slots. [Full methodology, sample exclusions and results](research/DAY_AHEAD_FORECASTS.md) · [Machine-readable five-household results](docs/assets/day-ahead/summary.json).
+
+ERA5 regression has lower half-hour MAE than yesterday's zero-order hold on **three of the five** public households, but beats the no-weather clock/calendar predictor on **only one of five**. Residential4 has just 12 paired held-out days and unusually high calendar-only error, so its weather gain is especially uncertain. ERA5 is reanalysis, not an issued historical weather forecast; results are a **weather-perfect hindcast, not operational next-day skill**. The raw data source hashes and all measured test-day profiles are published.
+
+To reproduce and republish the benchmark after upstream data revisions, use `python -m scripts.prepare_day_ahead` followed by `node scripts/run_day_ahead.mjs`. The repository's `day-ahead-data.yml` workflow regenerates and commits measured results straight to `main` on relevant source changes.
+
 ## Day-ahead ERA5-proxy profile forecasts
 
 Open the [day-ahead forecaster](https://charlie9578.github.io/domestic-energy-analysis/day-ahead.html) and upload a half-hourly meter CSV plus matching hourly ERA5 CSV. The browser fits a calendar/half-hour profile and an additive temperature regression on the **earlier 80% of complete weather-matched local days**, and compares the frozen model against a calendar-only forecast and yesterday's 48-slot profile. All three are scored on the same complete held-out days. The page shows the next-day predicted-versus-observed half-hour profile, interval MAE/RMSE/R², daily-total MAE/bias and calibration regressions (actual on predicted). Backtest rows are downloadable as CSV; uploaded data stay in the browser.
