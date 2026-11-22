@@ -24,14 +24,14 @@
     }
   },
   "method": {
-    "name": "Frozen 80/20 chronological split; additive within-slot temperature regression",
+    "name": "Frozen 80/20 chronological split; temperature regression and training-only expanding-window AutoML selection",
     "weather": "Historical ERA5 reanalysis, NOT issued day-ahead forecast (perfect-weather proxy)",
     "zone": "Europe/Berlin",
     "interval": "Unflagged complete 48-slot local days; excludes DST 23/25h days",
     "baseline": "Prior complete local day's matching 48 half-hour readings",
     "comparison": "All models evaluated on identical holdout days with a complete yesterday",
     "prediction_unit": "kWh per 30 minutes; grid import not gross household load",
-    "training": "Train on earlier complete days only; no target or future values in coefficients",
+    "training": "Tune among 11 fixed low-complexity candidates in expanding-window folds within the first 80% of eligible days; freeze chosen model for untouched 20% test; paired-fold SE and >=3% improvement guard relative to best simple baseline",
     "note": "Households with insufficient paired days are marked ineligible rather than assigned artificial scores"
   },
   "homes": {
@@ -50,6 +50,53 @@
         "incomplete_or_dst": 2,
         "flagged_or_invalid": 10,
         "missing_era5_hour": 0
+      },
+      "auto_ml_selection": {
+        "chosen_id": "era5",
+        "chosen_label": "ERA5 temperature regression",
+        "tuned": true,
+        "folds": 3,
+        "validation_days": 140,
+        "fold_details": [
+          {
+            "train_days": 141,
+            "validation_start": "2016-05-24",
+            "validation_end": "2016-07-10",
+            "validation_days": 48
+          },
+          {
+            "train_days": 189,
+            "validation_start": "2016-07-11",
+            "validation_end": "2016-09-04",
+            "validation_days": 46
+          },
+          {
+            "train_days": 237,
+            "validation_start": "2016-09-05",
+            "validation_end": "2016-10-20",
+            "validation_days": 46
+          }
+        ],
+        "candidate_count": 11,
+        "baseline_id": "era5",
+        "baseline_cv_mae_kwh": 0.10742391161749813,
+        "chosen_cv_mae_kwh": 0.10742391161749813,
+        "chosen_cv_improvement_pct": 0,
+        "selection_guard": "3% MAE and one paired-fold SE over best simple baseline; >=2 improving folds",
+        "candidates_cv_mae_kwh": {
+          "calendar": 0.1183009939896909,
+          "era5": 0.10742391161749813,
+          "yesterday": 0.13623102229267262,
+          "calendar_yesterday_50": 0.1186555763861059,
+          "era5_yesterday_25": 0.10902375470431165,
+          "era5_yesterday_50": 0.11395520734912305,
+          "era5_yesterday_75": 0.12243759807277883,
+          "era5_calendar_50": 0.11136724536839789,
+          "yesterday_weather_50": 0.1361035576319031,
+          "yesterday_weather_100": 0.13631552682840123,
+          "era5_weather_yesterday_50": 0.11396126093144147
+        },
+        "reason": "No blend cleared the predeclared validation improvement guard; use simpler baseline"
       },
       "temperature_slope_kwh_per_halfhour_per_c": -0.00326,
       "methods": {
@@ -118,6 +165,28 @@
             "intercept_kwh": 7.50926,
             "calibration_r2": 0.22235
           }
+        },
+        "auto_ml": {
+          "interval": {
+            "count": 3360,
+            "mae_kwh": 0.11427,
+            "rmse_kwh": 0.19691,
+            "bias_kwh": 0.01838,
+            "r2": 0.08211,
+            "slope": 0.81041,
+            "intercept_kwh": 0.04204,
+            "calibration_r2": 0.09532
+          },
+          "daily": {
+            "count": 70,
+            "mae_kwh": 2.97251,
+            "rmse_kwh": 3.71675,
+            "bias_kwh": 0.88217,
+            "r2": -0.01009,
+            "slope": 0.91017,
+            "intercept_kwh": 0.49179,
+            "calibration_r2": 0.04727
+          }
         }
       },
       "file": "residential1.json"
@@ -137,6 +206,53 @@
         "incomplete_or_dst": 2,
         "flagged_or_invalid": 62,
         "missing_era5_hour": 0
+      },
+      "auto_ml_selection": {
+        "chosen_id": "era5",
+        "chosen_label": "ERA5 temperature regression",
+        "tuned": true,
+        "folds": 3,
+        "validation_days": 120,
+        "fold_details": [
+          {
+            "train_days": 120,
+            "validation_start": "2016-06-29",
+            "validation_end": "2016-08-09",
+            "validation_days": 40
+          },
+          {
+            "train_days": 161,
+            "validation_start": "2016-08-10",
+            "validation_end": "2016-09-19",
+            "validation_days": 41
+          },
+          {
+            "train_days": 202,
+            "validation_start": "2016-09-20",
+            "validation_end": "2016-10-28",
+            "validation_days": 39
+          }
+        ],
+        "candidate_count": 11,
+        "baseline_id": "era5",
+        "baseline_cv_mae_kwh": 0.08302564044915865,
+        "chosen_cv_mae_kwh": 0.08302564044915865,
+        "chosen_cv_improvement_pct": 0,
+        "selection_guard": "3% MAE and one paired-fold SE over best simple baseline; >=2 improving folds",
+        "candidates_cv_mae_kwh": {
+          "calendar": 0.0849620698828837,
+          "era5": 0.08302564044915865,
+          "yesterday": 0.10131495259624045,
+          "calendar_yesterday_50": 0.08630765417854343,
+          "era5_yesterday_25": 0.08268633203404539,
+          "era5_yesterday_50": 0.08550932770332041,
+          "era5_yesterday_75": 0.09148258301691675,
+          "era5_calendar_50": 0.08375091645393627,
+          "yesterday_weather_50": 0.10146039580495231,
+          "yesterday_weather_100": 0.10166377529340355,
+          "era5_weather_yesterday_50": 0.085503306230954
+        },
+        "reason": "No blend cleared the predeclared validation improvement guard; use simpler baseline"
       },
       "temperature_slope_kwh_per_halfhour_per_c": -0.00224,
       "methods": {
@@ -205,6 +321,28 @@
             "intercept_kwh": 6.06959,
             "calibration_r2": 0.1294
           }
+        },
+        "auto_ml": {
+          "interval": {
+            "count": 2832,
+            "mae_kwh": 0.1127,
+            "rmse_kwh": 0.19972,
+            "bias_kwh": -0.03573,
+            "r2": 0.09652,
+            "slope": 1.23433,
+            "intercept_kwh": -0.00323,
+            "calibration_r2": 0.13013
+          },
+          "daily": {
+            "count": 59,
+            "mae_kwh": 2.80004,
+            "rmse_kwh": 3.68632,
+            "bias_kwh": -1.71509,
+            "r2": -0.33512,
+            "slope": -0.04421,
+            "intercept_kwh": 10.04776,
+            "calibration_r2": 0.00008
+          }
         }
       },
       "file": "residential2.json"
@@ -224,6 +362,53 @@
         "incomplete_or_dst": 0,
         "flagged_or_invalid": 262,
         "missing_era5_hour": 0
+      },
+      "auto_ml_selection": {
+        "chosen_id": "era5_yesterday_75",
+        "chosen_label": "ERA5 25% / yesterday 75%",
+        "tuned": true,
+        "folds": 3,
+        "validation_days": 34,
+        "fold_details": [
+          {
+            "train_days": 41,
+            "validation_start": "2016-02-14",
+            "validation_end": "2016-02-28",
+            "validation_days": 13
+          },
+          {
+            "train_days": 55,
+            "validation_start": "2016-02-29",
+            "validation_end": "2016-03-18",
+            "validation_days": 10
+          },
+          {
+            "train_days": 69,
+            "validation_start": "2016-03-19",
+            "validation_end": "2016-05-31",
+            "validation_days": 11
+          }
+        ],
+        "candidate_count": 11,
+        "baseline_id": "yesterday",
+        "baseline_cv_mae_kwh": 0.15404435703185707,
+        "chosen_cv_mae_kwh": 0.14387945862129078,
+        "chosen_cv_improvement_pct": 6.598682747245415,
+        "selection_guard": "3% MAE and one paired-fold SE over best simple baseline; >=2 improving folds",
+        "candidates_cv_mae_kwh": {
+          "calendar": 0.2197976466614108,
+          "era5": 0.17555734899489175,
+          "yesterday": 0.15404435703185707,
+          "calendar_yesterday_50": 0.16781293060101424,
+          "era5_yesterday_25": 0.15683169547313516,
+          "era5_yesterday_50": 0.1460790274552621,
+          "era5_yesterday_75": 0.14387945862129078,
+          "era5_calendar_50": 0.19574769305284434,
+          "yesterday_weather_50": 0.15161178617720364,
+          "yesterday_weather_100": 0.1539179524983146,
+          "era5_weather_yesterday_50": 0.14865911878444743
+        },
+        "reason": "Blend improved past validation blocks enough to clear the predeclared guard"
       },
       "temperature_slope_kwh_per_halfhour_per_c": -0.02319,
       "methods": {
@@ -292,6 +477,28 @@
             "intercept_kwh": 0.82071,
             "calibration_r2": 0.98724
           }
+        },
+        "auto_ml": {
+          "interval": {
+            "count": 576,
+            "mae_kwh": 0.05041,
+            "rmse_kwh": 0.12075,
+            "bias_kwh": -0.00691,
+            "r2": 0.45923,
+            "slope": 0.73043,
+            "intercept_kwh": 0.03379,
+            "calibration_r2": 0.53369
+          },
+          "daily": {
+            "count": 12,
+            "mae_kwh": 0.78565,
+            "rmse_kwh": 0.98452,
+            "bias_kwh": -0.33186,
+            "r2": 0.97138,
+            "slope": 0.89381,
+            "intercept_kwh": 0.84002,
+            "calibration_r2": 0.98859
+          }
         }
       },
       "file": "residential4.json"
@@ -311,6 +518,53 @@
         "incomplete_or_dst": 2,
         "flagged_or_invalid": 23,
         "missing_era5_hour": 0
+      },
+      "auto_ml_selection": {
+        "chosen_id": "era5",
+        "chosen_label": "ERA5 temperature regression",
+        "tuned": true,
+        "folds": 3,
+        "validation_days": 136,
+        "fold_details": [
+          {
+            "train_days": 136,
+            "validation_start": "2016-06-09",
+            "validation_end": "2016-07-24",
+            "validation_days": 46
+          },
+          {
+            "train_days": 182,
+            "validation_start": "2016-07-25",
+            "validation_end": "2016-09-08",
+            "validation_days": 46
+          },
+          {
+            "train_days": 228,
+            "validation_start": "2016-09-09",
+            "validation_end": "2016-10-22",
+            "validation_days": 44
+          }
+        ],
+        "candidate_count": 11,
+        "baseline_id": "era5",
+        "baseline_cv_mae_kwh": 0.07431376759556471,
+        "chosen_cv_mae_kwh": 0.07431376759556471,
+        "chosen_cv_improvement_pct": 0,
+        "selection_guard": "3% MAE and one paired-fold SE over best simple baseline; >=2 improving folds",
+        "candidates_cv_mae_kwh": {
+          "calendar": 0.08843417548490644,
+          "era5": 0.07431376759556471,
+          "yesterday": 0.0861493741765481,
+          "calendar_yesterday_50": 0.07941095723956522,
+          "era5_yesterday_25": 0.07208517903143143,
+          "era5_yesterday_50": 0.07337102912039672,
+          "era5_yesterday_75": 0.07771591992796607,
+          "era5_calendar_50": 0.077439626718935,
+          "yesterday_weather_50": 0.08676057509688696,
+          "yesterday_weather_100": 0.08801517599482145,
+          "era5_weather_yesterday_50": 0.07407263402722468
+        },
+        "reason": "No blend cleared the predeclared validation improvement guard; use simpler baseline"
       },
       "temperature_slope_kwh_per_halfhour_per_c": -0.00466,
       "methods": {
@@ -379,6 +633,28 @@
             "intercept_kwh": 9.33028,
             "calibration_r2": 0.00052
           }
+        },
+        "auto_ml": {
+          "interval": {
+            "count": 3264,
+            "mae_kwh": 0.08237,
+            "rmse_kwh": 0.1297,
+            "bias_kwh": -0.0059,
+            "r2": 0.14744,
+            "slope": 1.03089,
+            "intercept_kwh": 0.00021,
+            "calibration_r2": 0.14934
+          },
+          "daily": {
+            "count": 68,
+            "mae_kwh": 1.17661,
+            "rmse_kwh": 1.48015,
+            "bias_kwh": -0.28336,
+            "r2": 0.14709,
+            "slope": 0.77031,
+            "intercept_kwh": 2.31405,
+            "calibration_r2": 0.19575
+          }
         }
       },
       "file": "residential5.json"
@@ -398,6 +674,53 @@
         "incomplete_or_dst": 2,
         "flagged_or_invalid": 49,
         "missing_era5_hour": 0
+      },
+      "auto_ml_selection": {
+        "chosen_id": "yesterday",
+        "chosen_label": "Yesterday persistence",
+        "tuned": true,
+        "folds": 3,
+        "validation_days": 125,
+        "fold_details": [
+          {
+            "train_days": 126,
+            "validation_start": "2016-06-24",
+            "validation_end": "2016-08-05",
+            "validation_days": 41
+          },
+          {
+            "train_days": 168,
+            "validation_start": "2016-08-06",
+            "validation_end": "2016-09-17",
+            "validation_days": 43
+          },
+          {
+            "train_days": 211,
+            "validation_start": "2016-09-18",
+            "validation_end": "2016-10-28",
+            "validation_days": 41
+          }
+        ],
+        "candidate_count": 11,
+        "baseline_id": "yesterday",
+        "baseline_cv_mae_kwh": 0.04245392560030259,
+        "chosen_cv_mae_kwh": 0.04245392560030259,
+        "chosen_cv_improvement_pct": 0,
+        "selection_guard": "3% MAE and one paired-fold SE over best simple baseline; >=2 improving folds",
+        "candidates_cv_mae_kwh": {
+          "calendar": 0.18069695958736656,
+          "era5": 0.11337473084827783,
+          "yesterday": 0.04245392560030259,
+          "calendar_yesterday_50": 0.1057122710677992,
+          "era5_yesterday_25": 0.09235100378589449,
+          "era5_yesterday_50": 0.0729417797512554,
+          "era5_yesterday_75": 0.05513073265178239,
+          "era5_calendar_50": 0.14532768066108795,
+          "yesterday_weather_50": 0.0449279736644444,
+          "yesterday_weather_100": 0.049177215419075236,
+          "era5_weather_yesterday_50": 0.07631323245993724
+        },
+        "reason": "No blend cleared the predeclared validation improvement guard; use simpler baseline"
       },
       "temperature_slope_kwh_per_halfhour_per_c": -0.01543,
       "methods": {
@@ -446,6 +769,28 @@
           }
         },
         "yesterday": {
+          "interval": {
+            "count": 2976,
+            "mae_kwh": 0.12266,
+            "rmse_kwh": 0.19299,
+            "bias_kwh": -0.00105,
+            "r2": -0.09115,
+            "slope": 0.45435,
+            "intercept_kwh": 0.13216,
+            "calibration_r2": 0.206
+          },
+          "daily": {
+            "count": 62,
+            "mae_kwh": 2.01073,
+            "rmse_kwh": 2.64116,
+            "bias_kwh": -0.05024,
+            "r2": -0.19573,
+            "slope": 0.40232,
+            "intercept_kwh": 6.94363,
+            "calibration_r2": 0.16181
+          }
+        },
+        "auto_ml": {
           "interval": {
             "count": 2976,
             "mae_kwh": 0.12266,
