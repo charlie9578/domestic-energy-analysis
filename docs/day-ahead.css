@@ -7,3 +7,5 @@
 .forecast-caption {position:static;background:none;color:var(--muted);font-size:.83rem;padding:.3rem 0}
 #forecast-scores td,#forecast-calibration td {font-variant-numeric:tabular-nums}
 #forecast-scores th,#forecast-calibration th {white-space:normal}
+
+.forecast-automl {--line-colour:#853b86}
