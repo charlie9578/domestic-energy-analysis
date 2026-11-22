@@ -1,0 +1,53 @@
+name: Publish measured day-ahead backtest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/prepare_day_ahead.py'
+      - 'scripts/run_day_ahead.mjs'
+      - 'docs/day-ahead.js'
+      - '.github/workflows/day-ahead-data.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: day-ahead-data-main
+  cancel-in-progress: false
+
+jobs:
+  build-study:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Prepare measured OPSD half-hours and ERA5 archive
+        run: python -m scripts.prepare_day_ahead
+      - name: Generate paired holdout results and traces
+        run: node scripts/run_day_ahead.mjs
+      - name: Verify outputs
+        run: |
+          test -s docs/assets/day-ahead/summary.json
+          python -c "import json; p=json.load(open('docs/assets/day-ahead/summary.json')); assert any('methods' in h for h in p['homes'].values())"
+          node --test tests/day_ahead.test.mjs
+      - name: Commit measured study directly to main
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/assets/day-ahead/
+          if git diff --cached --quiet; then
+            echo 'Measured outputs unchanged.'
+          else
+            git commit -m "Publish measured five-home ERA5 day-ahead backtest [skip ci]"
+            git push origin HEAD:main
+          fi
