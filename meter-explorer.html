@@ -31,6 +31,7 @@
         <label>Indoor temperature (CSV, optional)<input type="file" name="indoor" accept=".csv,text/csv"></label>
         <label>Space-heating activation (CSV, optional)<input type="file" name="heating" accept=".csv,text/csv"></label>
         <label>Default interval (minutes) (minutes)<input type="number" name="minutes" min="1" max="1440" step="1" value="30" required></label>
+        <label class="meter-checkbox"><input type="checkbox" name="exploratory">Show unvalidated meter pattern flags</label>
         <div class="actions meter-actions"><button class="button primary" type="submit">Analyse files</button><button class="button secondary" type="button" id="demo">Try synthetic demo</button></div>
       </form>
       <aside class="card">
@@ -87,7 +88,7 @@
         </details>
       </section>
       <section class="card reading-card" aria-labelledby="patterns-title">
-        <div class="section-heading"><span class="tag inferred">Recorded and inferred</span><h2 id="patterns-title">Pattern timeline</h2>
+        <div class="section-heading"><span class="tag inferred">Recorded and optional exploratory</span><h2 id="patterns-title">Pattern timeline</h2>
           <p>Heat, hot water and cooking can overlap in aggregate readings. Low use can have several causes, including a holiday, and does not establish occupancy. The rules have been checked on synthetic examples and have no field accuracy estimate.</p>
         </div>
         <label class="meter-filter">Pattern type<select id="pattern"><option value="">All patterns</option></select></label>

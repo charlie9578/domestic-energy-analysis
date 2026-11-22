@@ -21,6 +21,10 @@ The initial scope is **Great Britain**, with official statistics for **England a
 
 Read [the research report](research/REPORT.md), [methodology and caveats](research/METHODOLOGY.md), and [the public data catalogue](research/SOURCES.md) before quoting results.
 
+## Hourly heat-balance validation
+
+A measured heat input and indoor/outdoor temperatures drive a single-zone energy balance. We fit its parameters on earlier hours and compare later predictions against a persistence baseline at one and six hours. The result supports a narrow check of model behaviour under recorded heating. The project treats equipment sizing and changed thermostat schedules as separate questions. [Methods, results and data preparation](research/HOURLY_HEAT_BALANCE.md)
+
 ## HTML research explorer
 
 Visit the [research explorer on GitHub Pages](https://charlie9578.github.io/domestic-energy-analysis/). To preview changes locally, open [index.html](index.html) or serve the frontend from the repository root.
@@ -33,7 +37,7 @@ Visit http://localhost:8000. Datasets, the meter explorer, heating, tariffs and 
 
 In the [meter explorer](https://charlie9578.github.io/domestic-energy-analysis/meter-explorer.html), load a gas or electricity interval CSV, or both, and optionally an hourly ERA5 CSV for the same area and dates. Uploads stay in the tab. Use `start_utc,consumption_kwh,duration_minutes` for meter readings and `start_utc,temperature_c` for weather. Gas values must already be in kWh. The explorer keeps native interval durations and uses UTC for charts and complete-day checks. The details table shows the first day of the selected window.
 
-The pattern rules flag sustained cold-weather gas use, elevated cold-day electricity relative to mild days, short gas/electrical bursts, EV-like plateaus and unusually low or high daily use. Short bursts can be consistent with cooking or hot water, including showers. Several devices can produce similar signatures. The low-use rule compares at least three complete days against a median from at least 14 eligible days. Missing or publisher-interpolated values are excluded from the rules, and the synthetic demo illustrates the checks without supplying field accuracy estimates.
+Optional unvalidated pattern rules flag sustained cold-weather gas use, elevated cold-day electricity relative to mild days, short gas/electrical bursts, EV-like plateaus and unusually low or high daily use. Short bursts can be consistent with cooking or hot water, including showers. Several devices can produce similar signatures. The low-use rule compares at least three complete days against a median from at least 14 eligible days. Missing or publisher-interpolated values are excluded from the rules, and the synthetic demo illustrates the checks without supplying field accuracy estimates.
 
 Run the browser-analysis unit tests with `node --test tests/meter_analysis.test.mjs` (Node 24).
 

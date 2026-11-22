@@ -100,7 +100,7 @@ function completeDays(rows) {
     .map(([day, totals]) => [day, totals.energy]));
 }
 
-export function detectPatterns({ gas = [], electricity = [], weather = [], indoor = [], heating = [] }) {
+export function detectPatterns({ gas = [], electricity = [], weather = [], indoor = [], heating = [], exploratory = true }) {
   const temperatures = new Map(weather.filter((row) => !row.flagged)
     .map((row) => [row.start, row.amount]));
   const cold = (row) => {
@@ -144,6 +144,7 @@ export function detectPatterns({ gas = [], electricity = [], weather = [], indoo
     add("Recorded heating activation", block,
       `Positive heating signal in each interval, equivalent to ${Math.round(duty / MINUTE)} active minutes in total. Exact switch times may be unavailable.${room}`);
   });
+  if (!exploratory) return { events, baselineDays: null };
   runs(gas, (row) => !row.flagged && row.kw >= 2 && !logged(row) && cold(row), (block) => {
     if (block.length >= 2 && span(block) >= 90 * MINUTE) {
       add("Space-heating candidate", block, "Gas averaged at least 2 kW for 90+ minutes with matching outdoor temperatures at or below 15°C.");

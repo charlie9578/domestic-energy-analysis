@@ -18,9 +18,26 @@
   </header>
 
   <main id="main">
+    <section class="wrap section" id="hourly-validation">
+      <div class="section-heading">
+        <h1 class="subpage-title">Heating research</h1>
+        <h2>Hourly heat-balance validation</h2>
+        <p>We modelled one monitored room as a single thermal zone. The model uses metered delivered heat, outdoor temperature and an effective allowance for unmeasured gains. It was fitted on 8–15 January and evaluated on 16–21 January 2024.</p>
+      </div>
+      <article class="card table-card">
+        <h3>Held-out room-temperature error</h3>
+        <table><thead><tr><th scope="col">Horizon</th><th scope="col">Windows</th><th scope="col">Persistence</th><th scope="col">On-site weather</th><th scope="col">ERA5 weather</th></tr></thead><tbody>
+          <tr><th scope="row">1 hour</th><td>113</td><td>0.107°C</td><td>0.108°C</td><td>0.108°C</td></tr>
+          <tr><th scope="row">6 hours</th><td>10</td><td>0.347°C</td><td>0.297°C</td><td>0.297°C</td></tr>
+        </tbody></table>
+        <p>Persistence carries the first indoor reading forward. Each heat-balance run starts at the same reading and uses the heat that was actually delivered. The short test therefore assesses temperature prediction under the recorded heating, and provides no evidence about changing the thermostat.</p>
+        <p>The on-site model’s effective heat loss was 194 W/K, with a day-block bootstrap interval of 41–348 W/K. The estimate describes this fit and should not be used for equipment sizing.</p>
+        <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/HOURLY_HEAT_BALANCE.md">Read the equation, evidence and reproduction steps</a>
+      </article>
+    </section>
     <section class="band" id="heating">
       <div class="wrap section">
-        <div class="section-heading"><span class="tag inferred">Inferred from measurements</span><h1 class="subpage-title">Heating and heat loss</h1><p>Five monitored heat pumps provided matched space heat, electricity and temperatures. Models fitted on 2023 heating-season days were tested on 2024 observations.</p><p><a href="meter-explorer.html#schedule-title">Compare real indoor temperatures with a day and night schedule</a></p></div>
+        <div class="section-heading"><span class="tag inferred">Inferred from measurements</span><h2>Daily signatures and scenario studies</h2><p>Five monitored heat pumps provided matched space heat, electricity and temperatures. Models fitted on 2023 heating-season days were tested on 2024 observations.</p><p><a href="meter-explorer.html#schedule-title">Compare real indoor temperatures with a day and night schedule</a></p></div>
         <div class="split">
           <article class="card table-card"><h3>Apparent heat-loss coefficients</h3><table><thead><tr><th scope="col">System</th><th scope="col">W/K</th><th scope="col">95% interval</th></tr></thead><tbody>
             <tr><th scope="row">3 · Air source</th><td>132</td><td>104–153</td></tr>
@@ -28,8 +45,8 @@
             <tr><th scope="row">8 · Air source</th><td>251</td><td>230–266</td></tr>
             <tr><th scope="row">9 · Air source</th><td>196</td><td>179–209</td></tr>
             <tr><th scope="row">11 · Ground source</th><td>93</td><td>55–125</td></tr>
-          </tbody></table><p>Equipment types come from registry metadata. The intervals reflect variation across resampled weeks.</p></article>
-          <article class="card"><span class="tag simulated">Simulated schedules</span><h3>Thermostat strategy</h3><p>Adding indoor temperature improved held-out forecasts at two of the five sites compared with an outdoor-only model.</p><p>Among the fixed schedules tested for four air-source systems, an 18°C night setback ranked first under the illustrative flat tariff. Fixed preheat ranked first under the study’s off-peak and Agile prices. The comfort screen uses modelled indoor temperature.</p><a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md#thermostat-and-retrofit-scenarios">Controls and assumptions</a></article>
+          </tbody></table><p>These are slopes from daily energy signatures. They absorb changes in gains and controls. The intervals reflect variation across resampled weeks.</p></article>
+          <article class="card"><span class="tag simulated">Simulated schedules</span><h3>Thermostat scenario tests</h3><p>The earlier controller study assumes thermal mass, equipment output, available gains and occupancy. Its schedule rankings depend on those inputs. No schedule change was tested against measured household response.</p><a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md#thermostat-and-retrofit-scenarios">Controls and assumptions</a></article>
         </div>
       </div>
     </section>

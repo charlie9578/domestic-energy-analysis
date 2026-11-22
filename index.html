@@ -18,33 +18,23 @@
   </header>
 
   <main id="main">
-    <section class="wrap hero" id="home" aria-labelledby="home-title">
-      <div class="intro">
-        <p class="eyebrow">Great Britain and Europe · Open research</p>
-        <h1 id="home-title">How our<br class="desktop-break"> homes use <em>energy.</em></h1>
-        <p class="lead">Explore half-hourly smart-meter readings, see how monitored homes respond to colder weather, and compare what tariffs and upgrades could cost.</p>
-        <div class="actions">
-          <a class="button primary" href="datasets.html">Explore the data <span class="arrow" aria-hidden="true"></span></a>
-          <a class="button secondary" href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/OBSERVED_VALIDATION.md">Read the methodology <span class="arrow" aria-hidden="true"></span></a>
-        </div>
+    <section class="wrap section" id="home" aria-labelledby="home-title">
+      <div class="section-heading">
+        <h1 class="subpage-title" id="home-title">Domestic energy research</h1>
+        <p>Open household data, reproducible analysis and tests of how well simple models explain what was measured.</p>
       </div>
-      <figure class="hero-image">
-        <img src="docs/assets/house.webp" alt="Illustration of a British brick home with rooftop solar panels" fetchpriority="high">
-        <figcaption>Illustrative home retrofit</figcaption>
-      </figure>
+      <article class="card">
+        <h2>Can a heat balance predict room temperature?</h2>
+        <p>We fitted a single-zone model using metered heat and measured temperatures, then tested it on later hours. It offered no clear one-hour improvement over carrying forward the current room temperature. At six hours it lowered mean error by 0.05°C across ten test windows.</p>
+        <a href="heating.html#hourly-validation">See the validation, uncertainty and limitations</a>
+      </article>
     </section>
-
-    <div class="wrap evidence" aria-label="Study at a glance">
-      <div><span class="tag measured">Public meter series</span><strong>5 households</strong><span>One year of half-hourly imports per home</span></div>
-      <div><span class="tag measured">Measured</span><strong>5 sites</strong><span>Heat, electricity and temperatures monitored</span></div>
-      <div><span class="tag simulated">Simulated</span><strong>88 cases</strong><span>Full-year tariff and upgrade scenarios</span></div>
-    </div>
 
     <section class="wrap section explorer" aria-labelledby="explore-title">
       <div class="section-heading"><h2 id="explore-title">Explore the research</h2><p>Each study links to its source data, assumptions and reproduction steps.</p></div>
       <div class="topic-grid">
         <a class="topic" id="datasets" href="datasets.html"><span class="topic-icon" aria-hidden="true">▤</span><div><h3>Public datasets</h3><p>Meter readings, weather and equipment records</p></div><span class="arrow" aria-hidden="true"></span></a>
-        <a class="topic" href="meter-explorer.html"><span class="topic-icon" aria-hidden="true">∿</span><div><h3>Smart meters</h3><p>Review readings and automatically flag patterns</p></div><span class="arrow" aria-hidden="true"></span></a>
+        <a class="topic" href="meter-explorer.html"><span class="topic-icon" aria-hidden="true">∿</span><div><h3>Smart meters</h3><p>Inspect gas, electricity, temperature and recorded heating</p></div><span class="arrow" aria-hidden="true"></span></a>
         <a class="topic" id="heating" href="heating.html"><span class="topic-icon" aria-hidden="true">☷</span><div><h3>Heating</h3><p>Heat loss, heat pumps and thermostat schedules</p></div><span class="arrow" aria-hidden="true"></span></a>
         <a class="topic" id="tariffs" href="tariffs.html"><span class="topic-icon" aria-hidden="true">£</span><div><h3>Tariffs</h3><p>Reprice a measured London load profile</p></div><span class="arrow" aria-hidden="true"></span></a>
         <a class="topic" id="upgrades" href="upgrades.html"><span class="topic-icon" aria-hidden="true">⌂</span><div><h3>Home upgrades</h3><p>Solar, insulation, storage and heat pumps</p></div><span class="arrow" aria-hidden="true"></span></a>

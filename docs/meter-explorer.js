@@ -130,13 +130,13 @@ function render() {
       : "No recorded or inferred patterns in this window.";
 }
 
-function show(data, label, demo = false, submeter = false) {
+function show(data, label, demo = false, submeter = false, exploratory = false) {
   const meter = [...(data.gas ?? []), ...(data.electricity ?? []),
     ...(data.indoor ?? []), ...(data.heating ?? [])];
   const min = dayStart(meter.reduce((value, row) => Math.min(value, row.start), Infinity));
   const max = dayStart(meter.reduce((value, row) => Math.max(value, row.end), -Infinity) - 1);
   // Keep the submeter in the readings but avoid household-level inference from it.
-  const patternData = submeter ? { ...data, electricity: [] } : data;
+  const patternData = { ...data, exploratory, electricity: submeter ? [] : data.electricity };
   state = { data, min, max, ...detectPatterns(patternData) };
   const date = get("view-date");
   date.min = dateLabel(min);
@@ -151,7 +151,9 @@ function show(data, label, demo = false, submeter = false) {
     const flagged = rows.filter((row) => row.flagged).length;
     return `${channels[key].name}: ${format(rows.length)} readings${flagged ? ` (${format(flagged)} interpolated)` : ""}`;
   }).join(" · ");
-  get("baseline-note").textContent = state.baselineDays < 14
+  get("baseline-note").textContent = state.baselineDays === null
+    ? "Recorded mode shows supplied activation data. Enable exploratory flags and analyse again to run unvalidated meter heuristics."
+    : state.baselineDays < 14
     ? `Daily anomaly rules need at least 14 complete, unflagged UTC days. Found ${state.baselineDays}.`
     : `${state.baselineDays} complete, unflagged UTC days available for the daily baseline.`;
   get("status").textContent = label + (submeter
@@ -186,7 +188,7 @@ form.addEventListener("submit", async (event) => {
       throw new Error("Choose a meter, indoor-temperature or activation CSV.");
     }
     if (request === current) show(data, "Loaded your files. All analysis is local to this tab.", false,
-      Boolean(data.electricity && inputs.has("submeter")));
+      Boolean(data.electricity && inputs.has("submeter")), inputs.has("exploratory"));
   } catch (error) {
     if (request === current) {
       state = null;
@@ -198,7 +200,8 @@ form.addEventListener("submit", async (event) => {
 
 get("demo").addEventListener("click", () => {
   request++;
-  show(demoSeries(), "Synthetic demo · 28 days of invented readings and weather.", true);
+  show(demoSeries(), "Synthetic demo · 28 days of invented readings and weather.", true, false,
+    form.elements.exploratory.checked);
 });
 for (const id of ["view-date", "range", "pattern"]) get(id).addEventListener("change", render);
 for (const [id, direction] of [["previous", -1], ["next", 1]]) {

@@ -95,3 +95,11 @@ test("clock-hour profiles retain local summer time and weight native durations",
   assert.equal(scheduledTarget(22, targets), 17);
   assert.equal(scheduledTarget(0, { ...targets, dayStart: 22, nightStart: 7 }), 20);
 });
+
+test("recorded-mode display excludes inferred activity", () => {
+  const data = demoSeries();
+  data.heating = [{ start: data.gas[0].start, end: data.gas[0].start + HOUR, amount: .5 }];
+  const result = detectPatterns({ ...data, exploratory: false });
+  assert.deepEqual(result.events.map((event) => event.type), ["Recorded heating activation"]);
+  assert.equal(result.baselineDays, null);
+});
