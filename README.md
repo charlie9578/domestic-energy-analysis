@@ -205,3 +205,7 @@ The [related-work review](research/RELATED_WORK.md) compares real measured-house
 - The most important next validation is **measured reference heat loss**, using [SMETER 30-dwelling research measurements](https://reshare.ukdataservice.ac.uk/856978/), followed by detection error at *half-hourly resolution* using independently labelled appliance circuits.
 
 These are **research plans**, not claims that all external benchmarks have been reproduced. Do not merge raw private traces or imply occupancy from low-load periods without separate verified labels and appropriate consent.
+
+### Studies using downloadable public household energy data
+
+The [public-data study replication shortlist](research/REPRODUCIBLE_PUBLIC_DATA_STUDIES.md) identifies published work using Low Carbon London, SMETER, REFIT, UK-DALE and a new Irish EV/PV/battery/heat-pump dataset. It distinguishes open articles from open underlying measurements, identifies directly reproducible parts, and proposes concrete held-out evaluation experiments. See also the broader [related-work survey](research/RELATED_WORK.md).
