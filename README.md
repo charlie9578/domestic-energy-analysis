@@ -21,6 +21,12 @@ The initial scope is **Great Britain**, with official statistics for **England a
 
 Read [the research report](research/REPORT.md), [methodology and caveats](research/METHODOLOGY.md), and [the public data catalogue](research/SOURCES.md) before quoting results.
 
+## Conservative AutoML-style day-ahead forecasting
+
+The [day-ahead forecasting page](https://charlie9578.github.io/domestic-energy-analysis/day-ahead.html) now compares **guarded AutoML selection** to ERA5 weather regression, calendar-only and yesterday-persistence baselines on the same untouched half-hourly holdout periods. The model search evaluates **11 predetermined low-complexity candidates** (including fixed blends and simple weather-adjusted persistence) with three expanding-window validation folds **entirely inside the training period**. It only promotes a more complex candidate if there are at least 40 paired validation days, a mean MAE improvement over the best simple model of at least 3% **and** more than one paired-fold standard error, and improvement in at least two folds. Otherwise, it retains the simpler model or falls back to yesterday persistence when validation is sparse. The holdout is never used for selecting the model. This reduces, but cannot eliminate, overfitting. [Model selection methodology](research/DAY_AHEAD_FORECASTS.md)
+
+The site displays the training-selected method, its validation evidence, and the actual independent test MAE. Because the weather input is hindsight ERA5, this is **retrospective forecast-proxy skill**, not proof of genuine issued day-ahead forecast skill.
+
 ## Published measured day-ahead forecast validation
 
 The [day-ahead forecasting page](https://charlie9578.github.io/domestic-energy-analysis/day-ahead.html) now includes a **published historical backtest on five measured Konstanz-area OPSD household import channels**, with each household's half-hour predicted-versus-observed curve, regression calibration diagnostics and downloadable held-out predictions. Earlier 80% of eligible days are training; the final 20% are held out and compared on identical complete-day slots. [Full methodology, sample exclusions and results](research/DAY_AHEAD_FORECASTS.md) · [Machine-readable five-household results](docs/assets/day-ahead/summary.json).
