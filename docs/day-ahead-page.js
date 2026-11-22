@@ -2,8 +2,8 @@ import { analyseDayAheadCsv } from "./day-ahead.js";
 
 const $ = (id) => document.getElementById(id);
 const f = (x, digits = 3) => x == null ? "—" : Number(x).toFixed(digits);
-const names = { era5: "ERA5 temperature regression", calendar: "Clock/calendar only", yesterday: "Yesterday = today" };
-const colours = { actual: "#132b2e", era5: "#12604c", calendar: "#286497", yesterday: "#af6d2c" };
+const names = { era5: "ERA5 temperature regression", calendar: "Clock/calendar only", yesterday: "Yesterday = today", auto_ml: "Guarded AutoML (training-only selection)" };
+const colours = { actual: "#132b2e", era5: "#12604c", calendar: "#286497", yesterday: "#af6d2c", auto_ml: "#853b86" };
 let report = null, sourceLabel = "";
 
 function populate(target, cells) {
@@ -33,8 +33,8 @@ function draw(points) {
   }
   for (const key of Object.keys(colours)) {
     ctx.beginPath(); ctx.strokeStyle = colours[key]; ctx.lineWidth = key === "actual" ? 3 : 2;
-    ctx.setLineDash(key === "calendar" ? [5, 4] : key === "yesterday" ? [2, 4] : []);
-    points.forEach((p, i) => i === 0 ? ctx.moveTo(x(i), y(p[key])) : ctx.lineTo(x(i), y(p[key])));
+    ctx.setLineDash(key === "calendar" ? [5, 4] : key === "yesterday" ? [2, 4] : key === "auto_ml" ? [9, 3] : []);
+    points.forEach((p, i) => { if (Number.isFinite(p[key])) i === 0 ? ctx.moveTo(x(i), y(p[key])) : ctx.lineTo(x(i), y(p[key])); });
     ctx.stroke();
   }
   ctx.setLineDash([]);
@@ -47,12 +47,12 @@ function displayDay() {
   $("forecast-caption").textContent = "Local time · energy per half-hour (kWh), not instantaneous kW.";
   $("forecast-day-summary").textContent = "Observed " + f(day.totals.actual) + " kWh · ERA5 " +
     f(day.totals.era5) + " kWh · Calendar " + f(day.totals.calendar) +
-    " kWh · Yesterday hold " + f(day.totals.yesterday) + " kWh.";
+    " kWh · Yesterday hold " + f(day.totals.yesterday) + " kWh · AutoML " + f(day.totals.auto_ml) + " kWh.";
   $("forecast-values").replaceChildren();
   for (const p of day.points) {
     const hh = String(Math.floor(p.slot / 2)).padStart(2, "0");
     populate($("forecast-values"), [hh + ":" + (p.slot % 2 ? "30" : "00"),
-      f(p.actual), f(p.era5), f(p.calendar), f(p.yesterday), f(p.temperature_c, 1)]);
+      f(p.actual), f(p.era5), f(p.calendar), f(p.yesterday), f(p.auto_ml), f(p.temperature_c, 1)]);
   }
 }
 function show(result, label) {
@@ -65,12 +65,23 @@ function show(result, label) {
   $("forecast-scores").replaceChildren();
   $("forecast-calibration").replaceChildren();
   for (const [key, name] of Object.entries(names)) {
+    if (!result.methods[key]) continue;
     const interval = result.methods[key].interval, daily = result.methods[key].daily;
     populate($("forecast-scores"), [name, f(interval.mae_kwh), f(interval.rmse_kwh),
       f(interval.r2), f(daily.mae_kwh), f(daily.bias_kwh)]);
     populate($("forecast-calibration"), [name, f(interval.slope), f(interval.intercept_kwh),
       f(interval.calibration_r2), f(daily.slope), f(daily.calibration_r2)]);
   }
+  const choice = result.auto_ml_selection;
+  $("forecast-selection").textContent = choice
+    ? "Training-only AutoML: " + choice.chosen_label + " (" + choice.chosen_id +
+      "). Expanding-window validation: " + choice.folds + " blocks / " +
+      choice.validation_days + " paired days; " + choice.reason + ". " +
+      (choice.chosen_cv_improvement_pct == null ? "" :
+       "Estimated validation gain vs best simple baseline: " +
+       f(choice.chosen_cv_improvement_pct, 1) + "%. ") +
+      "The selected model is evaluated on the untouched held-out days alongside the three baselines."
+    : "This archived result predates the guarded AutoML search; regenerate to compare the selected model.";
   const e = result.excluded;
   $("forecast-exclusions").textContent = "Excluded local days: " + e.incomplete_or_dst +
     " incomplete/DST, " + e.flagged_or_invalid + " flagged or invalid, " + e.missing_era5_hour +
@@ -90,7 +101,7 @@ function show(result, label) {
     const day = result.future;
     $("future-status").textContent = day.date + ": ERA5-weather proxy " +
       f(day.totals.era5) + " kWh, calendar " + f(day.totals.calendar) +
-      " kWh, yesterday hold " + f(day.totals.yesterday) + " kWh.";
+      " kWh, yesterday hold " + f(day.totals.yesterday) + " kWh, AutoML " + f(day.totals.auto_ml) + " kWh.";
   }
   $("forecast-status").textContent = "Backtest ready. ERA5 results are hindsight weather-proxy estimates, not real day-ahead weather forecast skill.";
 }
@@ -137,9 +148,9 @@ $("forecast-demo").addEventListener("click", () => {
 });
 $("forecast-export").addEventListener("click", () => {
   if (!report) return;
-  const rows = ["date,local_slot,observed_kwh,era5_kwh,calendar_kwh,yesterday_kwh,era5_temperature_c"];
+  const rows = ["date,local_slot,observed_kwh,era5_kwh,calendar_kwh,yesterday_kwh,automl_kwh,era5_temperature_c"];
   for (const d of report.days) for (const p of d.points) rows.push([
-    d.date, p.slot, p.actual, p.era5, p.calendar, p.yesterday, p.temperature_c].join(","));
+    d.date, p.slot, p.actual, p.era5, p.calendar, p.yesterday, p.auto_ml, p.temperature_c].join(","));
   const url = URL.createObjectURL(new Blob([rows.join("\n") + "\n"], { type: "text/csv" }));
   const a = document.createElement("a");
   a.href = url; a.download = "day-ahead-backtest.csv"; a.click();
@@ -157,14 +168,16 @@ async function loadPublishedStudy() {
     $("published-home").replaceChildren();
     for (const [home, entry] of Object.entries(study.homes)) {
       if (!entry.methods) {
-        populate($("published-rows"), [home, "Not evaluable", "—", "—", "—", entry.reason ?? "Excluded"]);
+        populate($("published-rows"), [home, "Not evaluable", "—", "—", "—", "—", "—", entry.reason ?? "Excluded"]);
         continue;
       }
       const a = entry.methods.era5.interval.mae_kwh;
       const b = entry.methods.yesterday.interval.mae_kwh;
       const c = entry.methods.calendar.interval.mae_kwh;
+      const auto = entry.methods.auto_ml?.interval.mae_kwh;
       populate($("published-rows"), [home, entry.test_days, f(a, 4), f(b, 4),
-        f(c, 4), a < b ? "ERA5 lower error" : a > b ? "Yesterday lower error" : "Tie"]);
+        f(c, 4), f(auto, 4), entry.auto_ml_selection?.chosen_label ?? "Not yet generated",
+        a < b ? "ERA5 lower error" : a > b ? "Yesterday lower error" : "Tie"]);
       available.push({ home, file: entry.file });
       const option = document.createElement("option");
       option.value = entry.file; option.textContent = home;
