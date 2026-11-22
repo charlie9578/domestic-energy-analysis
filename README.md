@@ -228,3 +228,5 @@ python -m unittest discover -s tests -v
 ```
 
 **Important:** weather-normalised difference is a **descriptive association**, not a causal estimate. Whole-home meter readings cannot provide verified thermostat setpoints, identify a particular resident's absence or reliably disaggregate all devices. Solar affects net import, not necessarily gross demand; fuel switching requires both gas and electric boundaries. See [measurement caveats](research/BEHAVIOUR_CHANGE.md).
+
+**View your own analysis locally:** run the `evaluate` or `timeline` CLI command and save JSON output (for example, `python -m domestic_energy.behaviour_change evaluate ... > reports/house_change.json`). Open the [changes-over-time page](behaviour.html#local-report) and select the JSON. The browser-only viewer renders measured-vs-expected totals and 30-day residuals without sending the file to a remote service. Keep raw household event and occupancy data off the public repository.
