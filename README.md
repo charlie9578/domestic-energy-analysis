@@ -195,3 +195,13 @@ python -m domestic_energy meter --csv data/public/processed/opsd-hourly_resident
 These download from allow-listed publisher URLs, leave large raw and converted data in **gitignored `data/public/`**, record checksums, refuse to overwrite outputs and preserve missing-period gaps. REFIT / UK-DALE are power recordings (W), UCI minute-average power is kW, OPSD published channels are interval kWh, and the OPSD **third-party sample mirror** is a counter series — the conversions deliberately differ. ZIPs can be read without extracting the full archive.
 
 **Details and exact source terms:** [Public datasets, example provenance, full local workflow and limitations](research/PUBLIC_DATASETS.md). Historical data priced on today's tariffs must be labelled counterfactual. The dataset downloads have not been live-tested in CI.
+
+## Prior art: academic evidence and open-source comparisons
+
+The [related-work review](research/RELATED_WORK.md) compares real measured-household studies, NILM/disaggregation, heat-loss measurement, heat-pump thermal controls and energy-management tools (EMHASS, Predbat, Heat Pump Cost Optimizer, NILMTK and NILMbench). It distinguishes field evidence from software demonstrations, documents known failure modes, and identifies what *this* research still needs to validate.
+
+- [30-source machine-readable prior-art catalogue](research/PRIOR_ART_CATALOG.csv) — publications, dataset access, design, granularity, gaps and links.
+- [Six replication/benchmark protocols](research/PRIOR_ART_REPLICATION_PLAN.md) — SMETER reference HTC, cross-household NILM and resolution ablations, thermostat comfort, honest tariff dispatch, weather forecasting, PV and retrofit validation.
+- The most important next validation is **measured reference heat loss**, using [SMETER 30-dwelling research measurements](https://reshare.ukdataservice.ac.uk/856978/), followed by detection error at *half-hourly resolution* using independently labelled appliance circuits.
+
+These are **research plans**, not claims that all external benchmarks have been reproduced. Do not merge raw private traces or imply occupancy from low-load periods without separate verified labels and appropriate consent.
