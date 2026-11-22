@@ -145,3 +145,58 @@ $("forecast-export").addEventListener("click", () => {
   a.href = url; a.download = "day-ahead-backtest.csv"; a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
+
+
+async function loadPublishedStudy() {
+  try {
+    const response = await fetch("docs/assets/day-ahead/summary.json", { cache: "no-store" });
+    if (!response.ok) throw new Error("Study dataset has not been published yet (HTTP " + response.status + ").");
+    const study = await response.json();
+    const available = [];
+    $("published-rows").replaceChildren();
+    $("published-home").replaceChildren();
+    for (const [home, entry] of Object.entries(study.homes)) {
+      if (!entry.methods) {
+        populate($("published-rows"), [home, "Not evaluable", "—", "—", "—", entry.reason ?? "Excluded"]);
+        continue;
+      }
+      const a = entry.methods.era5.interval.mae_kwh;
+      const b = entry.methods.yesterday.interval.mae_kwh;
+      const c = entry.methods.calendar.interval.mae_kwh;
+      populate($("published-rows"), [home, entry.test_days, f(a, 4), f(b, 4),
+        f(c, 4), a < b ? "ERA5 lower error" : a > b ? "Yesterday lower error" : "Tie"]);
+      available.push({ home, file: entry.file });
+      const option = document.createElement("option");
+      option.value = entry.file; option.textContent = home;
+      $("published-home").append(option);
+    }
+    $("published-table").hidden = false;
+    $("published-home").disabled = available.length === 0;
+    $("published-open").disabled = available.length === 0;
+    $("published-status").textContent = available.length + " of " + Object.keys(study.homes).length +
+      " measured household traces have comparable backtest days. Lower MAE is better.";
+    $("published-provenance").textContent = "Meter: " + study.provenance.source +
+      " (SHA-256 " + study.provenance.opsd_sha256.slice(0, 16) + "…) · Weather: " +
+      study.provenance.weather + " (SHA-256 " +
+      study.provenance.era5_sha256.slice(0, 16) + "…). The regression was fitted on historical training data only.";
+  } catch (error) {
+    $("published-status").textContent = "Measured study is not currently available: " + error.message +
+      " Reproduction commands are in the linked methodology.";
+  }
+}
+$("published-open").addEventListener("click", async () => {
+  try {
+    const file = $("published-home").value;
+    if (!/^residential[1-6]\.json$/.test(file)) throw new Error("Invalid household reference");
+    $("published-status").textContent = "Loading measured household trace…";
+    const response = await fetch("docs/assets/day-ahead/" + file, { cache: "no-store" });
+    if (!response.ok) throw new Error("Household file unavailable");
+    const report = await response.json();
+    show(report, "Measured OPSD " + report.home + " · ERA5 hindcast");
+    $("forecast-results").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("published-status").textContent = report.home + " loaded. Curve and scores are shown below.";
+  } catch (error) {
+    $("published-status").textContent = "Cannot open measured household: " + error.message;
+  }
+});
+loadPublishedStudy();
