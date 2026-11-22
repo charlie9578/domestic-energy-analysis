@@ -83,8 +83,8 @@ class TestBehaviourChange(unittest.TestCase):
 
     def test_missing_days_are_not_zero(self):
         rows,event=make_days()
-        rows[0]['coverage_fraction']=.2
-        rows.pop(1)
+        rows[100]['coverage_fraction']=.2
+        rows.pop(101)
         r=evaluate_intervention(rows,event_date=event,event_type='other',meter_boundary='gas_input')
         self.assertEqual(r['n_low_coverage_days_excluded'],1)
         self.assertTrue(any('Missing' in w for w in r['warnings']))
