@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { analyseDayAheadCsv } from "../docs/day-ahead.js";
+import { analyseDayAheadCsv, DAY_AHEAD_CANDIDATES, selectDayAheadModel } from "../docs/day-ahead.js";
 
 function fixture({ days = 70, missing = -1, flagged = -1, futureWeather = false } = {}) {
   const meter = ["start_utc,consumption_kwh,duration_minutes,publisher_interpolated"];
@@ -89,4 +89,55 @@ test("DST transition days cannot masquerade as 48 local half-hours", () => {
 test("short data fails with an informative error", () => {
   const { meter, weather } = fixture({ days: 10 });
   assert.throws(() => analyseDayAheadCsv(meter, weather, "UTC"), /at least/);
+});
+
+test("guarded AutoML search is predeclared and uses only training-period folds", () => {
+  const { meter, weather } = fixture({ days: 110 });
+  const result = analyseDayAheadCsv(meter, weather, "UTC");
+  assert.equal(DAY_AHEAD_CANDIDATES.length, 11);
+  assert.ok(DAY_AHEAD_CANDIDATES.some((m) => m.id === result.auto_ml_selection.chosen_id));
+  assert.ok(result.auto_ml_selection.folds >= 2);
+  assert.ok(result.auto_ml_selection.fold_details.every((f) => f.validation_end <= result.train_end));
+  assert.equal(result.methods.auto_ml.interval.count, result.test_halfhours);
+  assert.equal(result.methods.auto_ml.daily.count, result.test_days);
+  assert.ok(result.days.every((d) => d.points.every((p) => Number.isFinite(p.auto_ml) && p.auto_ml >= 0)));
+});
+
+test("holdout perturbation cannot alter candidate choice or fitted predictions", () => {
+  const { meter, weather } = fixture({ days: 100 });
+  const original = analyseDayAheadCsv(meter, weather, "UTC");
+  const changedMeter = meter.split("\n").map((line) => {
+    if (!line.startsWith("2025-")) return line;
+    if (line.slice(0, 10) < original.test_start) return line;
+    const parts = line.split(",");
+    parts[1] = "18.5";
+    return parts.join(",");
+  }).join("\n");
+  const shifted = analyseDayAheadCsv(changedMeter, weather, "UTC");
+  assert.equal(shifted.auto_ml_selection.chosen_id, original.auto_ml_selection.chosen_id);
+  assert.deepEqual(shifted.days.map((d) => d.points.map((p) => p.era5)),
+    original.days.map((d) => d.points.map((p) => p.era5)));
+  // Each holdout prediction may legitimately depend on the previous day's
+  // reading, never the target itself. The first test day has a training-day lag.
+  assert.deepEqual(shifted.days[0].points.map((p) => p.auto_ml),
+    original.days[0].points.map((p) => p.auto_ml));
+});
+
+test("selection falls back to yesterday on sparse or unpaired training", () => {
+  const noValidation = selectDayAheadModel([]);
+  assert.equal(noValidation.chosen_id, "yesterday");
+  assert.equal(noValidation.tuned, false);
+});
+
+test("guarded AutoML does not promote complexity when a simple baseline is exact", () => {
+  const days = Array.from({ length: 120 }, (_, d) => {
+    const date = new Date(Date.UTC(2025, 0, 1 + d)).toISOString().slice(0, 10);
+    const points = Array.from({ length: 48 }, (_, slot) => ({
+      slot, actual: .2 + .015 * slot, temperature: 2 + 15 * Math.sin(d / 17),
+    }));
+    return { date, points };
+  });
+  const model = selectDayAheadModel(days);
+  assert.ok(["calendar", "era5", "yesterday"].includes(model.chosen_id));
+  assert.equal(model.candidate_count, 11);
 });
