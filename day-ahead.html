@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Backtest day-ahead half-hourly domestic electricity consumption using ERA5 weather and persistence baselines.">
+  <title>Day-ahead forecast · Domestic Energy Research</title>
+  <link rel="icon" href="docs/assets/house.webp" type="image/webp">
+  <link rel="stylesheet" href="docs/styles.css">
+  <link rel="stylesheet" href="docs/day-ahead.css">
+  <script type="module" src="docs/day-ahead-page.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="header"><div class="wrap header-inner">
+  <a class="brand" href="./"><span class="brand-icon" aria-hidden="true">⌂</span> Domestic Energy Research</a>
+  <nav aria-label="Main navigation"><a href="datasets.html">Datasets</a><a href="meter-explorer.html">Meter explorer</a><a href="day-ahead.html" aria-current="page">Day-ahead forecast</a><a href="tariffs.html">Tariffs</a></nav>
+</div></header>
+<main class="wrap section" id="main">
+  <div class="section-heading">
+    <span class="tag inferred">Retrospective weather-proxy backtest</span>
+    <h1 class="subpage-title">Tomorrow's consumption profile: expected vs observed</h1>
+    <p>Compare a 48-point day-ahead electricity profile with the next day's real meter readings, on exactly the same held-out intervals. ERA5 is historical reanalysis, so this is a <strong>perfect-weather hindcast</strong>, not an operational forecast. Electricity import is not necessarily total household demand when solar is present.</p>
+  </div>
+  <div class="split">
+    <form id="forecast-form" class="card">
+      <h2>Backtest your data</h2>
+      <label>Half-hourly electricity CSV<input type="file" name="meter" accept=".csv,text/csv" required></label>
+      <label>Hourly ERA5 temperature CSV<input type="file" name="weather" accept=".csv,text/csv" required></label>
+      <label>Local clock<select name="zone"><option value="Europe/London">UK (Europe/London)</option><option value="Europe/Berlin">Central Europe (Europe/Berlin)</option><option value="UTC">UTC</option></select></label>
+      <div class="actions"><button class="button primary" type="submit">Run backtest</button><button class="button secondary" id="forecast-demo" type="button">Try synthetic demo</button></div>
+      <p>Files stay in this browser tab. Require at least 33 complete aligned days; the last 20% form the chronological holdout. There is no random shuffle, and no future meter readings enter prediction.</p>
+    </form>
+    <aside class="card">
+      <h2>Inputs and fair comparison</h2>
+      <p>Meter: <code>start_utc,consumption_kwh,duration_minutes,publisher_interpolated</code> (the last column is optional). Weather: <code>start_utc,temperature_c</code>. UTC timestamps must carry <code>Z</code> or an offset.</p>
+      <p>The temperature regression learns 48 half-hour × weekday/weekend average profiles and a pooled within-slot temperature slope. The calendar-only control uses the same profile with slope zero. Yesterday's zero-order hold copies each of the previous local day's 48 values.</p>
+      <p>Missing/flagged readings, weather gaps and 23/25-hour local days are excluded: no interpolation or hidden zero-filling. Only the next-day target uses held-out readings. Download ERA5 with <a href="https://github.com/charlie9578/domestic-energy-analysis#hourly-historical-weather">the repository weather command</a>.</p>
+    </aside>
+  </div>
+  <p id="forecast-status" class="meter-status" role="status">Load a matching meter and ERA5 series, or try the clearly labelled synthetic demo.</p>
+  <div id="forecast-results" hidden>
+    <section class="card reading-card">
+      <div class="section-heading"><h2>Held-out forecast scores</h2><p id="forecast-split"></p></div>
+      <div class="meter-scroll"><table>
+        <thead><tr><th>Model</th><th>Half-hour MAE (kWh)</th><th>Half-hour RMSE</th><th>Half-hour R²</th><th>Daily total MAE (kWh)</th><th>Daily total bias (kWh)</th></tr></thead>
+        <tbody id="forecast-scores"></tbody>
+      </table></div>
+      <p id="forecast-exclusions"></p>
+    </section>
+    <section class="card reading-card">
+      <div class="section-heading"><h2>One day: prediction vs reality</h2><p>Select a held-out day to see the profile made without using that day's readings.</p></div>
+      <div class="meter-controls">
+        <label>Held-out local date<select id="forecast-day"></select></label>
+        <button class="button secondary" type="button" id="forecast-export">Download backtest CSV</button>
+      </div>
+      <div class="forecast-legend"><span class="forecast-actual">Observed</span><span class="forecast-era5">ERA5 regression</span><span class="forecast-calendar">Clock/calendar only</span><span class="forecast-yesterday">Yesterday hold</span></div>
+      <figure><canvas id="forecast-curve" width="900" height="320" role="img" aria-label="Half-hourly demand line plot"></canvas><figcaption class="forecast-caption" id="forecast-caption"></figcaption></figure>
+      <p id="forecast-day-summary"></p>
+      <details class="meter-scroll"><summary>Show half-hour values</summary><table><thead><tr><th>Local time</th><th>Actual</th><th>ERA5 regression</th><th>Calendar</th><th>Yesterday</th><th>ERA5 °C</th></tr></thead><tbody id="forecast-values"></tbody></table></details>
+    </section>
+    <section class="card reading-card">
+      <div class="section-heading"><h2>Calibration regressions: actual vs predicted</h2><p>OLS slopes and intercepts use held-out data only for diagnostics, not model fitting. Ideal slope = 1 and intercept = 0; R² here measures calibration correlation, not predictive R².</p></div>
+      <div class="meter-scroll"><table><thead><tr><th>Method</th><th>Interval slope</th><th>Intercept (kWh/half-hour)</th><th>Correlation R²</th><th>Daily slope</th><th>Daily correlation R²</th></tr></thead><tbody id="forecast-calibration"></tbody></table></div>
+    </section>
+    <section class="card reading-card" id="future-panel" hidden>
+      <h2>Next-day preview</h2>
+      <p id="future-status"></p>
+      <p>This preview is possible only with a complete 48-slot day of separately supplied *future* weather. ERA5 reanalysis cannot provide tomorrow's weather in real time; for live operation replace it with an actual issued weather forecast and record its issue time.</p>
+    </section>
+  </div>
+  <section class="card reading-card">
+    <h2>Interpretation and next steps</h2>
+    <p>This is a frozen chronological train/test split, not a rolling re-fit. The weather model is only as good as the weather supplied; hindsight ERA5 may overstate day-ahead skill. Its performance should be compared with yesterday persistence and calendar-only expectations on paired complete days, and later with archived forecast weather at known issue times. Separate gas, whole-home electricity and heat-pump electricity require separate fits and score tables.</p>
+    <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/DEMAND_DECISIONS.md">Earlier half-hourly persistence study</a>
+  </section>
+</main>
+<footer><div class="wrap footer-inner"><a class="brand" href="./">⌂ Domestic Energy Research</a><a href="https://github.com/charlie9578/domestic-energy-analysis">Repository and reproducibility</a></div></footer>
+</body></html>
