@@ -147,9 +147,9 @@ export function selectDayAheadModel(training) {
     foldDetails.push({ train_days: bounds[i], validation_start: paired[0].day.date,
       validation_end: paired.at(-1).day.date, validation_days: paired.length });
   }
-  if (foldDetails.length < 2 || days < 20) {
+  if (foldDetails.length < 3 || days < 40) {
     return { chosen_id: "yesterday", chosen_label: "Yesterday persistence",
-      reason: "Too few paired expanding-window validation days; safe persistence fallback",
+      reason: "Fewer than 40 paired days or three chronological validation folds; safe persistence fallback",
       tuned: false, folds: foldDetails.length, validation_days: days,
       candidate_count: DAY_AHEAD_CANDIDATES.length };
   }
@@ -181,7 +181,7 @@ export function selectDayAheadModel(training) {
     baseline_id: baseline.id, baseline_cv_mae_kwh: baselineMae,
     chosen_cv_mae_kwh: chosenMae,
     chosen_cv_improvement_pct: 100 * (baselineMae - chosenMae) / baselineMae,
-    selection_guard: "3% MAE and one paired-fold SE over best simple baseline; >=2 improving folds",
+    selection_guard: "At least 40 paired validation days, all 3 expanding folds; 3% MAE and one paired-fold SE over best simple baseline; >=2 improving folds",
     candidates_cv_mae_kwh: Object.fromEntries(DAY_AHEAD_CANDIDATES.map((m) =>
       [m.id, average(foldScores[m.id])])),
     reason: chosen.id === baseline.id ?
