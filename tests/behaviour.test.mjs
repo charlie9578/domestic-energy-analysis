@@ -7,7 +7,7 @@ test('setpoint 25 to 22 conserves temperature difference arithmetic', () => {
     heatLossWK:200,heatedHours:14,fuel:'gas',efficiency:.85,priceP:8});
   assert.ok(Math.abs(v.differenceInput+8.4/.85)<1e-8);
   assert.ok(Math.abs(v.variableCostDifferenceDay+8.4/.85*.08)<1e-8);
-  assert.equal(v.beforeHeat-v.afterHeat,8.4);
+  assert.ok(Math.abs((v.beforeHeat-v.afterHeat)-8.4)<1e-8);
 });
 test('same setpoint has no energy difference',()=>{
  const v=thermostatScenario({beforeC:22,afterC:22,outsideC:5,
