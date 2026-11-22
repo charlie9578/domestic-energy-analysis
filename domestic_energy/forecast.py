@@ -121,9 +121,9 @@ def fit_daily_model(rows: list[dict], *, fuel: str = 'gas', ridge: float = 0.02,
                     candidate_balance_c: tuple[int, ...] = (12, 14, 15, 16, 18),
                     holdout_fraction: float = 0.2, boiler_efficiency: float | None = None,
                     floor_area_m2: float | None = None) -> dict:
-    """Fit HDD + occupancy + weekend + season model, select HDD base on *later* holdout.
+    """Fit an HDD model with an inner chronological split for base selection.
 
-    Fits final model on training rows only: holdout stays genuinely out of sample.
+    The outer holdout is used only for final evaluation.
     Positive gas heating gradient can be turned into an *indicative* HLC when
     boiler efficiency is provided; it does NOT measure a building fabric U value.
     """
@@ -149,12 +149,17 @@ def fit_daily_model(rows: list[dict], *, fuel: str = 'gas', ridge: float = 0.02,
     cut = len(ordered) - max(10, round(len(ordered) * holdout_fraction))
     train, holdout = ordered[:cut], ordered[cut:]
     actual = [float(r['consumption_kwh']) for r in holdout]
+    tune_cut = len(train) - max(7, round(len(train) * .2))
+    fit_rows, tuning = train[:tune_cut], train[tune_cut:]
     candidates = []
     for base in candidate_balance_c:
-        params = _fit(train, float(base), ridge)
-        preds = [_estimate(row, float(base), params) for row in holdout]
-        candidates.append((mean(abs(p - y) for p, y in zip(preds, actual)), base, params, preds))
-    mae, balance_c, params, predictions = min(candidates, key=lambda x: (x[0], x[1]))
+        params = _fit(fit_rows, float(base), ridge)
+        error = mean(abs(_estimate(row, float(base), params) - float(row['consumption_kwh']))
+                     for row in tuning)
+        candidates.append((error, base))
+    _, balance_c = min(candidates)
+    params = _fit(train, float(balance_c), ridge)
+    predictions = [_estimate(row, float(balance_c), params) for row in holdout]
     errors = sorted(abs(p - y) for p, y in zip(predictions, actual))
     holdout_p90_abs_error = errors[min(len(errors)-1, int(0.9 * len(errors)))]
     heating_gradient = max(0, params[1])

@@ -19,8 +19,32 @@
   </header>
 
   <main id="main">
+    <section class="wrap section" id="demand-decisions">
+      <div class="section-heading">
+        <h1 class="subpage-title">Forecast demand and lower bills</h1>
+        <p>Use earlier meter readings to forecast grid import. Then price the forecast and test savings against the observed readings.</p>
+      </div>
+      <article class="card cohort-card">
+        <h2>Test the demand forecast first</h2>
+        <p>Five Konstanz-area homes, October–December 2016. The rolling median uses the preceding four weeks at the same UTC half-hour. Both models were scored on the same eligible slots.</p>
+        <table><thead><tr><th scope="col">Home</th><th scope="col">Test slots</th><th scope="col">Last week</th><th scope="col">Rolling median</th></tr></thead><tbody>
+          <tr><th scope="row">1</th><td>4,418</td><td>0.144</td><td>0.109</td></tr>
+          <tr><th scope="row">2</th><td>4,322</td><td>0.150</td><td>0.115</td></tr>
+          <tr><th scope="row">4</th><td>2,360</td><td>0.205</td><td>0.176</td></tr>
+          <tr><th scope="row">5</th><td>4,418</td><td>0.110</td><td>0.087</td></tr>
+          <tr><th scope="row">6</th><td>4,418</td><td>0.108</td><td>0.095</td></tr>
+        </tbody></table>
+        <p>Values are mean absolute error in kWh per half-hour. The median improved interval error for all five homes and still underestimated every priced total. A rolling mean gave closer cost totals for all five.</p>
+        <a href="https://github.com/charlie9578/domestic-energy-analysis/blob/main/research/DEMAND_DECISIONS.md">Forecast methods, exclusions and uncertainty</a>
+      </article>
+      <div class="dataset-grid">
+        <article class="card"><h3>Reprice the same load</h3><p>On the observed test slots, illustrative 10p overnight and 30p daytime rates cost less for two homes than a 27p flat rate. All readings stayed fixed.</p></article>
+        <article class="card"><h3>Shift a metered load</h3><p>Across three eligible overnight EV windows, 13.15 kWh moved to cheaper slots and modelled energy charges fell by £2.63. Total charging energy and the observed half-hour peak were preserved. Vehicle availability through the deadline was assumed.</p></article>
+        <article class="card"><h3>Reduce imported energy</h3><p>A verified cut of 1 kWh in a 30p interval saves 30p. Moving it to a 10p interval saves 20p. The forecast shows where to look for savings. A separate measurement or engineering calculation establishes what can be removed.</p></article>
+      </div>
+    </section>
     <section class="wrap section" id="tariffs">
-      <div class="section-heading"><span class="tag simulated">Illustrative pricing</span><h1 class="subpage-title">Compare tariffs on measured load</h1><p>Reprice all recorded London meter intervals, including 100.376 kWh overnight and 446.580 kWh during the day. Compare variable charges on the same consumption. Standing charges are excluded.</p></div>
+      <div class="section-heading"><span class="tag simulated">Illustrative pricing</span><h2>Compare tariffs on measured London load</h2><p>Reprice all recorded London meter intervals, including 100.376 kWh overnight and 446.580 kWh during the day. Compare variable charges on the same consumption. Standing charges are excluded.</p></div>
       <div class="split">
         <form class="card" id="tariff-form">
           <h3>Unit rates</h3>

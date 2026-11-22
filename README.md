@@ -21,6 +21,10 @@ The initial scope is **Great Britain**, with official statistics for **England a
 
 Read [the research report](research/REPORT.md), [methodology and caveats](research/METHODOLOGY.md), and [the public data catalogue](research/SOURCES.md) before quoting results.
 
+## Demand forecasting and bill decisions
+
+The [demand and tariff analysis](https://charlie9578.github.io/domestic-energy-analysis/tariffs.html#demand-decisions) compares chronological half-hourly demand forecasts on five public homes. It then reprices the same observed load and separately tests shifting an observed EV charging circuit subject to energy, timing and peak constraints. [Methods and reproduction](research/DEMAND_DECISIONS.md)
+
 ## Hourly heat-balance validation
 
 A measured heat input and indoor/outdoor temperatures drive a single-zone energy balance. We fit its parameters on earlier hours and compare later predictions against a persistence baseline at one and six hours. The result supports a narrow check of model behaviour under recorded heating. The project treats equipment sizing and changed thermostat schedules as separate questions. [Methods, results and data preparation](research/HOURLY_HEAT_BALANCE.md)

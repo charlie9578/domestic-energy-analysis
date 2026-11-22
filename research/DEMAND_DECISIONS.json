@@ -1,0 +1,110 @@
+{
+  "end_exclusive_utc": "2016-12-31T23:00:00+00:00",
+  "ev_charge_replay_by_local_deadline": {
+    "5": {
+      "eligible_windows": 3,
+      "excluded_windows": {
+        "less_than_one_kwh_observed": 140,
+        "missing_or_flagged_channel": 222
+      },
+      "modelled_variable_cost_reduction_gbp": 2.63,
+      "observed_ev_kwh_in_eligible_windows": 17.238,
+      "shifted_kwh": 13.148,
+      "windows_with_lower_cost": 3
+    },
+    "7": {
+      "eligible_windows": 3,
+      "excluded_windows": {
+        "less_than_one_kwh_observed": 133,
+        "missing_or_flagged_channel": 229
+      },
+      "modelled_variable_cost_reduction_gbp": 2.63,
+      "observed_ev_kwh_in_eligible_windows": 17.238,
+      "shifted_kwh": 13.148,
+      "windows_with_lower_cost": 3
+    }
+  },
+  "evaluation_start_utc": "2016-09-30T22:00:00+00:00",
+  "households": {
+    "residential1": {
+      "four_week_median_mae_kwh": 0.1085,
+      "mae_difference_week_bootstrap_95_kwh": [
+        -0.0461,
+        -0.0238
+      ],
+      "priced_four_week_mean_gbp": 359.05,
+      "priced_four_week_median_gbp": 310.71,
+      "priced_observed_flat_27p_gbp": 362.8,
+      "priced_observed_test_slots_gbp": 365.68,
+      "priced_weekly_persistence_gbp": 366.59,
+      "shared_test_intervals": 4418,
+      "test_intervals_without_baseline": 0,
+      "weekly_persistence_mae_kwh": 0.1436
+    },
+    "residential2": {
+      "four_week_median_mae_kwh": 0.1151,
+      "mae_difference_week_bootstrap_95_kwh": [
+        -0.0433,
+        -0.027
+      ],
+      "priced_four_week_mean_gbp": 231.81,
+      "priced_four_week_median_gbp": 191.83,
+      "priced_observed_flat_27p_gbp": 226.31,
+      "priced_observed_test_slots_gbp": 236.53,
+      "priced_weekly_persistence_gbp": 241.61,
+      "shared_test_intervals": 4322,
+      "test_intervals_without_baseline": 48,
+      "weekly_persistence_mae_kwh": 0.1498
+    },
+    "residential4": {
+      "four_week_median_mae_kwh": 0.1764,
+      "mae_difference_week_bootstrap_95_kwh": [
+        -0.0407,
+        -0.0168
+      ],
+      "priced_four_week_mean_gbp": 170.35,
+      "priced_four_week_median_gbp": 153.13,
+      "priced_observed_flat_27p_gbp": 225.93,
+      "priced_observed_test_slots_gbp": 218.47,
+      "priced_weekly_persistence_gbp": 195.42,
+      "shared_test_intervals": 2360,
+      "test_intervals_without_baseline": 873,
+      "weekly_persistence_mae_kwh": 0.2049
+    },
+    "residential5": {
+      "four_week_median_mae_kwh": 0.0868,
+      "mae_difference_week_bootstrap_95_kwh": [
+        -0.0267,
+        -0.0206
+      ],
+      "priced_four_week_mean_gbp": 201.38,
+      "priced_four_week_median_gbp": 177.58,
+      "priced_observed_flat_27p_gbp": 218.53,
+      "priced_observed_test_slots_gbp": 219.84,
+      "priced_weekly_persistence_gbp": 211.57,
+      "shared_test_intervals": 4418,
+      "test_intervals_without_baseline": 0,
+      "weekly_persistence_mae_kwh": 0.1104
+    },
+    "residential6": {
+      "four_week_median_mae_kwh": 0.0951,
+      "mae_difference_week_bootstrap_95_kwh": [
+        -0.0213,
+        -0.0049
+      ],
+      "priced_four_week_mean_gbp": 193.22,
+      "priced_four_week_median_gbp": 177.94,
+      "priced_observed_flat_27p_gbp": 243.97,
+      "priced_observed_test_slots_gbp": 236.16,
+      "priced_weekly_persistence_gbp": 223.21,
+      "shared_test_intervals": 4418,
+      "test_intervals_without_baseline": 0,
+      "weekly_persistence_mae_kwh": 0.108
+    }
+  },
+  "illustrative_prices_p_per_kwh": {
+    "00_to_05_local": 10,
+    "05_to_24_local": 30
+  },
+  "opsd_source_sha256": "eca7dee5ac6e53373cd0209bc05ba3383cd860bfa5d5e995f74fa78db8857c58"
+}

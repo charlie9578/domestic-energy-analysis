@@ -8,12 +8,17 @@ from .dataset_hub import number
 
 
 def opsd_halfhours(source, households, *, start, end):
+    return opsd_halfhour_channels(source, {
+        home: f"DE_KN_{home}_grid_import" for home in households
+    }, start=start, end=end)
+
+
+def opsd_halfhour_channels(source, columns, *, start, end):
     """Read three consecutive quarter-hour boundaries per half-hour.
 
     Preserve the publisher's interpolation flag so study callers can exclude
     those intervals while retaining the downloadable full-coverage series.
     """
-    columns = {home: f"DE_KN_{home}_grid_import" for home in households}
     records = defaultdict(list)
     quarter = timedelta(minutes=15)
     rows = csv.DictReader(source)
