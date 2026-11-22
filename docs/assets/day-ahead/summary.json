@@ -1,0 +1,474 @@
+{
+  "provenance": {
+    "source": "OPSD Household Data 2020-04-15 quarter-hour singleindex, CoSSMic",
+    "source_url": "https://data.open-power-system-data.org/household_data/2020-04-15/",
+    "source_license": "CC BY 4.0",
+    "opsd_sha256": "eca7dee5ac6e53373cd0209bc05ba3383cd860bfa5d5e995f74fa78db8857c58",
+    "weather": "Open-Meteo historical ERA5 hourly reanalysis, 47.6603 N, 9.1758 E",
+    "weather_url": "https://open-meteo.com/en/docs/historical-weather-api",
+    "era5_sha256": "2ac0e359be920e92c40af4e66d27cf0de3781950e1f1df73b9bd9b15eba4dc72",
+    "range": "Europe/Berlin 2016",
+    "households": [
+      "residential1",
+      "residential2",
+      "residential4",
+      "residential5",
+      "residential6"
+    ],
+    "meter_counts": {
+      "residential1": 17568,
+      "residential2": 17568,
+      "residential4": 17568,
+      "residential5": 17568,
+      "residential6": 17568
+    }
+  },
+  "method": {
+    "name": "Frozen 80/20 chronological split; additive within-slot temperature regression",
+    "weather": "Historical ERA5 reanalysis, NOT issued day-ahead forecast (perfect-weather proxy)",
+    "zone": "Europe/Berlin",
+    "interval": "Unflagged complete 48-slot local days; excludes DST 23/25h days",
+    "baseline": "Prior complete local day's matching 48 half-hour readings",
+    "comparison": "All models evaluated on identical holdout days with a complete yesterday",
+    "prediction_unit": "kWh per 30 minutes; grid import not gross household load",
+    "training": "Train on earlier complete days only; no target or future values in coefficients",
+    "note": "Households with insufficient paired days are marked ineligible rather than assigned artificial scores"
+  },
+  "homes": {
+    "residential1": {
+      "home": "residential1",
+      "train_start": "2016-01-01",
+      "train_end": "2016-10-20",
+      "test_start": "2016-10-21",
+      "test_end": "2016-12-31",
+      "train_days": 283,
+      "test_days": 70,
+      "candidate_test_days": 71,
+      "test_halfhours": 3360,
+      "skipped_missing_yesterday": 1,
+      "excluded": {
+        "incomplete_or_dst": 2,
+        "flagged_or_invalid": 10,
+        "missing_era5_hour": 0
+      },
+      "temperature_slope_kwh_per_halfhour_per_c": -0.00326,
+      "methods": {
+        "era5": {
+          "interval": {
+            "count": 3360,
+            "mae_kwh": 0.11427,
+            "rmse_kwh": 0.19691,
+            "bias_kwh": 0.01838,
+            "r2": 0.08211,
+            "slope": 0.81041,
+            "intercept_kwh": 0.04204,
+            "calibration_r2": 0.09532
+          },
+          "daily": {
+            "count": 70,
+            "mae_kwh": 2.97251,
+            "rmse_kwh": 3.71675,
+            "bias_kwh": 0.88217,
+            "r2": -0.01009,
+            "slope": 0.91017,
+            "intercept_kwh": 0.49179,
+            "calibration_r2": 0.04727
+          }
+        },
+        "calendar": {
+          "interval": {
+            "count": 3360,
+            "mae_kwh": 0.10697,
+            "rmse_kwh": 0.19689,
+            "bias_kwh": -0.00838,
+            "r2": 0.08229,
+            "slope": 0.81184,
+            "intercept_kwh": 0.0633,
+            "calibration_r2": 0.08872
+          },
+          "daily": {
+            "count": 70,
+            "mae_kwh": 2.81351,
+            "rmse_kwh": 3.69652,
+            "bias_kwh": -0.40203,
+            "r2": 0.00087,
+            "slope": 0.69103,
+            "intercept_kwh": 4.73115,
+            "calibration_r2": 0.01586
+          }
+        },
+        "yesterday": {
+          "interval": {
+            "count": 3360,
+            "mae_kwh": 0.12828,
+            "rmse_kwh": 0.26355,
+            "bias_kwh": 0.00291,
+            "r2": -0.64433,
+            "slope": 0.19531,
+            "intercept_kwh": 0.24106,
+            "calibration_r2": 0.04032
+          },
+          "daily": {
+            "count": 70,
+            "mae_kwh": 2.78333,
+            "rmse_kwh": 3.79308,
+            "bias_kwh": 0.13984,
+            "r2": -0.05201,
+            "slope": 0.4744,
+            "intercept_kwh": 7.50926,
+            "calibration_r2": 0.22235
+          }
+        }
+      },
+      "file": "residential1.json"
+    },
+    "residential2": {
+      "home": "residential2",
+      "train_start": "2016-01-01",
+      "train_end": "2016-10-28",
+      "test_start": "2016-10-29",
+      "test_end": "2016-12-31",
+      "train_days": 241,
+      "test_days": 59,
+      "candidate_test_days": 61,
+      "test_halfhours": 2832,
+      "skipped_missing_yesterday": 2,
+      "excluded": {
+        "incomplete_or_dst": 2,
+        "flagged_or_invalid": 62,
+        "missing_era5_hour": 0
+      },
+      "temperature_slope_kwh_per_halfhour_per_c": -0.00224,
+      "methods": {
+        "era5": {
+          "interval": {
+            "count": 2832,
+            "mae_kwh": 0.1127,
+            "rmse_kwh": 0.19972,
+            "bias_kwh": -0.03573,
+            "r2": 0.09652,
+            "slope": 1.23433,
+            "intercept_kwh": -0.00323,
+            "calibration_r2": 0.13013
+          },
+          "daily": {
+            "count": 59,
+            "mae_kwh": 2.80004,
+            "rmse_kwh": 3.68632,
+            "bias_kwh": -1.71509,
+            "r2": -0.33512,
+            "slope": -0.04421,
+            "intercept_kwh": 10.04776,
+            "calibration_r2": 0.00008
+          }
+        },
+        "calendar": {
+          "interval": {
+            "count": 2832,
+            "mae_kwh": 0.11014,
+            "rmse_kwh": 0.20557,
+            "bias_kwh": -0.06014,
+            "r2": 0.04284,
+            "slope": 1.27882,
+            "intercept_kwh": 0.02059,
+            "calibration_r2": 0.13098
+          },
+          "daily": {
+            "count": 59,
+            "mae_kwh": 3.49627,
+            "rmse_kwh": 4.33563,
+            "bias_kwh": -2.88663,
+            "r2": -0.84689,
+            "slope": 0.05471,
+            "intercept_kwh": 9.3225,
+            "calibration_r2": 0.00009
+          }
+        },
+        "yesterday": {
+          "interval": {
+            "count": 2832,
+            "mae_kwh": 0.14409,
+            "rmse_kwh": 0.25726,
+            "bias_kwh": 0.00337,
+            "r2": -0.49905,
+            "slope": 0.25612,
+            "intercept_kwh": 0.14938,
+            "calibration_r2": 0.06708
+          },
+          "daily": {
+            "count": 59,
+            "mae_kwh": 2.51297,
+            "rmse_kwh": 3.57467,
+            "bias_kwh": 0.16195,
+            "r2": -0.25547,
+            "slope": 0.3678,
+            "intercept_kwh": 6.06959,
+            "calibration_r2": 0.1294
+          }
+        }
+      },
+      "file": "residential2.json"
+    },
+    "residential4": {
+      "home": "residential4",
+      "train_start": "2016-01-01",
+      "train_end": "2016-05-31",
+      "test_start": "2016-07-31",
+      "test_end": "2016-12-06",
+      "train_days": 83,
+      "test_days": 12,
+      "candidate_test_days": 21,
+      "test_halfhours": 576,
+      "skipped_missing_yesterday": 9,
+      "excluded": {
+        "incomplete_or_dst": 0,
+        "flagged_or_invalid": 262,
+        "missing_era5_hour": 0
+      },
+      "temperature_slope_kwh_per_halfhour_per_c": -0.02319,
+      "methods": {
+        "era5": {
+          "interval": {
+            "count": 576,
+            "mae_kwh": 0.06237,
+            "rmse_kwh": 0.11667,
+            "bias_kwh": -0.02914,
+            "r2": 0.49508,
+            "slope": 0.94063,
+            "intercept_kwh": 0.03374,
+            "calibration_r2": 0.52868
+          },
+          "daily": {
+            "count": 12,
+            "mae_kwh": 1.63555,
+            "rmse_kwh": 1.87281,
+            "bias_kwh": -1.39868,
+            "r2": 0.89645,
+            "slope": 1.09161,
+            "intercept_kwh": 1.05803,
+            "calibration_r2": 0.96098
+          }
+        },
+        "calendar": {
+          "interval": {
+            "count": 576,
+            "mae_kwh": 0.28882,
+            "rmse_kwh": 0.30924,
+            "bias_kwh": 0.25756,
+            "r2": -2.5469,
+            "slope": 0.39534,
+            "intercept_kwh": -0.03736,
+            "calibration_r2": 0.06445
+          },
+          "daily": {
+            "count": 12,
+            "mae_kwh": 13.49839,
+            "rmse_kwh": 13.67826,
+            "bias_kwh": 12.36302,
+            "r2": -4.52344,
+            "slope": -10.36561,
+            "intercept_kwh": 186.30998,
+            "calibration_r2": 0.05512
+          }
+        },
+        "yesterday": {
+          "interval": {
+            "count": 576,
+            "mae_kwh": 0.05426,
+            "rmse_kwh": 0.14016,
+            "bias_kwh": 0.00049,
+            "r2": 0.2713,
+            "slope": 0.60416,
+            "intercept_kwh": 0.0419,
+            "calibration_r2": 0.47538
+          },
+          "daily": {
+            "count": 12,
+            "mae_kwh": 0.90358,
+            "rmse_kwh": 1.31319,
+            "bias_kwh": 0.02375,
+            "r2": 0.94909,
+            "slope": 0.83574,
+            "intercept_kwh": 0.82071,
+            "calibration_r2": 0.98724
+          }
+        }
+      },
+      "file": "residential4.json"
+    },
+    "residential5": {
+      "home": "residential5",
+      "train_start": "2016-01-01",
+      "train_end": "2016-10-22",
+      "test_start": "2016-10-23",
+      "test_end": "2016-12-31",
+      "train_days": 272,
+      "test_days": 68,
+      "candidate_test_days": 69,
+      "test_halfhours": 3264,
+      "skipped_missing_yesterday": 1,
+      "excluded": {
+        "incomplete_or_dst": 2,
+        "flagged_or_invalid": 23,
+        "missing_era5_hour": 0
+      },
+      "temperature_slope_kwh_per_halfhour_per_c": -0.00466,
+      "methods": {
+        "era5": {
+          "interval": {
+            "count": 3264,
+            "mae_kwh": 0.08237,
+            "rmse_kwh": 0.1297,
+            "bias_kwh": -0.0059,
+            "r2": 0.14744,
+            "slope": 1.03089,
+            "intercept_kwh": 0.00021,
+            "calibration_r2": 0.14934
+          },
+          "daily": {
+            "count": 68,
+            "mae_kwh": 1.17661,
+            "rmse_kwh": 1.48015,
+            "bias_kwh": -0.28336,
+            "r2": 0.14709,
+            "slope": 0.77031,
+            "intercept_kwh": 2.31405,
+            "calibration_r2": 0.19575
+          }
+        },
+        "calendar": {
+          "interval": {
+            "count": 3264,
+            "mae_kwh": 0.08003,
+            "rmse_kwh": 0.13805,
+            "bias_kwh": -0.04597,
+            "r2": 0.03412,
+            "slope": 1.13751,
+            "intercept_kwh": 0.02615,
+            "calibration_r2": 0.14331
+          },
+          "daily": {
+            "count": 68,
+            "mae_kwh": 2.30905,
+            "rmse_kwh": 2.70171,
+            "bias_kwh": -2.20651,
+            "r2": -1.84162,
+            "slope": 0.85875,
+            "intercept_kwh": 3.18363,
+            "calibration_r2": 0.05528
+          }
+        },
+        "yesterday": {
+          "interval": {
+            "count": 3264,
+            "mae_kwh": 0.11315,
+            "rmse_kwh": 0.18163,
+            "bias_kwh": -0.00006,
+            "r2": -0.67184,
+            "slope": 0.16449,
+            "intercept_kwh": 0.15883,
+            "calibration_r2": 0.02709
+          },
+          "daily": {
+            "count": 68,
+            "mae_kwh": 1.8359,
+            "rmse_kwh": 2.29853,
+            "bias_kwh": -0.00304,
+            "r2": -1.05679,
+            "slope": -0.02259,
+            "intercept_kwh": 9.33028,
+            "calibration_r2": 0.00052
+          }
+        }
+      },
+      "file": "residential5.json"
+    },
+    "residential6": {
+      "home": "residential6",
+      "train_start": "2016-01-16",
+      "train_end": "2016-10-28",
+      "test_start": "2016-10-29",
+      "test_end": "2016-12-31",
+      "train_days": 252,
+      "test_days": 62,
+      "candidate_test_days": 63,
+      "test_halfhours": 2976,
+      "skipped_missing_yesterday": 1,
+      "excluded": {
+        "incomplete_or_dst": 2,
+        "flagged_or_invalid": 49,
+        "missing_era5_hour": 0
+      },
+      "temperature_slope_kwh_per_halfhour_per_c": -0.01543,
+      "methods": {
+        "era5": {
+          "interval": {
+            "count": 2976,
+            "mae_kwh": 0.13829,
+            "rmse_kwh": 0.17572,
+            "bias_kwh": 0.0637,
+            "r2": 0.09541,
+            "slope": 1.08359,
+            "intercept_kwh": -0.0892,
+            "calibration_r2": 0.21555
+          },
+          "daily": {
+            "count": 62,
+            "mae_kwh": 3.53842,
+            "rmse_kwh": 4.15111,
+            "bias_kwh": 3.05752,
+            "r2": -1.95373,
+            "slope": 0.30414,
+            "intercept_kwh": 7.13085,
+            "calibration_r2": 0.08295
+          }
+        },
+        "calendar": {
+          "interval": {
+            "count": 2976,
+            "mae_kwh": 0.13621,
+            "rmse_kwh": 0.18854,
+            "bias_kwh": -0.09174,
+            "r2": -0.04134,
+            "slope": 1.72842,
+            "intercept_kwh": -0.01723,
+            "calibration_r2": 0.24951
+          },
+          "daily": {
+            "count": 62,
+            "mae_kwh": 4.55831,
+            "rmse_kwh": 5.01724,
+            "bias_kwh": -4.40341,
+            "r2": -3.31492,
+            "slope": 1.49964,
+            "intercept_kwh": 0.81577,
+            "calibration_r2": 0.00988
+          }
+        },
+        "yesterday": {
+          "interval": {
+            "count": 2976,
+            "mae_kwh": 0.12266,
+            "rmse_kwh": 0.19299,
+            "bias_kwh": -0.00105,
+            "r2": -0.09115,
+            "slope": 0.45435,
+            "intercept_kwh": 0.13216,
+            "calibration_r2": 0.206
+          },
+          "daily": {
+            "count": 62,
+            "mae_kwh": 2.01073,
+            "rmse_kwh": 2.64116,
+            "bias_kwh": -0.05024,
+            "r2": -0.19573,
+            "slope": 0.40232,
+            "intercept_kwh": 6.94363,
+            "calibration_r2": 0.16181
+          }
+        }
+      },
+      "file": "residential6.json"
+    }
+  }
+}
