@@ -1,0 +1,9 @@
+.forecast-legend {display:flex;gap:1rem;flex-wrap:wrap;font-size:.85rem;font-weight:650}
+.forecast-legend span::before {content:"";display:inline-block;vertical-align:middle;margin-right:.4rem;width:1rem;height:.22rem;background:var(--line-colour)}
+.forecast-actual {--line-colour:#132b2e}.forecast-era5 {--line-colour:#12604c}.forecast-calendar {--line-colour:#286497}.forecast-yesterday {--line-colour:#af6d2c}
+#forecast-curve {width:100%;height:auto;display:block;max-height:360px;background:#fff}
+#forecast-results {display:grid;gap:1rem;margin-block:1.5rem}
+#forecast-results[hidden],#future-panel[hidden]{display:none}
+.forecast-caption {position:static;background:none;color:var(--muted);font-size:.83rem;padding:.3rem 0}
+#forecast-scores td,#forecast-calibration td {font-variant-numeric:tabular-nums}
+#forecast-scores th,#forecast-calibration th {white-space:normal}
