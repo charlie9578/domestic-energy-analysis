@@ -17,3 +17,8 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Generate sample outputs
         run: python -m domestic_energy demo --out-dir reports/demo
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Run browser scenario tests
+        run: node --test tests/behaviour.test.mjs tests/meter_analysis.test.mjs
