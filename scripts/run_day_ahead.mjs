@@ -23,14 +23,14 @@ const compactMetric = (m) => Object.fromEntries(Object.entries(m).map(([key, val
 const summary = {
   provenance: manifest,
   method: {
-    name: "Frozen 80/20 chronological split; additive within-slot temperature regression",
+    name: "Frozen 80/20 chronological split; temperature regression and training-only expanding-window AutoML selection",
     weather: "Historical ERA5 reanalysis, NOT issued day-ahead forecast (perfect-weather proxy)",
     zone: "Europe/Berlin",
     interval: "Unflagged complete 48-slot local days; excludes DST 23/25h days",
     baseline: "Prior complete local day's matching 48 half-hour readings",
     comparison: "All models evaluated on identical holdout days with a complete yesterday",
     prediction_unit: "kWh per 30 minutes; grid import not gross household load",
-    training: "Train on earlier complete days only; no target or future values in coefficients",
+    training: "Tune among 11 fixed low-complexity candidates in expanding-window folds within the first 80% of eligible days; freeze chosen model for untouched 20% test; paired-fold SE and >=3% improvement guard relative to best simple baseline",
     note: "Households with insufficient paired days are marked ineligible rather than assigned artificial scores",
   },
   homes: {},
@@ -46,6 +46,7 @@ for (const home of homes) {
       candidate_test_days: report.candidate_test_days, test_halfhours: report.test_halfhours,
       skipped_missing_yesterday: report.skipped_missing_yesterday,
       excluded: report.excluded,
+      auto_ml_selection: report.auto_ml_selection,
       temperature_slope_kwh_per_halfhour_per_c: round(report.temperature_slope_kwh_per_halfhour_per_c),
       methods: Object.fromEntries(Object.entries(report.methods).map(([key, m]) => [key, {
         interval: compactMetric(m.interval), daily: compactMetric(m.daily),
@@ -63,7 +64,9 @@ for (const home of homes) {
     summary.homes[home].file = home + ".json";
     console.log(home + ": " + report.test_days + " paired days; ERA5 MAE " +
       round(report.methods.era5.interval.mae_kwh) + "; yesterday MAE " +
-      round(report.methods.yesterday.interval.mae_kwh));
+      round(report.methods.yesterday.interval.mae_kwh) +
+      "; guarded AutoML " + report.auto_ml_selection.chosen_id +
+      " MAE " + round(report.methods.auto_ml.interval.mae_kwh));
   } catch (error) {
     summary.homes[home] = { status: "not_evaluable", reason: error.message };
     console.warn(home + ": ineligible (" + error.message + ")");
