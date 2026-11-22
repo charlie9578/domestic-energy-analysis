@@ -213,3 +213,18 @@ The [public-data study replication shortlist](research/REPRODUCIBLE_PUBLIC_DATA_
 ## Existing dashboards, competitor products and open-source controllers
 
 Browse the [searchable dashboard/product landscape](landscape.html) on the website or read the [qualitative market review](research/DASHBOARDS_AND_COMPETITORS.md). The [57-entry CSV inventory](research/EXISTING_PRODUCTS_CATALOG.csv) covers public heat-pump and grid monitors, smart-meter consumer apps, tariff comparison, building/retrofit services, thermal MPC controllers and EV/PV/battery optimizers. Each entry distinguishes public versus account-only access, what signals are available, APIs, stated capabilities and limitations. The market inventory is a research **snapshot**, not a vendor endorsement or independently verified product comparison. Cross-check live pricing, eligibility, licences and plan terms directly with suppliers.
+
+## Behaviour changes, interventions and equipment adoption
+
+Open the [interactive changes-over-time explorer](behaviour.html) or read the [methodology and input contract](research/BEHAVIOUR_CHANGE.md). The explorer demonstrates thermostat setpoint changes (e.g. 25°C → 22°C), EV adoption, solar generation, and the difference between **gross household consumption** and **grid import**. It is labelled **illustrative/simulated**, not a prediction of the user's own bills.
+
+The standard-library [behaviour-change analysis module](domestic_energy/behaviour_change.py) takes consented daily energy data with local weather and (optionally) documented intervention records. It uses a **pre-change-only** weather/weekday baseline to estimate the observed-versus-expected change, reports chronological validation, 30-day persistence and gaps/weather extrapolation, and can split sequential EV/solar/thermostat events into non-overlapping regimes. Simultaneous changes are **not individually attributable**. A separate shift scanner flags *unexplained usage changes* without claiming a holiday, appliance, thermostat or EV has been identified.
+
+```bash
+python -m domestic_energy.behaviour_change --help
+python -m domestic_energy.behaviour_change setpoint --old-c 25 --new-c 22 --outside-c 5 --heat-loss-w-per-k 200 --hours-per-day 14 --fuel gas --efficiency-or-cop .85 --price-p-per-kwh 8
+python -m scripts.run_behaviour_study --out reports/behaviour_changes
+python -m unittest discover -s tests -v
+```
+
+**Important:** weather-normalised difference is a **descriptive association**, not a causal estimate. Whole-home meter readings cannot provide verified thermostat setpoints, identify a particular resident's absence or reliably disaggregate all devices. Solar affects net import, not necessarily gross demand; fuel switching requires both gas and electric boundaries. See [measurement caveats](research/BEHAVIOUR_CHANGE.md).
